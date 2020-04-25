@@ -14,7 +14,7 @@
 #	6 $M - Prune Months	6
 #
 #	Modification Log
-#		2020-04-24  Creacion
+#		2020-04-24  First version
 #		2020-04-25  Uploaded a GitHub version
 #
 #
