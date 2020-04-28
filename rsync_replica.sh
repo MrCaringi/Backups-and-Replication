@@ -39,12 +39,13 @@ echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
 
 wakeonlan -i 192.168.100.0 00:11:32:44:9B:4B
 if $? != 0; then
-	bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IP"
+	echo $(date +%Y%m%d-%H%M)" ERROR during WOL of device $IP $MAC"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IP"
     exit 1
 fi
 
 exit 
-    
+
 ##   Waiting for start up
 echo $(date +%Y%m%d-%H%M)" Waiting for Start up $IP $MAC"
 sleep ${MIN}m
