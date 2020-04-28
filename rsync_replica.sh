@@ -3,7 +3,11 @@
 ###############################
 #  RSYNC Replica
 #
-#	sh rsync_replica.sh
+#   HOW TO USE (put it in crontab)
+#	    0 12 * * * sh /path/rsync_replica.sh >> /path/log.log
+#
+#   REQUIREMENTS
+#       - to be able to ssh to host without password (only using PUB KEY)
 #
 #
 #	Modification Log
@@ -13,21 +17,41 @@
 #
 ###############################
 
-#	RSYNC CONFIGURATION
+##	RSYNC CONFIGURATION
 #   It must include:
 #   SSHPASS=passphrase      - ssh password in order to shutdown the remote when finish
+#   HOST=NAS                - hostname indicated in .ssh/config
 #   IP=10.0.0.0             - Network Address (not the remote IP address) for WOL command
 #   MAC=00:00:00:00:00      - remote MAC address for WOL command
 #   MIN=5                   - Minutes to wait after WOL
-source /home/jfc/scripts/rsync.sh
+. /home/jfc/scripts/rsync.conf
 
 echo SSHPASS $SSHPASS
 echo IP $IP
 echo MAC $MAC
 echo MIN $MIN
 
+##   Starting WOL
 echo "=============================================================================="
-echo "WOL "
+echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "WOL device $IP" > /dev/null
+
+wakeonlan -i 192.168.100.0 00:11:32:44:9B:4B
+if $? != 0; then
+	bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IP"
+    exit 1
+fi
+
+##   Waiting for start up
+echo $(date +%Y%m%d-%H%M)" Waiting for Start up $IP $MAC"
+sleep ${MIN}m
+
+##  Starting Rsync folders
+
+
+##   Turning off remote device
+
+echo $SSHPASS | ssh -tt quiltra "sudo ps -A"
 
 exit
 
