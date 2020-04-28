@@ -19,7 +19,7 @@
 #   IP=10.0.0.0             - Network Address (not the remote IP address) for WOL command
 #   MAC=00:00:00:00:00      - remote MAC address for WOL command
 #   MIN=5                   - Minutes to wait after WOL
-source /home/jfc/scripts/rsync.conf
+source /home/jfc/scripts/rsync.sh
 
 echo SSHPASS $SSHPASS
 echo IP $IP
