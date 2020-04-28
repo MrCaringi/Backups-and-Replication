@@ -7,7 +7,7 @@
 #	    0 12 * * * sh /path/rsync_replica.sh >> /path/log.log
 #
 #   REQUIREMENTS
-#       - to be able to ssh to host without password (only using PUB KEY)
+#       - to be able to ssh to host without password (it requires a proper ssh configuration: SSH PUB KEY Configuration)
 #
 #
 #	Modification Log
@@ -20,7 +20,7 @@
 ##	RSYNC CONFIGURATION
 #   It must include:
 #   SSHPASS=passphrase      - ssh password in order to shutdown the remote when finish
-#   HOST=NAS                - hostname indicated in .ssh/config
+#   HOST=NAS                - hostname indicated in .ssh/config 
 #   IP=10.0.0.0             - Network Address (not the remote IP address) for WOL command
 #   MAC=00:00:00:00:00      - remote MAC address for WOL command
 #   MIN=5                   - Minutes to wait after WOL
@@ -30,6 +30,7 @@ echo SSHPASS $SSHPASS
 echo IP $IP
 echo MAC $MAC
 echo MIN $MIN
+echo HOST $HOST
 
 ##   Starting WOL
 echo "=============================================================================="
@@ -42,6 +43,8 @@ if $? != 0; then
     exit 1
 fi
 
+exit 
+    
 ##   Waiting for start up
 echo $(date +%Y%m%d-%H%M)" Waiting for Start up $IP $MAC"
 sleep ${MIN}m
