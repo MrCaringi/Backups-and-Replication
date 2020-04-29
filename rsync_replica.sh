@@ -44,14 +44,13 @@ if $? != 0; then
     exit 1
 fi
 
-exit 
-
 ##   Waiting for start up
 echo $(date +%Y%m%d-%H%M)" Waiting for Start up $IP $MAC"
 sleep ${MIN}m
 
 ##  Starting Rsync folders
-
+echo $(date +%Y%m%d-%H%M)" Starting Rsync folders"
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "Starting Rsync folders"
 
 ##   Turning off remote device
 
