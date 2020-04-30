@@ -12,8 +12,8 @@
 #       - "sshpass" packacge is needed
 #
 #	Modification Log
-#		2020-04-28  First version
-#	    2020-04-29  testing version releases	
+#       2020-04-28  First version
+#       2020-04-29  testing version releases	
 #
 #
 ###############################
@@ -28,12 +28,6 @@
 #   MAC=00:00:00:00:00      - remote MAC address for WOL command
 #   MIN=5                   - Minutes to wait after WOL
 . /home/jfc/scripts/rsync.conf
-
-echo SSHPASS $SSHPASS
-echo IP $IP
-echo MAC $MAC
-echo MIN $MIN
-echo HOST $HOST
 
 ##   Starting WOL
 echo "=============================================================================="
