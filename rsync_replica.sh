@@ -8,11 +8,12 @@
 #
 #   REQUIREMENTS
 #       - to be able to ssh to host without password (it requires a proper ssh configuration: SSH PUB KEY Configuration)
-#
+#       - RSYNC daemon should be available on destination
+#       - "sshpass" packacge is needed
 #
 #	Modification Log
 #		2020-04-28  First version
-#		
+#	    2020-04-29  testing version releases	
 #
 #
 ###############################
@@ -58,6 +59,8 @@ sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/iscsi-borg $RSYNCUSER@$IP::
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/iscsi-borg"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/iscsi-borg"
+    sleep 20
+    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
     exit 1
 fi
 
@@ -65,6 +68,8 @@ sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-Music $RSYNCUSER@$
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-Music"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-Music"
+    sleep 20
+    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
     exit 1
 fi
 
@@ -72,6 +77,8 @@ sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-photo $RSYNCUSER@$
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-photo"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-photo"
+    sleep 20
+    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
     exit 1
 fi
 
@@ -79,6 +86,8 @@ sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-video $RSYNCUSER@$
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-video"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-video"
+    sleep 20
+    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
     exit 1
 fi
 
@@ -89,44 +98,4 @@ bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "o
 sleep 20
 echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
 
-exit
-
-
-
-info "Starting backup"
-bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Starting backup" > /dev/null
-
-# Backup the most important directories into an archive named after
-# the machine this script is currently running on:
-
-borg create -s --compression auto,zlib,5 ${FULLREP} ${ORI}
-
-backup_exit=$?
-
-info "Pruning repository"
-bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruning repository" > /dev/null
-
-# Use the `prune` subcommand to maintain 7 daily, 4 weekly and 6 monthly
-# archives of THIS machine. The 'QNAP-' prefix is very important to
-# limit prune's operation to this machine's archives and not apply to
-# other machines' archives also:
-
-borg prune -v -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
-
-prune_exit=$?
-
-# use highest exit code as global exit code
-global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
-
-if [ ${global_exit} -eq 0 ]; then
-    info "Backup and Prune finished successfully"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and Prune finished successfully" > /dev/null
-elif [ ${global_exit} -eq 1 ]; then
-    info "Backup and/or Prune finished with warnings"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with warnings" > /dev/null
-else
-    info "Backup and/or Prune finished with errors"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with errors" > /dev/null
-fi
-
-exit ${global_exit}
+exit 0
