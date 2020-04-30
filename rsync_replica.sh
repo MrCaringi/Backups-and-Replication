@@ -13,8 +13,8 @@
 #
 #	Modification Log
 #       2020-04-28  First version
-#       2020-04-29  testing version releases	
-#
+#       2020-04-29  Testing version releases	
+#       2020-04-30  Variables improvement
 #
 ###############################
 
