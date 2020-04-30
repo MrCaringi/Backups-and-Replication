@@ -35,7 +35,7 @@ echo "==========================================================================
 echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "WOL device $IP" > /dev/null
 
-wakeonlan -i 192.168.100.0 00:11:32:44:9B:4B
+wakeonlan -i $IP $MAC
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR during WOL of device $IP $MAC"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IP"
@@ -55,7 +55,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/iscsi-borg"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/iscsi-borg"
     sleep 20
-    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
+    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
     exit 1
 fi
 
@@ -64,7 +64,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-Music"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-Music"
     sleep 20
-    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
+    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
     exit 1
 fi
 
@@ -73,7 +73,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-photo"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-photo"
     sleep 20
-    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
+    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
     exit 1
 fi
 
@@ -82,7 +82,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-video"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-video"
     sleep 20
-    echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
+    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
     exit 1
 fi
 
@@ -90,6 +90,6 @@ fi
 echo $(date +%Y%m%d-%H%M)" INFO RSYNC successfully done on $IP"
 bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNC successfully done" "of $IP"
 sleep 5
-echo $SSHPASS | ssh -tt quiltra "shutdown -h now"
+echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
 sleep 5
 exit 0
