@@ -15,12 +15,12 @@
 #       2020-04-28  First version
 #       2020-04-29  Testing version releases	
 #       2020-04-30  Variables improvement
+#       2020-05-01  Shutdown fix
 #
 ###############################
 
 ##	RSYNC CONFIGURATION
 #   It must include:
-#   SSHPASS=passphrase      - ssh password in order to shutdown the remote when finish
 #   RSYNCUSER=rsync-user    - rsync user
 #   RSYNCPASS=passphrase    - rsync password
 #   HOST=NAS                - hostname indicated in .ssh/config
@@ -55,7 +55,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/iscsi-borg"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/iscsi-borg" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
+    ssh $HOST "sudo shutdown -h now"
     exit 1
 fi
 
@@ -64,7 +64,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-Music"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-Music" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
+    ssh $HOST "sudo shutdown -h now"
     exit 1
 fi
 
@@ -73,7 +73,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-photo"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-photo" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
+    ssh $HOST "sudo shutdown -h now"
     exit 1
 fi
 
@@ -82,7 +82,7 @@ if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-video"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-video" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
+    ssh $HOST "sudo shutdown -h now"
     exit 1
 fi
 
@@ -90,6 +90,6 @@ fi
 echo $(date +%Y%m%d-%H%M)" INFO RSYNC successfully done on $IP"
 bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNC successfully done" "of $IPRSYNC" > /dev/null
 sleep 5
-echo $SSHPASS | ssh -tt $HOST "sudo shutdown -h now"
+ssh $HOST "sudo shutdown -h now"
 sleep 5
 exit 0
