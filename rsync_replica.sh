@@ -33,12 +33,12 @@
 ##   Starting WOL
 echo "=============================================================================="
 echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
-    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "WOL device $IP" > /dev/null
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "WOL device $IPRSYNC" > /dev/null
 
 wakeonlan -i $IP $MAC
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR during WOL of device $IP $MAC"
-    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IP"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IPRSYNC" > /dev/null
     exit 1
 fi
 
@@ -48,48 +48,48 @@ sleep ${MIN}m
 
 ##  Starting Rsync folders
 echo $(date +%Y%m%d-%H%M)" Starting Rsync folders"
-bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "Starting Rsync folders"
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "Starting Rsync folders" > /dev/null
 
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/iscsi-borg $RSYNCUSER@$IPRSYNC::borg
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/iscsi-borg"
-    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/iscsi-borg"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/iscsi-borg" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
+    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
     exit 1
 fi
 
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-Music $RSYNCUSER@$IPRSYNC::music
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-Music"
-    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-Music"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-Music" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
+    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
     exit 1
 fi
 
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-photo $RSYNCUSER@$IPRSYNC::photo
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-photo"
-    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-photo"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-photo" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
+    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
     exit 1
 fi
 
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-video $RSYNCUSER@$IPRSYNC::video
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-video"
-    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-video"
+    bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during RSYNC" "/mnt/nostromo-video" > /dev/null
     sleep 20
-    echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
+    echo $SSHPASS | ssh -tt $HOST "shutdown -h now"
     exit 1
 fi
 
 ##   Turning off remote device
 echo $(date +%Y%m%d-%H%M)" INFO RSYNC successfully done on $IP"
-bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNC successfully done" "of $IP"
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNC successfully done" "of $IPRSYNC" > /dev/null
 sleep 5
-echo $SSHPASS | ssh -tt &HOST "shutdown -h now"
+echo $SSHPASS | ssh -tt $HOST "sudo shutdown -h now"
 sleep 5
 exit 0
