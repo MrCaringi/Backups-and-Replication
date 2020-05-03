@@ -60,7 +60,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Start
 # Backup the most important directories into an archive named after
 # the machine this script is currently running on:
 
-borg create -s --compression auto,zlib,5 ${FULLREP} ${ORI}
+borg create --stats --compression auto,zlib,5 ${FULLREP} ${ORI}
 
 backup_exit=$?
 
