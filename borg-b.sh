@@ -39,16 +39,8 @@ echo "==========================================================================
 # Setting this, so the repo does not need to be given on the command line:
 export BORG_REPO=$REP
 
-###	TESTING
-#echo "repositorio ${REP}"
-#echo "origen" ${ORI}
-#echo "BORG_REPO=$REP"
-#exit
-
 # Setting this, so you won't be asked for your repository passphrase:
 export BORG_PASSPHRASE=${PASSPHRASE}
-# or this to ask an external program to supply the passphrase:
-# export BORG_PASSCOMMAND='pass show backup'
 
 # some helpers and error handling:
 info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
@@ -69,12 +61,9 @@ info "Pruning repository"
 echo $(date +%Y%m%d-%H%M)" Pruning repository of ${TITLE}"
 bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruning repository" > /dev/null
 
-# Use the `prune` subcommand to maintain 7 daily, 4 weekly and 6 monthly
-# archives of THIS machine. The 'QNAP-' prefix is very important to
-# limit prune's operation to this machine's archives and not apply to
-# other machines' archives also:
+###     PRUNE
 
-if $backup_exit eq 0; then
+if $backup_exit -eq 0; then
     borg prune -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
     prune_exit=$?
 else
