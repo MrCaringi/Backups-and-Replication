@@ -64,7 +64,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruni
 ###     PRUNE
 
 if [ $backup_exit -eq 0 ]; then
-    borg prune -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
+    borg prune -v -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
     prune_exit=$?
 else
     echo $(date +%Y%m%d-%H%M)" Backup not completed, skip Pruning of ${TITLE}"    
