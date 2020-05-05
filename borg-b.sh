@@ -74,7 +74,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruni
 # limit prune's operation to this machine's archives and not apply to
 # other machines' archives also:
 
-if $backup_exit = 0; then
+if $backup_exit eq 0; then
     borg prune -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
     prune_exit=$?
 else
