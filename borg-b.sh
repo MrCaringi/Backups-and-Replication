@@ -61,7 +61,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Start
 # Backup the most important directories into an archive named after
 # the machine this script is currently running on:
 
-borg create -v --stats --compression auto,zlib,5 ${FULLREP} ${ORI}
+borg create --stats --compression auto,zlib,5 ${FULLREP} ${ORI}
 
 backup_exit=$?
 
@@ -74,9 +74,12 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruni
 # limit prune's operation to this machine's archives and not apply to
 # other machines' archives also:
 
-borg prune -v -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
-
-prune_exit=$?
+if $backup_exit = 0; then
+    borg prune -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
+    prune_exit=$?
+else
+    echo $(date +%Y%m%d-%H%M)" Backup not completed, skip Pruning of ${TITLE}"    
+fi
 
 # use highest exit code as global exit code
 global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
