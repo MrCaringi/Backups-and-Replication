@@ -63,7 +63,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruni
 
 ###     PRUNE
 
-if $backup_exit -eq 0; then
+if [ $backup_exit -eq 0 ]; then
     borg prune -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP
     prune_exit=$?
 else
