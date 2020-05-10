@@ -12,7 +12,7 @@
 #	4 $D - Prune Days	7
 #	5 $W - Prune Weeks	4
 #	6 $M - Prune Months	6
-#   test
+# 
 #	Modification Log
 #		2020-04-24  First version
 #		2020-04-25  Uploaded a GitHub version
@@ -43,8 +43,8 @@ export BORG_REPO=$REP
 export BORG_PASSPHRASE=${PASSPHRASE}
 
 # some helpers and error handling:
-info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
-trap 'echo $( date ) Backup interrupted >&2; exit 2' INT TERM
+info() { printf "\n%s %s\n\n" "$( date )" "$*"; }
+trap 'echo $( date ) Backup interrupted ; exit 2' INT TERM
 
 info "Starting backup"
 echo $(date +%Y%m%d-%H%M)" Starting backup of ${TITLE}"
