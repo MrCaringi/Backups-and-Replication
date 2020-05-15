@@ -76,15 +76,15 @@ global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
 if [ ${global_exit} -eq 0 ]; then
     info "Backup and Prune finished successfully"
     echo $(date +%Y%m%d-%H%M)" Backup and Prune finished successfully"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and Prune finished successfully" > /dev/null
+	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and Prune finished #successfully" > /dev/null
 elif [ ${global_exit} -eq 1 ]; then
     info "Backup and/or Prune finished with warnings"
     echo $(date +%Y%m%d-%H%M)" Backup and/or Prune finished with warnings"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with warnings" > /dev/null
+	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with #warnings" > /dev/null
 else
     info "Backup and/or Prune finished with errors"
     echo $(date +%Y%m%d-%H%M)" Backup and/or Prune finished with errors"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with errors" > /dev/null
+	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with #errors" > /dev/null
 fi
 
 exit ${global_exit}
