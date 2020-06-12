@@ -35,7 +35,11 @@ echo "==========================================================================
 echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "WOL device $IPRSYNC" > /dev/null
 
+
 wakeonlan -i $IP $MAC
+#   00:11:32:44:9B:4B
+#   while :; do {{command}}; sleep 1; done
+
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR during WOL of device $IP $MAC"
     bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "ERROR during WOL" "of $IPRSYNC" > /dev/null
@@ -90,6 +94,6 @@ fi
 echo $(date +%Y%m%d-%H%M)" INFO RSYNC successfully done on $IP"
 bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNC successfully done" "of $IPRSYNC" > /dev/null
 sleep 5
-ssh $HOST "sudo shutdown -h now"
+ssh -t $HOST "sudo shutdown -h now"
 sleep 5
 exit 0
