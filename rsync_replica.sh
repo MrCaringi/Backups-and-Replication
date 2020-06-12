@@ -54,6 +54,7 @@ sleep ${MIN}m
 echo $(date +%Y%m%d-%H%M)" Starting Rsync folders"
 bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "Starting Rsync folders" > /dev/null
 
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNCing /mnt/iscsi-borg" > /dev/null
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/iscsi-borg $RSYNCUSER@$IPRSYNC::borg
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/iscsi-borg"
@@ -63,6 +64,7 @@ if $? != 0; then
     exit 1
 fi
 
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNCing /mnt/nostromo-Music" > /dev/null
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-Music $RSYNCUSER@$IPRSYNC::music
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-Music"
@@ -72,6 +74,7 @@ if $? != 0; then
     exit 1
 fi
 
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNCing /mnt/nostromo-photo" > /dev/null
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-photo $RSYNCUSER@$IPRSYNC::photo
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-photo"
@@ -81,6 +84,7 @@ if $? != 0; then
     exit 1
 fi
 
+bash /home/jfc/scripts/telegram-message.sh "RSYNC Replica" "RSYNCing /mnt/nostromo-video" > /dev/null
 sshpass -p $RSYNCPASS rsync -aq --append-verify /mnt/nostromo-video $RSYNCUSER@$IPRSYNC::video
 if $? != 0; then
 	echo $(date +%Y%m%d-%H%M)" ERROR RSYNC /mnt/nostromo-video"
