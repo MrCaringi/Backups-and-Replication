@@ -48,7 +48,7 @@ trap 'echo $( date ) Backup interrupted ; exit 2' INT TERM
 
 info "Starting backup"
 echo $(date +%Y%m%d-%H%M)" Starting backup of ${TITLE}"
-bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Starting backup" > /dev/null
+bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Starting backup" > /dev/null
 
 # Backup the most important directories into an archive named after
 # the machine this script is currently running on:
@@ -59,7 +59,7 @@ backup_exit=$?
 
 info "Pruning repository"
 echo $(date +%Y%m%d-%H%M)" Pruning repository of ${TITLE}"
-bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Pruning repository" > /dev/null
+bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Pruning repository" > /dev/null
 
 ###     PRUNE
 
@@ -76,15 +76,15 @@ global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
 if [ ${global_exit} -eq 0 ]; then
     info "Backup and Prune finished successfully"
     echo $(date +%Y%m%d-%H%M)" Backup and Prune finished successfully"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and Prune finished #successfully" > /dev/null
+	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Backup and Prune finished #successfully" > /dev/null
 elif [ ${global_exit} -eq 1 ]; then
     info "Backup and/or Prune finished with warnings"
     echo $(date +%Y%m%d-%H%M)" Backup and/or Prune finished with warnings"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with #warnings" > /dev/null
+	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Backup and/or Prune finished with #warnings" > /dev/null
 else
     info "Backup and/or Prune finished with errors"
     echo $(date +%Y%m%d-%H%M)" Backup and/or Prune finished with errors"
-	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: ${TITLE}" "Backup and/or Prune finished with #errors" > /dev/null
+	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Backup and/or Prune finished with #errors" > /dev/null
 fi
 
 exit ${global_exit}
