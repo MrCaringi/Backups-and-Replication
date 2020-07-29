@@ -58,7 +58,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Star
 
 ##  Running the backup and capturing the output to a variable
 #   log variable will be used to sent the log via telegram
-log=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
+log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
 
 backup_exit=$?
 
@@ -69,7 +69,7 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Prun
 ###     PRUNE
 
 if [ $backup_exit -eq 0 ]; then
-    borg prune -v -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP 2>&1
+    log_prune=`borg prune -v -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP 2>&1`
     prune_exit=$?
 else
     echo $(date +%Y%m%d-%H%M)" Backup not completed, skip Pruning of ${TITLE}"    
@@ -94,9 +94,13 @@ fi
 
 #   Enviando archivo con el log de BORG CREATE
 rand=$((1000 + RANDOM % 8500))
-echo "$log" > borg-create_${rand}.log
-bash /home/jfc/scripts/telegram-message-file.sh "Borg Backup" "Repo: #${TITLE}" borg-create_${rand}.log > /dev/null
-cat borg-create_${rand}.log
-rm borg-create_${rand}.log
+echo "========== BORG CREATE" > borg-log_${rand}.log
+echo "$log_create" > borg-log_${rand}.log
+echo
+echo "========== BORG PRUNE" > borg-log_${rand}.log
+echo "$log_prune" > borg-log_${rand}.log
+bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${TITLE}" "Log File" borg-log_${rand}.log > /dev/null
+cat borg-log_${rand}.log
+rm borg-log_${rand}.log
 
 exit ${global_exit}
