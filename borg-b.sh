@@ -94,11 +94,11 @@ fi
 
 #   Enviando archivo con el log de BORG CREATE
 rand=$((1000 + RANDOM % 8500))
-echo "========== BORG CREATE" > borg-log_${rand}.log
-echo "$log_create" > borg-log_${rand}.log
-echo
-echo "========== BORG PRUNE" > borg-log_${rand}.log
-echo "$log_prune" > borg-log_${rand}.log
+echo "========== BORG CREATE" >> borg-log_${rand}.log
+echo "$log_create" >> borg-log_${rand}.log
+echo >> borg-log_${rand}.log
+echo "========== BORG PRUNE" >> borg-log_${rand}.log
+echo "$log_prune" >> borg-log_${rand}.log
 bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${TITLE}" "Log File" borg-log_${rand}.log > /dev/null
 cat borg-log_${rand}.log
 rm borg-log_${rand}.log
