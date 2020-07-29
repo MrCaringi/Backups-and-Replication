@@ -92,14 +92,22 @@ else
 	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Backup and/or Prune finished with #errors" > /dev/null
 fi
 
-#   Enviando archivo con el log de BORG CREATE
+##  Attaching the Log
+#   Building the Files
 rand=$((1000 + RANDOM % 8500))
 echo "========== BORG CREATE" >> borg-log_${rand}.log
 echo "$log_create" >> borg-log_${rand}.log
 echo >> borg-log_${rand}.log
 echo "========== BORG PRUNE" >> borg-log_${rand}.log
+echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
+echo >> borg-log_${rand}.log
 echo "$log_prune" >> borg-log_${rand}.log
+#   Sending the File to Telegram
 bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${TITLE}" "Log File" borg-log_${rand}.log > /dev/null
+echo "========== END" >> borg-log_${rand}.log
+echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
+
+#   Flushing & Deleting the file
 cat borg-log_${rand}.log
 rm borg-log_${rand}.log
 
