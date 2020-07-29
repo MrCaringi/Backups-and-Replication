@@ -31,7 +31,10 @@ M=${6}
 #	Ruta de repositorio + nombre de backup
 FULLREP="${REP}::${TITLE}"
 
-#	Carga de Password, ejemplo del contenido: PASSPHRASE='password'
+#	Parametros
+#
+#   PASSPHRASE='password'
+#   
 . /home/jfc/scripts/borg.conf
 
 echo "=============================================================================="
@@ -53,7 +56,9 @@ bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Star
 # Backup the most important directories into an archive named after
 # the machine this script is currently running on:
 
-borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1
+##  Running the backup and capturing the output to a variable
+#   log variable will be used to sent the log via telegram
+log=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
 
 backup_exit=$?
 
@@ -86,5 +91,12 @@ else
     echo $(date +%Y%m%d-%H%M)" Backup and/or Prune finished with errors"
 	bash /home/jfc/scripts/telegram-message.sh "Borg Backup" "Repo: #${TITLE}" "Backup and/or Prune finished with #errors" > /dev/null
 fi
+
+#   Enviando archivo con el log de BORG CREATE
+rand=$((1000 + RANDOM % 8500))
+echo "$log" > borg-create_${rand}.log
+bash /home/jfc/scripts/telegram-message-file.sh "Borg Backup" "Repo: #${TITLE}" borg-create_${rand}.log > /dev/null
+cat borg-create_${rand}.log
+rm borg-create_${rand}.log
 
 exit ${global_exit}
