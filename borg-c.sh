@@ -3,12 +3,11 @@
 ###############################
 #  BORG CHECK SCRIPT
 #
-#	bash borg-c.sh /path/to/config /path/to/repository
+#	bash borg-c.sh /path/to/repository
 #
 #	Parameters
-#	1 $CONFIG       path to config file
-#	2 $REP_DIR     path to file with list of repositories
-#	3 
+#	1 $REP_DIR     path to file with list of repositories
+#	2 
 # 
 #	Modification Log
 #		2020-07-30  First version
@@ -16,6 +15,12 @@
 #
 #
 ###############################
+
+
+##	INPUT VARIABLES
+#   $(date +"%Y%m%d")"
+REP_DIR=${1}
+
 
 #################################
 #   CONFIG FILE
@@ -25,21 +30,12 @@
 #   PASSPHRASE='password'
 
 #	Asignacion de Variables
-#   $(date +"%Y%m%d")"
-CONFIG=${1}
-REP_DIR=${2}
-
-
-
-#	Parametros
-#
-#   PASSPHRASE='password'
-#   
-. $1
+#   $(date +"%Y%m%d")"   
+. /home/jfc/scripts/borg.conf
 
 #testing
-echo &1
-echo &BORG_PASSPHRASE
+echo $REP_DIR
+echo $BORG_PASSPHRASE
 exit 0
 
 echo "=============================================================================="
