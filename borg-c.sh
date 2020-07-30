@@ -50,6 +50,7 @@ do
     echo "================================================"
     REPO=${i##*/}
     echo $(date +%Y%m%d-%H%M)" Starting Check of $REPO"
+    START="$(date +%Y%m%d-%H%M)"
     bash /home/jfc/scripts/telegram-message.sh "Borg Check" "Repo: #${REPO}" "Starting Check of repository" > /dev/null
     
     #   The Magic goes here
@@ -70,6 +71,7 @@ do
     #   Building the log file
         rand=$((1000 + RANDOM % 8500))
         echo "========== BORG CHECK" >> borg-log_${rand}.log
+        echo "$START" >> borg-log_${rand}.log
         echo "$log_check" >> borg-log_${rand}.log
         echo >> borg-log_${rand}.log
         echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
