@@ -42,9 +42,6 @@ export BORG_PASSPHRASE=${PASSPHRASE}
 info() { printf "\n%s %s\n\n" "$( date )" "$*"; }
 trap 'echo $( date ) Check interrupted ; exit 2' INT TERM
 
-info "Starting Repository Check"
-echo $(date +%Y%m%d-%H%M)" Starting backup of ${TITLE}"
-
 ##  Getting the list of repositories
 REP_LIST=`cat $REP_DIR`
 
@@ -56,7 +53,7 @@ do
     bash /home/jfc/scripts/telegram-message.sh "Borg Check" "Repo: #${REPO}" "Starting Check of repository" > /dev/null
     
     #   The Magic goes here
-    log_check=`borg check -v --verify-data --show-rc $i`
+    log_check=`borg check -v --verify-data --show-rc $i 2>&1`
     exit=$?
 
     if [ ${exit} -eq 0 ]; then
