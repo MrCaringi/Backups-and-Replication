@@ -50,7 +50,7 @@ do
     echo "================================================"
     REPO=${i##*/}
     echo $(date +%Y%m%d-%H%M)" Starting Check of $REPO"
-    START="$(date +%Y%m%d-%H%M)"
+    START=$(date +"%Y%m%d %HH%MM%SS")
     bash /home/jfc/scripts/telegram-message.sh "Borg Check" "Repo: #${REPO}" "Starting Check of repository" > /dev/null
     
     #   The Magic goes here
