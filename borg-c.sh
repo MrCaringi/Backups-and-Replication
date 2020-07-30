@@ -70,12 +70,10 @@ do
     ##  Sending log to Telegram
     #   Building the log file
         rand=$((1000 + RANDOM % 8500))
-        echo "========== BORG CHECK" >> borg-log_${rand}.log
-        echo "$START" >> borg-log_${rand}.log
+        echo "========== BORG CHECK          $START" >> borg-log_${rand}.log
         echo "$log_check" >> borg-log_${rand}.log
         echo >> borg-log_${rand}.log
-        echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
-        echo "========== END" >> borg-log_${rand}.log
+        echo "========== END           $(date +"%Y%m%d %HH%MM%SS")" >> borg-log_${rand}.log
         #   Sending the File to Telegram
         bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${REPO}" "Borg Check Log File" borg-log_${rand}.log > /dev/null
         #   Flushing & Deleting the file
