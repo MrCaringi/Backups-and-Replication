@@ -102,8 +102,7 @@ echo "========== BORG PRUNE" >> borg-log_${rand}.log
 echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
 echo >> borg-log_${rand}.log
 echo "$log_prune" >> borg-log_${rand}.log
-echo "========== END" >> borg-log_${rand}.log
-echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
+echo "========== END          $(date +"%Y%m%d %HH%MM%SS")" >> borg-log_${rand}.log
 
 #   Sending the File to Telegram
 bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${TITLE}" "Log File" borg-log_${rand}.log > /dev/null
