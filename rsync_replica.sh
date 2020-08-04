@@ -2,7 +2,7 @@
 
 ###############################
 #               RSYNC Replica v2
-#   This is scripts is for RSYNC your folders from a server to other
+#   This script is for RSYNC your folders from a server to another
 #
 ##   HOW TO USE (put it in crontab)
 #	    0 12 * * * bash /path/rsync_replica.sh /path/to/rsync_replica.json >> /path/log
