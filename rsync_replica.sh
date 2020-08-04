@@ -75,7 +75,7 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
     T=0
     while [ $UP -eq 0 ]
         do 
-            ping -c 1 $IPRSYNC 
+            ping -c 5 $IPRSYNC 
             if [ $? -ne 0 ]; then
                 echo $(date +%Y%m%d-%H%M)" ERROR during WOL of $HOST, ping unsuccessful"
                 sleep $SEC
