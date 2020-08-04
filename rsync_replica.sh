@@ -12,6 +12,7 @@
 #
 ##   REQUIREMENTS
 #       - to be able to ssh to host without password (it requires a proper ssh configuration: SSH PUB KEY Configuration)
+#       - Remote server is configured in .ssh/config files, this will be used as "Host" variable. 
 #       - RSYNC daemon should be available on destination
 #       - "sshpass" packacge is needed in the source server.
 #
@@ -27,7 +28,7 @@
 #       "SendFile": full pathand ans script name used for Telegram send File Log
 #
 #   In DESTINATION section
-#       "Host": Hostname of remote server
+#        "Host": Hostname of remote server
 #        "RsyncUser": Rsync user in remote server
 #        "RsyncPass": Rsync password in remote server
 #        "IPDest": IP of remote server
