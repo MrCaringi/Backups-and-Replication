@@ -2,7 +2,7 @@
 
 ###############################
 #               RSYNC Replica v2
-#   This script is for RSYNC your folders from a server to another
+#   This script is for RSYNC your folders from a server to another in the same LAN
 #
 ##   HOW TO USE IT (in a Cron Job)
 #	    0 12 * * * bash /path/rsync_replica.sh /path/to/rsync_replica.json >> /path/log
@@ -11,24 +11,24 @@
 #   $1  Path to ".json" config file
 #
 ##   REQUIREMENTS
-#       - to be able to ssh to host without password (it requires a proper ssh configuration: SSH PUB KEY Configuration)
-#       - Remote server is configured in .ssh/config files, this will be used as "Host" variable. 
-#       - RSYNC daemon should be available on destination
+#       - to be able to ssh to host without password (it requires a proper ssh configuration: SSH PUB KEY Configuration).
+#       - Remote server is configured in .ssh/config file, this will be used as "Host" variable. 
+#       - RSYNC daemon should be available on remote server.
 #       - "sshpass" packacge is needed in the source server.
 #
-##	RSYNC CONFIGURATION
-#   Please see https://github.com/MrCaringi/borg for a example of "rsync_replica.json" file
+##	RSYNC CONFIGURATION File
+#   Please see https://github.com/MrCaringi/borg/blob/master/rsync_replica.json for a example of "rsync_replica.json" file
 #
 #  It must include:
 #  In CONFIG section
-#       "Network": IP of your local network, example, if your server IP is 1.1.1.22/24, then your network address is 1.1.1.0
-#       "Seconds": Seconds to wait in order to verifiy if remote server is UP
+#       "Network": IP of your local network, example: if your server IP is 1.1.1.22/24, then your network address is 1.1.1.0
+#       "Seconds": Seconds to wait in order to verifiy if remote server is UP (using ping tool)
 #       "Try": How many attempts will be tried to verify if Remote Server is Up, after that, if ping is unsucessful, the script ends
-#       "SendMessage": full pathand ans script name used for Telegram send Message
-#       "SendFile": full pathand ans script name used for Telegram send File Log
+#       "SendMessage": full path and script name used for Sending Messages to Telegram, example: https://github.com/MrCaringi/notifications/blob/master/telegram-message.sh
+#       "SendFile": full path and script name used for Sending files to Telegram, example: https://github.com/MrCaringi/notifications/blob/master/telegram-message-file.sh 
 #
 #   In DESTINATION section
-#        "Host": Hostname of remote server
+#        "Host": Hostname of remote server (included in .ssh/config file)
 #        "RsyncUser": Rsync user in remote server
 #        "RsyncPass": Rsync password in remote server
 #        "IPDest": IP of remote server
@@ -43,7 +43,7 @@
 #       2020-04-29  Testing version releases	
 #       2020-04-30  Variables improvement
 #       2020-05-01  Shutdown fix
-#       2020-08-04  Version 2: JSON config support
+#       2020-08-04  Version 2: JSON config support, log file to telegram support
 #
 ###############################
 
