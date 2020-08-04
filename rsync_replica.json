@@ -1,0 +1,22 @@
+{
+    "config":{
+        "Network": "1.1.1.0",
+        "Seconds": 30,
+        "Try": 10,
+        "SendMessage": "/path/telegram-message.sh",
+        "SendFile": "/path/telegram-message-file.sh"
+        },
+    "destination":{
+        "Host": "remote-hostname",
+        "RsyncUser": "user",
+        "RsyncPass": "password",
+        "IPDest": "1.1.1.15",
+        "MAC": "AA:AA:AA:AA:AA:AA",
+        "Share": "shared-folder"
+    },
+    "folders": [
+        "/path/folder1",
+        "/path/folder2",
+        "/path/folder3"
+    ]
+}
