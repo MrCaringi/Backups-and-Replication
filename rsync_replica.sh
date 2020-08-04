@@ -22,7 +22,7 @@
 #  In CONFIG section
 #       "Network": IP of your local network, example, if your server IP is 1.1.1.22/24, then your network address is 1.1.1.0
 #       "Seconds": Seconds to wait in order to verifiy if remote server is UP
-#       "Try": Seconds to wait between attempts if server is up
+#       "Try": How many attempts will be tried to verify if Remote Server is Up, after that, if ping is unsucessful, the script ends
 #       "SendMessage": full pathand ans script name used for Telegram send Message
 #       "SendFile": full pathand ans script name used for Telegram send File Log
 #
@@ -73,7 +73,7 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
 ##  Verifying if WOL was OK   
     UP=0
     T=0
-    while [ UP -eq 0 ]
+    while [ $UP -eq 0 ]
         do 
             ping -c 1 $IPRSYNC 
             if [ $? -ne 0 ]; then
@@ -89,6 +89,7 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
                 echo $(date +%Y%m%d-%H%M)" ERROR during WOL of $HOST, after $T attempts of $SEC Seconds"
                 bash $SEND_MESSAGE "RSYNC Replica" "ERROR during WOL, after $T attempts of $SEC Seconds" "of $HOST" > /dev/null
                 exit 1
+                fi
         done
 
 ##  If WOL was ok, then is time to RSYNC
