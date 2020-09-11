@@ -17,6 +17,17 @@ if pidof -o %PPID -x rclone; then
 	exit 1
 fi
 
+####	DMESG
+#	LOCAL to ONEDRIVE-YAHOO	
+echo $(date +"%Y%m%d %H:%M:%S")" SYNC: local DMESG to onedrive-yahoo:/dmesg/comp"
+rclone sync /mnt/nostromo-repository/dmesg/comp/ onedrive-yahoo:/dmesg/comp
+	if $? != 0; then
+		echo $(date +"%Y%m%d %H:%M:%S")" ERROR during rclone sync /mnt/nostromo-repository/dmesg/comp/ onedrive-yahoo:/dmesg/comp"
+		bash /home/jfc/scripts/telegram-message.sh "Borg rclone sync" "ERROR during" "rclone sync /mnt/nostromo-repository/dmesg/comp/ onedrive-yahoo:/dmesg/comp" > /dev/null
+		exit 1
+	fi
+
+####	BACKUPS
 #	LOCAL to ONEDRIVE-YAHOO	
 echo $(date +"%Y%m%d %H:%M:%S")" SYNC: local to onedrive-yahoo:borg/"
 rclone sync /mnt/iscsi-borg/ onedrive-yahoo:borg/
