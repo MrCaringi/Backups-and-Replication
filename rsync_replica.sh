@@ -44,6 +44,7 @@
 #       2020-04-30  Variables improvement
 #       2020-05-01  Shutdown fix
 #       2020-08-04  Version 2: JSON config support, log file to telegram support
+#       2020-09-18  Supporting different source-destination folders
 #
 ###############################
 
@@ -60,7 +61,6 @@ RSYNCUSER=`cat $1 | jq --raw-output '.destination.RsyncUser'`
 RSYNCPASS=`cat $1 | jq --raw-output '.destination.RsyncPass'`
 IPRSYNC=`cat $1 | jq --raw-output '.destination.IPDest'`
 MAC=`cat $1 | jq --raw-output '.destination.MAC'`
-SHARE=`cat $1 | jq --raw-output '.destination.Share'`
 #   Folders Config
 DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
 
@@ -68,8 +68,10 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
     echo "=============================================================================="
     echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
     bash $SEND_MESSAGE "RSYNC Replica" "WOL device $HOST ($IPRSYNC)" > /dev/null
-    
+
+#	WOL and Initial Wait
     wakeonlan -i $IP $MAC
+    sleep 300
 
 ##  Verifying if WOL was OK   
     UP=0

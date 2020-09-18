@@ -12,11 +12,20 @@
         "RsyncPass": "password",
         "IPDest": "1.1.1.15",
         "MAC": "AA:AA:AA:AA:AA:AA",
-        "Share": "shared-folder"
     },
     "folders": [
-        "/path/folder1",
-        "/path/folder2",
-        "/path/folder3"
+        {
+            "From": "/local/folder1",
+            "To": "/remote/folder1"
+        }
+        {
+            "From": "/local/folder2",
+            "To": "/remote/folder2"
+        }
+        {
+            "From": "/local/folder3",
+            "To": "/remote/folder3"
+        }
+
     ]
 }
