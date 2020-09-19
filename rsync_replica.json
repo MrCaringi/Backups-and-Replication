@@ -2,6 +2,7 @@
     "config":{
         "Network": "1.1.1.0",
         "Seconds": 30,
+        "Wait_remote": 240,
         "Try": 10,
         "SendMessage": "/path/telegram-message.sh",
         "SendFile": "/path/telegram-message-file.sh"
@@ -11,20 +12,20 @@
         "RsyncUser": "user",
         "RsyncPass": "password",
         "IPDest": "1.1.1.15",
-        "MAC": "AA:AA:AA:AA:AA:AA",
+        "MAC": "AA:AA:AA:AA:AA:AA"
     },
     "folders": [
         {
-            "From": "/local/folder1",
-            "To": "/remote/folder1"
-        }
+            "From": "/local/folder1/",
+            "To": "remote-folder1"
+        },
         {
-            "From": "/local/folder2",
-            "To": "/remote/folder2"
-        }
+            "From": "/local/folder2/",
+            "To": "remote-folder2"
+        },
         {
             "From": "/local/folder3",
-            "To": "/remote/folder3"
+            "To": "remote-folder3"
         }
 
     ]

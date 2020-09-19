@@ -44,7 +44,7 @@
 #       2020-04-30  Variables improvement
 #       2020-05-01  Shutdown fix
 #       2020-08-04  Version 2: JSON config support, log file to telegram support
-#       2020-09-18  Supporting different source-destination folders
+#       2020-09-18  Supporting different source-to-destination folders
 #
 ###############################
 
@@ -52,6 +52,7 @@
 #   General Config
 IP=`cat $1 | jq --raw-output '.config.Network'`
 SEC=`cat $1 | jq --raw-output '.config.Seconds'`
+WAIT=`cat $1 | jq --raw-output '.config.Wait_remote'`
 TRY=`cat $1 | jq --raw-output '.config.Try'`
 SEND_MESSAGE=`cat $1 | jq --raw-output '.config.SendMessage'`
 SEND_FILE=`cat $1 | jq --raw-output '.config.SendFile'`
@@ -61,8 +62,6 @@ RSYNCUSER=`cat $1 | jq --raw-output '.destination.RsyncUser'`
 RSYNCPASS=`cat $1 | jq --raw-output '.destination.RsyncPass'`
 IPRSYNC=`cat $1 | jq --raw-output '.destination.IPDest'`
 MAC=`cat $1 | jq --raw-output '.destination.MAC'`
-#   Folders Config
-DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
 
 ##   Starting WOL
     echo "=============================================================================="
@@ -71,7 +70,6 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
 
 #	WOL and Initial Wait
     wakeonlan -i $IP $MAC
-    sleep 300
 
 ##  Verifying if WOL was OK   
     UP=0
@@ -86,7 +84,7 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
             else
                 UP=1
                 echo $(date +%Y%m%d-%H%M)" WOL of $HOST, ping successful, waiting for Remote Host to be fully ready"
-                sleep $SEC
+                sleep $WAIT
             fi
             if [ $T -ge $TRY ]; then
                 echo $(date +%Y%m%d-%H%M)" ERROR during WOL of $HOST, after $T attempts of $SEC Seconds"
@@ -95,17 +93,22 @@ DIR_LIST=`cat $1 | jq --raw-output '.folders[]'`
                 fi
         done
 
+
 ##  If WOL was ok, then is time to RSYNC
-    for i in $DIR_LIST
+    N=`jq '.folders | length ' $1`
+    i=0
+    while [ $i -lt $N ]
     do
         echo "================================================"
-        DIR=${i##*/}
+        DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
+        DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
+        DIR=${DIR_O##*/}
         echo $(date +%Y%m%d-%H%M)" Starting RSYNC of $DIR"
         START=$(date +"%Y%m%d %HH%MM%SS")
         bash $SEND_MESSAGE "RSYNC Replica to" "RSYNCing #${DIR}"> /dev/null
         
         #   The Magic goes here
-        LOG=`sshpass -p $RSYNCPASS rsync -aq --append-verify $i $RSYNCUSER@$IPRSYNC::$SHARE 2>&1`
+        LOG=`sshpass -p $RSYNCPASS rsync -aq --append-verify $DIR_O $RSYNCUSER@$IPRSYNC::$DIR_D 2>&1`
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M)" ERROR RSYNC $DIR"
             bash $SEND_MESSAGE "RSYNC Replica" "ERROR during RSYNCing " "#${DIR}" > /dev/null
