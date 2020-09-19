@@ -44,7 +44,7 @@
 #       2020-04-30  Variables improvement
 #       2020-05-01  Shutdown fix
 #       2020-08-04  Version 2: JSON config support, log file to telegram support
-#       2020-09-18  Supporting different source-to-destination folders
+#       2020-09-19  Supporting different source-to-destination folders
 #
 ###############################
 
