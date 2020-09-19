@@ -128,6 +128,7 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
 
             sleep 5
         fi
+        i=$(($i + 1))
     done
 
 ##   Turning off remote device
