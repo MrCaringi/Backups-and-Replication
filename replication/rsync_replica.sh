@@ -65,7 +65,7 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
 
 ##   Starting WOL
     echo "=============================================================================="
-    echo $(date +%Y%m%d-%H%M)" WOL of device $IP $MAC"
+    echo $(date +%Y%m%d-%H%M%S)" WOL of device $IP $MAC"
     bash $SEND_MESSAGE "RSYNC Replica" "WOL device $HOST ($IPRSYNC)" > /dev/null
 
 #	WOL and Initial Wait
@@ -78,16 +78,16 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
         do 
             ping -c 5 $IPRSYNC 
             if [ $? -ne 0 ]; then
-                echo $(date +%Y%m%d-%H%M)" ERROR during WOL of $HOST, ping unsuccessful"
+                echo $(date +%Y%m%d-%H%M%S)" ERROR during WOL of $HOST, ping unsuccessful"
                 sleep $SEC
                 T=$(( $T + 1 ))
             else
                 UP=1
-                echo $(date +%Y%m%d-%H%M)" WOL of $HOST, ping successful, waiting for Remote Host to be fully ready"
+                echo $(date +%Y%m%d-%H%M%S)" WOL of $HOST, ping successful, waiting for Remote Host to be fully ready"
                 sleep $WAIT
             fi
             if [ $T -ge $TRY ]; then
-                echo $(date +%Y%m%d-%H%M)" ERROR during WOL of $HOST, after $T attempts of $SEC Seconds"
+                echo $(date +%Y%m%d-%H%M%S)" ERROR during WOL of $HOST, after $T attempts of $SEC Seconds"
                 bash $SEND_MESSAGE "RSYNC Replica" "ERROR during WOL, after $T attempts of $SEC Seconds" "of $HOST" > /dev/null
                 exit 1
                 fi
@@ -102,16 +102,23 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
         echo "================================================"
         DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
         DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
-        DIR=${DIR_O##*/}
-        echo $(date +%Y%m%d-%H%M)" Starting RSYNC of $DIR"
+        #DIR=${DIR_O##*/}
+        DIR=${DIR_O}
+        echo $(date +%Y%m%d-%H%M%S)" Starting RSYNC from: ${DIR_O} to: ${DIR_D}"
+        #   For Debug Purposes
+            echo "DIR_O:"$DIR_O
+            echo "DIR_D:"$DIR_D
+            echo "DIR:"$DIR
+            echo "N="$N
+            echo "i="$i        
         START=$(date +"%Y%m%d %HH%MM%SS")
-        bash $SEND_MESSAGE "RSYNC Replica to" "RSYNCing #${DIR}"> /dev/null
+        bash $SEND_MESSAGE "RSYNC Replica" "RSYNCing from: ${DIR_O}" "to: ${DIR_D}"> /dev/null
         
         #   The Magic goes here
         LOG=`sshpass -p $RSYNCPASS rsync -aq --append-verify $DIR_O $RSYNCUSER@$IPRSYNC::$DIR_D 2>&1`
         if [ $? -ne 0 ]; then
-            echo $(date +%Y%m%d-%H%M)" ERROR RSYNC $DIR"
-            bash $SEND_MESSAGE "RSYNC Replica" "ERROR during RSYNCing " "#${DIR}" > /dev/null
+            echo $(date +%Y%m%d-%H%M%S)" ERROR RSYNC from: ${DIR_O} to: ${DIR_D}"
+            bash $SEND_MESSAGE "RSYNC Replica" "ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" > /dev/null
             
             ##  Sending log to Telegram
             #   Building the log file
@@ -121,7 +128,7 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
                 echo >> rsync-log_${rand}.log
                 echo "========== END           $(date +"%Y%m%d %HH%MM%SS")" >> rsync-log_${rand}.log
                 #   Sending the File to Telegram
-                bash $SEND_FILE "RSYNC Replica" "ERROR during RSYNCing #${DIR}" rsync-log_${rand}.log > /dev/null
+                bash $SEND_FILE "RSYNC Replica" "ERROR during RSYNCing from: ${DIR_O} to: ${DIR_D}" rsync-log_${rand}.log > /dev/null
                 #   Flushing & Deleting the file
                 cat rsync-log_${rand}.log
                 rm rsync-log_${rand}.log
@@ -132,10 +139,10 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
     done
 
 ##   Turning off remote device
-    echo $(date +%Y%m%d-%H%M)" RSYNC Finished on $HOST"
+    echo $(date +%Y%m%d-%H%M%S)" RSYNC Finished on $HOST"
     bash SEND_MESSAGE "RSYNC Replica" "RSYNC Finished on" "$HOST ($IPRSYNC)" > /dev/null
     sleep 5
-    echo $(date +%Y%m%d-%H%M)" Shutting Down $HOST"
+    echo $(date +%Y%m%d-%H%M%S)" Shutting Down $HOST"
     ssh -t $HOST "sudo shutdown -h now"
     sleep 5
     exit 0
