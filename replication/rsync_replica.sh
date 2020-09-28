@@ -45,6 +45,7 @@
 #       2020-05-01  Shutdown fix
 #       2020-08-04  Version 2: JSON config support, log file to telegram support
 #       2020-09-19  Supporting different source-to-destination folders
+#       2020-09-28  Checksum enable for rsync
 #
 ###############################
 
@@ -105,7 +106,7 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
         #DIR=${DIR_O##*/}
         DIR=${DIR_O}
         echo $(date +%Y%m%d-%H%M%S)" Starting RSYNC from: ${DIR_O} to: ${DIR_D}"
-        #   For Debug Purposes
+        #   For Debug purposes
             echo "DIR_O:"$DIR_O
             echo "DIR_D:"$DIR_D
             echo "DIR:"$DIR
@@ -115,7 +116,7 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
         bash $SEND_MESSAGE "RSYNC Replica" "RSYNCing from: ${DIR_O}" "to: ${DIR_D}"> /dev/null
         
         #   The Magic goes here
-        LOG=`sshpass -p $RSYNCPASS rsync -aq --append-verify $DIR_O $RSYNCUSER@$IPRSYNC::$DIR_D 2>&1`
+        LOG=`sshpass -p $RSYNCPASS rsync -caq --append-verify $DIR_O $RSYNCUSER@$IPRSYNC::$DIR_D 2>&1`
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)" ERROR RSYNC from: ${DIR_O} to: ${DIR_D}"
             bash $SEND_MESSAGE "RSYNC Replica" "ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" > /dev/null
