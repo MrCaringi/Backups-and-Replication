@@ -48,8 +48,8 @@ export BORG_PASSPHRASE=${PASSPHRASE}
         
             #   For Debug purposes
             echo "REPO:"$REPO
-            echo "SEND_MESSAGE:"$SEND_MESSAGE
-            echo "PASSPHRASE:"$PASSPHRASE
+            #echo "SEND_MESSAGE:"$SEND_MESSAGE
+            #echo "PASSPHRASE:"$PASSPHRASE
             echo "N="$N
             echo "i="$i
         
