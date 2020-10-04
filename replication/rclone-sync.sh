@@ -11,10 +11,16 @@
 ###
 
 echo "===================================================="
+#	checking for other intences
+process=`ps aux | grep "rclone-sync.sh" | grep -v grep | wc -l`
+#process=$?
+echo "Qty process: " $process
 
-if pidof -o %PPID -x rclone; then
-	echo $(date +"%Y%m%d %H:%M:%S")" ERROR: another instance already running"
-	exit 1
+if [ $process -gt 0 ]; then
+		echo $(date +"%Y%m%d %H:%M:%S")" ERROR: another instance already running"
+		exit 1
+	else
+		echo $(date +"%Y%m%d %H:%M:%S")" INFO: no other instance is running"
 fi
 
 ####	DMESG
