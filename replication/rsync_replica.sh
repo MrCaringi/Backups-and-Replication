@@ -116,7 +116,7 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
         bash $SEND_MESSAGE "RSYNC Replica" "RSYNCing from: ${DIR_O}" "to: ${DIR_D}"> /dev/null
         
         #   The Magic goes here
-        LOG=`sshpass -p $RSYNCPASS rsync -caq --append-verify $DIR_O $RSYNCUSER@$IPRSYNC::$DIR_D 2>&1`
+        LOG=&(sshpass -p $RSYNCPASS rsync -achP --append-verify $DIR_O $RSYNCUSER@$IPRSYNC::$DIR_D)
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)" ERROR RSYNC from: ${DIR_O} to: ${DIR_D}"
             bash $SEND_MESSAGE "RSYNC Replica" "ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" > /dev/null
@@ -136,9 +136,13 @@ MAC=`cat $1 | jq --raw-output '.destination.MAC'`
 
             sleep 5
         fi
+        echo $(date +%Y%m%d-%H%M%S)" Finished RSYNC from: ${DIR_O} to: ${DIR_D}"
         i=$(($i + 1))
     done
 
+    #Testing
+    #exit 0
+    
 ##   Turning off remote device
     echo $(date +%Y%m%d-%H%M%S)" RSYNC Finished on $HOST"
     bash SEND_MESSAGE "RSYNC Replica" "RSYNC Finished on" "$HOST ($IPRSYNC)" > /dev/null
