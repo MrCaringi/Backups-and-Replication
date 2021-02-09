@@ -94,21 +94,21 @@ fi
 
 ##  Sending log to Telegram
 #   Building the log file
-rand=$((1000 + RANDOM % 8500))
-echo "========== BORG CREATE" >> borg-log_${rand}.log
-echo "$log_create" >> borg-log_${rand}.log
-echo >> borg-log_${rand}.log
-echo "========== BORG PRUNE" >> borg-log_${rand}.log
-echo $(date +"%Y%m%d %HH%MM%SS") >> borg-log_${rand}.log
-echo >> borg-log_${rand}.log
-echo "$log_prune" >> borg-log_${rand}.log
-echo "========== END          $(date +"%Y%m%d %HH%MM%SS")" >> borg-log_${rand}.log
+rand=$((10 + RANDOM % 89))
+echo "========== BORG CREATE" >> ${TITLE}_${rand}.log
+echo "$log_create" >> ${TITLE}_${rand}.log
+echo >> ${TITLE}_${rand}.log
+echo "========== BORG PRUNE" >> ${TITLE}_${rand}.log
+echo $(date +"%Y%m%d %HH%MM%SS") >> ${TITLE}_${rand}.log
+echo >> ${TITLE}_${rand}.log
+echo "$log_prune" >> ${TITLE}_${rand}.log
+echo "========== END          $(date +"%Y%m%d %HH%MM%SS")" >> ${TITLE}_${rand}.log
 
 #   Sending the File to Telegram
-bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${TITLE}" "Log File" borg-log_${rand}.log > /dev/null
+bash /home/jfc/scripts/telegram-message-file.sh "Repo: #${TITLE}" "Log File" ${TITLE}_${rand}.log > /dev/null
 
 #   Flushing & Deleting the file
-cat borg-log_${rand}.log
-rm borg-log_${rand}.log
+cat ${TITLE}_${rand}.log
+rm ${TITLE}_${rand}.log
 
 exit ${global_exit}
