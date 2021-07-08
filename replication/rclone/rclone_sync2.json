@@ -1,0 +1,44 @@
+{
+    "config":{
+        "Debug": true,
+        "Wait": 5,
+        "EnableMessage": true,
+        "Instances": 3,
+        "SendMessage": "/home/jfc/scripts/telegram-message.sh",
+        "SendFile": "/home/jfc/scripts/telegram-message-file.sh"
+        },
+    "folders": [
+        {
+            "From": "onedrive-yahoo:borg/",
+            "To": "gdrive-santi_c:"
+        },
+        {
+            "From": "gdrive-santi_c:",
+            "To": "gdrive-cochise_c:"
+        },
+        {
+            "From": "gdrive-cochise_c:",
+            "To": "gdrive-cochise-unk_c:"
+        },
+        {
+            "From": "gdrive-cochise-unk_c:",
+            "To": "gdrive-texas_c:"
+        },
+        {
+            "From": "/mnt/services",
+            "To": "gdrive-santi_s:services"
+        },
+        {
+            "From": "gdrive-santi_s:",
+            "To": "gdrive-cochise_s:"
+        },
+        {
+            "From": "gdrive-cochise_s:",
+            "To": "gdrive-cochise-unk_s:"
+        },
+        {
+            "From": "gdrive-cochise-unk_s:",
+            "To": "gdrive-texas_s:"
+        }      
+    ]
+}
