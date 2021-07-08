@@ -1,11 +1,10 @@
 ##   The Idea
 I needed a way to syncronize several public clouds folders (team drive for example) for backup purposes.
-
 # RCLONE REPLICATION Script
-This is a (very simple) Bash script for syncing directories with rclone remotes or remote-to-remote
-This is a `rclone sync /origin/ /destination/` automation tool
+This is a (very simple) Bash script for syncing directories with rclone remotes or remote-to-remote.
+Internally this is a `rclone sync /origin/ /destination/` automation tool
 ##  Features
-- Telegram Notifications
+- Can send Telegram Notifications (test and log files)
 - Validates parallel intances
 - origin/remote folder can be easily modificable (for example when a Team Drive is lost)
 
@@ -22,10 +21,10 @@ Where:
 
 ```
 {
-    "config":{        -> Config Array:
-        "Debug": true,  -> true/false       This enable/disable more "verbosity" output
-        "Wait": 5,      ->  seconds         Delay between tasks
-        "Instances": 1, ->  number          In order to prevent concurrence, there is a validation of how many instances can be hold in parallel
+    "config":{        	->	Config Array:
+        "Debug": true,  ->	true/false      This enable/disable more "verbosity" output
+        "Wait": 5,      -> 	seconds         Delay between tasks
+        "Instances": 1, -> 	number          In order to prevent concurrence, there is a validation of how many instances can be hold in parallel
         "EnableMessage": true,  ->  true/false      Enable if you have the scripts for Telegram Messages, for more information: https://github.com/MrCaringi/notifications
         "SendMessage": "/home/jfc/scripts/telegram-message.sh",     -> path of the script used to send Telegram Mesage (text only)
         "SendFile": "/home/jfc/scripts/telegram-message-file.sh"    -> path of the script used to send Telegram Mesage with file (logs)
