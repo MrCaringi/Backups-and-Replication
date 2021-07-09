@@ -11,21 +11,15 @@
 #   $1  Path to ".json" config file
 #
 ##   REQUIREMENTS
-#       - rclone config propperly configured 
+#       - rclone remotes propperly configured 
 #
 ##	RSYNC CONFIGURATION File !!!!
-#   Please see https://github.com/MrCaringi/borg/blob/master/rsync_replica.json for a example of "rsync_replica.json" file
+#   Please see https://github.com/MrCaringi/borg/tree/master/replication/rclone for a example of "rclone_sync2.json" file
 #
-#  It must include:
-#  In CONFIG section
-#       "SendMessage": full path and script name used for Sending Messages to Telegram, example: https://github.com/MrCaringi/notifications/blob/master/telegram-message.sh
-#       "SendFile": full path and script name used for Sending files to Telegram, example: https://github.com/MrCaringi/notifications/blob/master/telegram-message-file.sh 
-#
-#   in FOLDERS section
-#       Just the array of folders to replicate to remote server
 #
 ##	SCRIPT MODIFICATION NOTES
 #       2021-07-07  First version
+#       2021-07-09  Fixing documentation
 #
 ###############################
 
