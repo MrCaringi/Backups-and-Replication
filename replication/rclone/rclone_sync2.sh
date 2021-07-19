@@ -66,6 +66,8 @@
 
         if [ $process -gt ${INSTANCES} ]; then
                 echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: another instance already running"
+                #   Notify
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR: another instance already running" "Qty process: $process / Instances Allowed: $INSTANCES " >/dev/null 2>&1 
                 exit 1
             else
                 echo $(date +"%Y%m%d %H:%M:%S")"    INFO: no other instance is running"
@@ -102,7 +104,7 @@
             [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
 		#   Sending the File to Telegram
-		bash $SEND_FILE "#RCLONE_Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
+		bash $SEND_FILE "RCLONE Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
 		#   Flushing & Deleting the file
 		rm rclone-log_${rand}.log
 		sleep $WAIT
