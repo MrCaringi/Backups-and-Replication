@@ -90,7 +90,7 @@
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i        
         
         #   Notify
-        [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "RCLONE from: ${DIR_O} to: ${DIR_D}" "Task: ${I} of ${N}" >/dev/null 2>&1 
+        [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "RCLONE from: ${DIR_O} to: ${DIR_D}" "Task: ${I} of ${N}" >/dev/null 2>&1 
         
 		#   Building the log file
 		rand=$((1000 + RANDOM % 8500))
@@ -99,7 +99,7 @@
 		#	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RSYNC Replica" "ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
 		#   Sending the File to Telegram
 		bash $SEND_FILE "RCLONE Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
@@ -112,7 +112,7 @@
     
 ##   The end
     echo $(date +%Y%m%d-%H%M%S)"	RCLONE Finished Task: ${I} of ${N}"
-    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Finished" >/dev/null 2>&1
+    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
