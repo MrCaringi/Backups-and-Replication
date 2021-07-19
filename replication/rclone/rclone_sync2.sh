@@ -40,9 +40,10 @@
     echo "#                                              #"
     echo "################################################"
 
-##  Time to RSYNC
+##  Time to RCLONE
     N=`jq '.folders | length ' $1`
     i=0
+    process=0
 
 	#   For Debug purposes
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	SEND_MESSAGE:"$SEND_MESSAGE
@@ -51,14 +52,15 @@
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FOLDER LENGTH:"$N
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	INSTANCES:"$INSTANCES
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	process:"$process
 	
     #	CHECKING FOR ANOTHER INSTANCES
         echo "===================================================="
         echo "checking for another intances"
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep rclone_sync2.sh | grep -v grep: " && ps aux | grep "rclone_sync2.sh" | grep -v grep
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep rclone-sync.sh | grep -v grep | wc -l: " && ps aux | grep "rclone-sync.sh" | grep -v grep | wc -l
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep "rclone_sync2" | grep -v grep: " && ps aux | grep "rclone_sync2" | grep -v grep
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep "rclone_sync2" | grep -v grep | wc -l: " && ps aux | grep "rclone_sync2" | grep -v grep | wc -l
         
-        process=`ps aux | grep "rclone-sync.sh" | grep -v grep | wc -l`
+        process=$(`ps aux | grep "rclone_sync2" | grep -v grep | wc -l`)
 
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"  Qty process: " $process
 
