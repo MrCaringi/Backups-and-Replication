@@ -65,9 +65,9 @@
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"  Qty process: " $process
 
         if [ $process -gt ${INSTANCES} ]; then
-                echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: another instance already running"
+                echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: there is more instantes than allowed, Qty intances: $process / Instances Allowed: $INSTANCES"
                 #   Notify
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR: another instance already running" "Qty process: $process / Instances Allowed: $INSTANCES " >/dev/null 2>&1 
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR: there is more instantes than allowed" "Qty intances: $process / Instances Allowed: $INSTANCES" >/dev/null 2>&1 
                 exit 1
             else
                 echo $(date +"%Y%m%d %H:%M:%S")"    INFO: no other instance is running"
