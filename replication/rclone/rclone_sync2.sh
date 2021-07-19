@@ -60,7 +60,7 @@
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep "rclone_sync2" | grep -v grep: " && ps aux | grep "rclone_sync2" | grep -v grep
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep "rclone_sync2" | grep -v grep | wc -l: " && ps aux | grep "rclone_sync2" | grep -v grep | wc -l
         
-        process=$(`ps aux | grep "rclone_sync2" | grep -v grep | wc -l`)
+        process=$(ps aux | grep "rclone_sync2" | grep -v grep | wc -l)
 
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"  Qty process: " $process
 
