@@ -102,7 +102,7 @@
             [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
 		#   Sending the File to Telegram
-		bash $SEND_FILE "RCLONE Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
+		bash $SEND_FILE "#RCLONE_Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
 		#   Flushing & Deleting the file
 		rm rclone-log_${rand}.log
 		sleep $WAIT
