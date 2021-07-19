@@ -2,6 +2,7 @@
 
 ###############################
 #               RCLONE Cloud Replica
+#   version 0.2
 #   This script is for RCLONE SYNC your publics clouds
 #
 ##   HOW TO USE IT (in a Cron Job)
@@ -20,6 +21,7 @@
 ##	SCRIPT MODIFICATION NOTES
 #       2021-07-07  First version
 #       2021-07-09  Fixing documentation
+#       2021-07-18  v0.2    Improved telegram messages
 #
 ###############################
 
