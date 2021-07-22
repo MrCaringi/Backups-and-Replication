@@ -24,7 +24,7 @@ Where:
     "config":{        	->	Config Array:
         "Debug": true,  ->	true/false      This enable/disable more "verbosity" output
         "Wait": 5,      -> 	seconds         Delay between tasks
-        "Instances": 1, -> 	number          In order to prevent concurrence, there is a validation of how many instances can be hold in parallel
+        "InstanceFile": 1, -> 	file path   In order to prevent concurrence, there is a .temp file validation
         "EnableMessage": true,  ->  true/false      Enable if you have the scripts for Telegram Messages, for more information: https://github.com/MrCaringi/notifications
         "SendMessage": "/home/jfc/scripts/telegram-message.sh",     -> path of the script used to send Telegram Mesage (text only)
         "SendFile": "/home/jfc/scripts/telegram-message-file.sh"    -> path of the script used to send Telegram Mesage with file (logs)

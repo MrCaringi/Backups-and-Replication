@@ -22,6 +22,7 @@
 #       2021-07-07  First version
 #       2021-07-09  Fixing documentation
 #       2021-07-18  v0.2    Improved telegram messages
+#       2021-07-21  v0.3    Improving concurrence instances validation
 #
 ###############################
 
@@ -29,7 +30,7 @@
 #   General Config
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
     WAIT=`cat $1 | jq --raw-output '.config.Wait'`
-    INSTANCES=`cat $1 | jq --raw-output '.config.Instances'`
+    INSTANCE_FILE=`cat $1 | jq --raw-output '.config.InstanceFile'`
 	ENABLE_MESSAGE=`cat $1 | jq --raw-output '.config.EnableMessage'`
     SEND_MESSAGE=`cat $1 | jq --raw-output '.config.SendMessage'`
     SEND_FILE=`cat $1 | jq --raw-output '.config.SendFile'`
@@ -53,26 +54,27 @@
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE:"$ENABLE_MESSAGE
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FOLDER LENGTH:"$N
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	INSTANCES:"$INSTANCES
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	INSTANCE_FILE:"$INSTANCE_FILE
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	process:"$process
 	
     #	CHECKING FOR ANOTHER INSTANCES
         echo "===================================================="
         echo "checking for another intances"
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep "rclone_sync2" | grep -v grep: " && ps aux | grep "rclone_sync2" | grep -v grep
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Testing: ps aux | grep "rclone_sync2" | grep -v grep | wc -l: " && ps aux | grep "rclone_sync2" | grep -v grep | wc -l
-        
-        process=$(ps aux | grep "rclone_sync2" | grep -v grep | wc -l)
 
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"  Qty process: " $process
-
-        if [ $process -gt ${INSTANCES} ]; then
-                echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: there is more instantes than allowed, Qty intances: $process / Instances Allowed: $INSTANCES"
-                #   Notify
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR: there is more instantes than allowed" "Qty intances: $process / Instances Allowed: $INSTANCES" >/dev/null 2>&1 
-                exit 1
+        if [ -f ${INSTANCE_FILE}  ];then
+            echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: An another instance of this script is already running, if it not right, please remove the file $INSTANCE_FILE"
+            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
+            exit 1
             else
-                echo $(date +"%Y%m%d %H:%M:%S")"    INFO: no other instance is running"
+                echo $(date +"%Y%m%d %H:%M:%S")"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
+        fi
+        #   Creating the *.temp file
+        echo $(date +"%Y%m%d %H:%M:%S")"    INFO: creating the $INSTANCE_FILE file."
+        touch $INSTANCE_FILE
+        if [ $? -ne 0 ]; then
+            echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not create $INSTANCE_FILE"
+            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
+            exit 1
         fi
 
     while [ $i -lt $N ]
@@ -103,7 +105,7 @@
 		#	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
 		#   Sending the File to Telegram
 		bash $SEND_FILE "RCLONE Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
@@ -116,6 +118,14 @@
     
 ##   The end
     echo $(date +%Y%m%d-%H%M%S)"	RCLONE Finished Task: ${I} of ${N}"
+    #   Deleting the *.temp file
+        echo $(date +"%Y%m%d %H:%M:%S")"    INFO: Deleting the $INSTANCE_FILE file."
+        rm $INSTANCE_FILE
+        if [ $? -ne 0 ]; then
+            echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not remove $INSTANCE_FILE"
+            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
+            exit 1
+        fi
     [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
