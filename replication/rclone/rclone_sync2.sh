@@ -23,6 +23,7 @@
 #       2021-07-09  Fixing documentation
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
+#       2021-07-29  v0.4    New Feature:    Time Elapse include in logs and notification
 #
 ###############################
 
@@ -42,6 +43,8 @@
     echo "#       STARTING RCLONE REPLICATION            #"
     echo "#                                              #"
     echo "################################################"
+    #   General Start time
+        TIME_START=$(date +%s)
 
 ##  Time to RCLONE
     N=`jq '.folders | length ' $1`
@@ -82,7 +85,9 @@
         echo "================================================"
         I=$((i+1))
         echo $(date +%Y%m%d-%H%M%S)"	Task: ${I} of ${N}"
-        
+        #   Iteration time
+            TIMEi_START=$(date +%s)
+
 		#	Getting From/To Directory
         DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
         DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
@@ -96,7 +101,7 @@
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i        
         
         #   Notify
-        [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "RCLONE from: ${DIR_O} to: ${DIR_D}" "Task: ${I} of ${N}" >/dev/null 2>&1 
+        [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 
         
 		#   Building the log file
 		rand=$((1000 + RANDOM % 8500))
@@ -105,12 +110,16 @@
 		#	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR during RSYNCing Task: ${I} of ${N}" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
+        #   Elapse time calculation for the iteration
+            TIMEi_END=$(date +%s);
+            TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%H:%M:%S")
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapse time: "$TIMEi_ELAPSE
 		#   Sending the File to Telegram
-		bash $SEND_FILE "RCLONE Replica" "Log for ${DIR_O} to: ${DIR_D}, Task: ${I} of ${N}" rclone-log_${rand}.log >/dev/null 2>&1
+		    bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapse time: $TIMEi_ELAPSE" rclone-log_${rand}.log >/dev/null 2>&1
 		#   Flushing & Deleting the file
-		rm rclone-log_${rand}.log
+		    rm rclone-log_${rand}.log
 		sleep $WAIT
         echo $(date +%Y%m%d-%H%M%S)"	Finished RCLONE from: ${DIR_O} to: ${DIR_D}"
         i=$(($i + 1))
@@ -126,7 +135,11 @@
             [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
-    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" >/dev/null 2>&1
+    #   Elapse time calculation for the iteration
+        TIME_END=$(date +%s);
+        TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%H:%M:%S")
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapse time: "$TIMEi_ELAPSE
+    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapse time: $TIME_ELAPSE" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
