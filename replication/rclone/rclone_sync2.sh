@@ -23,7 +23,7 @@
 #       2021-07-09  Fixing documentation
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
-#       2021-07-29  v0.4    New Feature:    Time Elapse include in logs and notification
+#       2021-07-29  v0.4    New Feature:    Time Elapsed included in logs and notification
 #
 ###############################
 
