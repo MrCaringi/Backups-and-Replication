@@ -23,7 +23,6 @@
 #       2021-07-09  Fixing documentation
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
-#       2021-07-29  v0.4    New Feature:    Time Elapsed included in logs and notification
 #
 ###############################
 
@@ -112,14 +111,19 @@
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
             [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
-        #   Elapse time calculation for the iteration
+        #   Elapsed time calculation for the iteration
             TIMEi_END=$(date +%s);
             TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%H:%M:%S")
-            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapse time: "$TIMEi_ELAPSE
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapsed time: "$TIMEi_ELAPSE
 		#   Sending the File to Telegram
-		    bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapse time: $TIMEi_ELAPSE" rclone-log_${rand}.log >/dev/null 2>&1
-		#   Flushing & Deleting the file
-		    rm rclone-log_${rand}.log
+            bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time: $TIMEi_ELAPSE" rclone-log_${rand}.log >/dev/null 2>&1
+            #   Log message not sent
+            if [ $? -ne 0 ]; then
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log not sent"
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}, Elapsed time: $TIMEi_ELAPSE" >/dev/null 2>&1
+            fi
+        #   Flushing & Deleting the file
+            rm rclone-log_${rand}.log
 		sleep $WAIT
         echo $(date +%Y%m%d-%H%M%S)"	Finished RCLONE from: ${DIR_O} to: ${DIR_D}"
         i=$(($i + 1))
@@ -135,11 +139,11 @@
             [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
-    #   Elapse time calculation for the iteration
+    #   Elapsed time calculation for the iteration
         TIME_END=$(date +%s);
         TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%H:%M:%S")
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapse time: "$TIMEi_ELAPSE
-    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapse time: $TIME_ELAPSE" >/dev/null 2>&1
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: "$TIMEi_ELAPSE
+    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapsed time: $TIME_ELAPSE" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"

@@ -7,6 +7,7 @@ Internally this is a `rclone sync /origin/ /destination/` automation tool
 - Can send Telegram Notifications (test and log files)
 - Validates parallel intances
 - origin/remote folder can be easily modificable (for example when a Team Drive is lost)
+- v0.4  Time Elapsed included in logs and notification
 
 # How to Use
 ##  In the Terminal
