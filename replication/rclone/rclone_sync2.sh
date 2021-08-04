@@ -23,6 +23,7 @@
 #       2021-07-09  Fixing documentation
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
+#       2021-08-04  v0.4.1  Elapsed time in notification
 #
 ###############################
 
@@ -49,6 +50,7 @@
     N=`jq '.folders | length ' $1`
     i=0
     process=0
+    lenght=0
 
 	#   For Debug purposes
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	SEND_MESSAGE:"$SEND_MESSAGE
@@ -115,13 +117,22 @@
             TIMEi_END=$(date +%s);
             TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%H:%M:%S")
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapsed time: "$TIMEi_ELAPSE
-		#   Sending the File to Telegram
-            bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time: $TIMEi_ELAPSE" rclone-log_${rand}.log >/dev/null 2>&1
-            #   Log message not sent
-            if [ $? -ne 0 ]; then
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log not sent"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}, Elapsed time: $TIMEi_ELAPSE" >/dev/null 2>&1
+
+        #   Verifying which type of message to be sent (log or message only)
+            lenght=`wc -c rclone-log_${rand}.log | awk '{print $1}'`
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	log file lenght: "$lenght
+
+            if [ $lenght -gt 0 ]; then
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has info"
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time: $TIMEi_ELAPSE" rclone-log_${rand}.log >/dev/null 2>&1
+            else
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has no info, sending message"
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: $TIMEi_ELAPSE" >/dev/null 2>&1
             fi
+		#   Sending the File to Telegram
+            
+            #   Log message not sent
+            
         #   Flushing & Deleting the file
             rm rclone-log_${rand}.log
 		sleep $WAIT
