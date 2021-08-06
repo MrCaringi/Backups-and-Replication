@@ -122,7 +122,7 @@
             DATEi_END=$(date +%F)
             DAYSi_ELAPSE=$(( ($(date -d $DATEi_END +%s) - $(date -d $DATEi_START +%s) )/(60*60*24) ))
 
-            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapsed time: $DAYSi_ELAPSE D - $TIMEi_ELAPSE"
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"
 
         #   Verifying which type of message to be sent (log or message only)
             lenght=`wc -c rclone-log_${rand}.log | awk '{print $1}'`
@@ -130,10 +130,10 @@
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time: $DAYSi_ELAPSE D - $TIMEi_ELAPSE" rclone-log_${rand}.log >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time:${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" rclone-log_${rand}.log >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has no info, sending message"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: $DAYSi_ELAPSE D - $TIMEi_ELAPSE" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
             fi
 		#   Sending the File to Telegram
             
@@ -161,8 +161,8 @@
         TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%dd %T")
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: $DAYS_ELAPSE D - $TIMEi_ELAPSE"
-    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapsed time: $DAYS_ELAPSE D - $TIME_ELAPSE" >/dev/null 2>&1
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
+    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
