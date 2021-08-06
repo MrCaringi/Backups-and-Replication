@@ -24,6 +24,7 @@
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
 #       2021-08-04  v0.4.1  Elapsed time in notification
+#       2021-08-04  v0.4.2  including DAYS in Elapsed time in notification
 #
 ###############################
 
@@ -115,7 +116,7 @@
         fi
         #   Elapsed time calculation for the iteration
             TIMEi_END=$(date +%s);
-            TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%H:%M:%S")
+            TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%dd %T")
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapsed time: "$TIMEi_ELAPSE
 
         #   Verifying which type of message to be sent (log or message only)
@@ -150,9 +151,9 @@
             [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
-    #   Elapsed time calculation for the iteration
+    #   Elapsed time calculation for the Main Program
         TIME_END=$(date +%s);
-        TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%H:%M:%S")
+        TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%dd %T")
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: "$TIMEi_ELAPSE
     [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapsed time: $TIME_ELAPSE" >/dev/null 2>&1
     echo "################################################"
