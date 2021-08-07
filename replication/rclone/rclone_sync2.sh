@@ -24,7 +24,7 @@
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
 #       2021-08-04  v0.4.1  Elapsed time in notification
-#       2021-08-06  v0.4.2.2    including DAYS in Elapsed time in notification
+#       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
 #
 ###############################
 
@@ -118,7 +118,7 @@
         fi
         #   Elapsed time calculation for the iteration
             TIMEi_END=$(date +%s)
-            TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%dd %T")
+            TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%T")
             DATEi_END=$(date +%F)
             DAYSi_ELAPSE=$(( ($(date -d $DATEi_END +%s) - $(date -d $DATEi_START +%s) )/(60*60*24) ))
 
@@ -130,10 +130,10 @@
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_FILE "RCLONE Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time:${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" rclone-log_${rand}.log >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_FILE "#RCLONE_Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time:${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" rclone-log_${rand}.log >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has no info, sending message"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "RCLONE Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
             fi
 		#   Sending the File to Telegram
             
@@ -158,7 +158,7 @@
         fi
     #   Elapsed time calculation for the Main Program
         TIME_END=$(date +%s);
-        TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%dd %T")
+        TIME_ELAPSE=$(date -u -d "0 $TIME_END seconds - $TIME_START seconds" +"%T")
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
