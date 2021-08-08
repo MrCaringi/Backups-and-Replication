@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ###############################
-#  BORG BACKUP SCRIPT   v0.3
+#  BORG BACKUP SCRIPT   v0.4
 #
 #	sh borg-b.sh DOCKER /mnt/iscsi-borg/nostromo-docker /mnt/nostromo-docker 7 4 3 NP
 #
@@ -18,6 +18,7 @@
 #		2020-04-24  First version
 #		2020-04-25  Uploaded a GitHub version
 #       2021-08-06  v0.3    Disable PRUNE Option
+#       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
 #
 ###############################
 
@@ -77,7 +78,7 @@ if [[ "$P" == "NP" ]]; then
 
         ###     PRUNE
         if [ $backup_exit -eq 0 ]; then
-            log_prune=`borg prune -v -s --list --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP 2>&1`
+            log_prune=`borg prune -v -s --list --prefix ${1} --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP 2>&1`
             prune_exit=$?
         else
             echo $(date +%Y%m%d-%H%M)" Backup not completed, skip Pruning of ${TITLE}"    
