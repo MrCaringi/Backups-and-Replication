@@ -28,7 +28,7 @@
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
 #
 ###############################
-
+ñlaksjdlaksjdlaksjdalksdjlaksdjlaskdj
 ##      Getting the Configuration
 #   General Config
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
