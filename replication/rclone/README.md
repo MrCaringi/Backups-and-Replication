@@ -19,18 +19,22 @@ Where:
 - "rclone_sync2.json" is the configuration file
 
 ##  How to fill the config file (rclone_sync2.json)
-
+Delete text afte commas (,) in order to use it:
 ```
 {
-    "config":{        	->	Config Array:
+    "config":{
         "Debug": true,  ->	true/false      This enable/disable more "verbosity" output
         "Wait": 5,      -> 	seconds         Delay between tasks
-        "InstanceFile": /path/rclone_wip.temp, -> 	file path   In order to prevent concurrence, there is a .temp file validation
-        "DriveServerSide": true,        ->  Enable rclone flag  "--drive-server-side-across-configs" Allow server-side operations to work across different drive configs.
-        "MaxTransfer": "670G",          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
-        "EnableMessage": true,  ->  true/false      Enable if you have the scripts for Telegram Messages, for more information: https://github.com/MrCaringi/notifications
-        "SendMessage": "/home/jfc/scripts/telegram-message.sh",     -> path of the script used to send Telegram Mesage (text only)
-        "SendFile": "/home/jfc/scripts/telegram-message-file.sh"    -> path of the script used to send Telegram Mesage with file (logs)
+        "InstanceFile": "/path/rclone_wip.temp",     -> 	file path   In order to prevent concurrence, there is a .temp file validation
+        "DriveServerSide": true,       ->  Enable rclone flag  "--drive-server-side-across-configs" Allow server-side operations to work across different drive configs.
+        "MaxTransfer": "670G"          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
+        },
+    "telegram":{
+        "Enable": true,             ->  true/false      Enable if you have the scripts for Telegram Messages
+        "ChatID": "-123456789",     ->  Integer     Number that identify Telegram Chat/Group
+        "APIkey": "123:ABCDE"       ->  Text        Telegram Bot API Key
+        },
+
 
         },
     "folders": [        -> Folder array, you can add as many origin/destination combination you prefer

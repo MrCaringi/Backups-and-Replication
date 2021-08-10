@@ -49,17 +49,27 @@
             HEADER=${1}
             LINE1=${2}
             LINE2=${3}
-        
+
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
         --data text="<b>${1}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
+    }
+
+    function TelegramSendFile(){
+        #   Variables
+        HEADER=${1}
+        LINE1=${2}
+        FILE=${3}
+        HOSTNAME=`hostname`
+
+        curl -v -4 -F \
+        "chat_id=${CHAT_ID}" \
+        -F document=@${FILE} \
+        -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}" \
+        https://api.telegram.org/bot$API_KEY/sendDocument
 }
-
-    TelegramSendMessage "#TEST Header" "Linea 1" "Linea 2"
-
-exit 0
 
 #   Start
     echo "################################################"
@@ -87,14 +97,15 @@ exit 0
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	process:"$process
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DriveServerSide:"$DriveServerSide
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	MaxTransfer:"$MaxTransfer
-	
+
+
     #	CHECKING FOR ANOTHER INSTANCES
         echo "===================================================="
         echo "checking for another intances"
 
         if [ -f ${INSTANCE_FILE}  ];then
             echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: An another instance of this script is already running, if it not right, please remove the file $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
             exit 1
             else
                 echo $(date +"%Y%m%d %H:%M:%S")"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
@@ -104,7 +115,7 @@ exit 0
         touch $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not create $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
 
@@ -130,16 +141,18 @@ exit 0
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i        
         
         #   Notify
-        [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 
         
 		#   Building the log file
 		rand=$((1000 + RANDOM % 8500))
+
 		#	RCLONE
 		rclone sync ${DIR_O} ${DIR_D} --log-file=rclone-log_${rand}.log --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer}
-		#	If rclone failed/warned notify
+		
+        #	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
         fi
         #   Elapsed time calculation for the iteration
             TIMEi_END=$(date +%s)
@@ -155,10 +168,10 @@ exit 0
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_FILE "#RCLONE_Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time:${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" rclone-log_${rand}.log >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSTelegramSendFile "#RCLONE_Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time:${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" rclone-log_${rand}.log >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has no info, sending message"
-                [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
             fi
 		#   Sending the File to Telegram
             
@@ -178,7 +191,7 @@ exit 0
         rm $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not remove $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
     #   Elapsed time calculation for the Main Program
@@ -187,7 +200,7 @@ exit 0
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
-    [ $ENABLE_MESSAGE == true ] && bash $SEND_MESSAGE "#RCLONE_Replica" "Finished" "Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
+    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Finished" "Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"

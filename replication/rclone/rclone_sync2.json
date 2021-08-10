@@ -8,7 +8,7 @@
         },
     "telegram":{
         "Enable": true,
-        "ChatID": "123456789",
+        "ChatID": "-123456789",
         "APIkey": "123:ABCDE"
         },
     "folders": [
