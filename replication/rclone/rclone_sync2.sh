@@ -25,7 +25,7 @@
 #       2021-07-21  v0.3    Improving concurrence instances validation
 #       2021-08-04  v0.4.1  Elapsed time in notification
 #       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
-#       2021-08-09  v0.5    Enable server-side-config and max-tranfer quota
+#       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
 #
 ###############################
 
@@ -114,7 +114,7 @@
 		#   Building the log file
 		rand=$((1000 + RANDOM % 8500))
 		#	RCLONE
-		rclone sync ${DIR_O} ${DIR_D} --log-file=rclone-log_${rand}.log --drive-server-side-across-configs=${DriveServerSide} max-transfer=${MaxTransfer}
+		rclone sync ${DIR_O} ${DIR_D} --log-file=rclone-log_${rand}.log --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer}
 		#	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
