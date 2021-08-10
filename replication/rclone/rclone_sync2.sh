@@ -26,19 +26,40 @@
 #       2021-08-04  v0.4.1  Elapsed time in notification
 #       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
+#       2021-08-10  v1      All-in-one
 #
 ###############################
-ñlaksjdlaksjdlaksjdalksdjlaksdjlaskdj
+
 ##      Getting the Configuration
-#   General Config
+    #   General Config
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
     WAIT=`cat $1 | jq --raw-output '.config.Wait'`
     INSTANCE_FILE=`cat $1 | jq --raw-output '.config.InstanceFile'`
     DriveServerSide=`cat $1 | jq --raw-output '.config.DriveServerSide'`
     MaxTransfer=`cat $1 | jq --raw-output '.config.MaxTransfer'`
-	ENABLE_MESSAGE=`cat $1 | jq --raw-output '.config.EnableMessage'`
-    SEND_MESSAGE=`cat $1 | jq --raw-output '.config.SendMessage'`
-    SEND_FILE=`cat $1 | jq --raw-output '.config.SendFile'`
+
+    #   Telegram Config
+    ENABLE_MESSAGE=`cat $1 | jq --raw-output '.telegram.Enable'`
+    CHAT_ID=`cat $1 | jq --raw-output '.telegram.ChatID'`
+    API_KEY=`cat $1 | jq --raw-output '.telegram.APIkey'`
+
+##  Telegram Notification Functions
+    function TelegramSendMessage(){
+        #   Variables
+            HEADER=${1}
+            LINE1=${2}
+            LINE2=${3}
+        
+        curl -s \
+        --data parse_mode=HTML \
+        --data chat_id=${CHAT_ID} \
+        --data text="<b>${1}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}" \
+        "https://api.telegram.org/bot${API_KEY}/sendMessage"
+}
+
+    TelegramSendMessage "#TEST Header" "Linea 1" "Linea 2"
+
+exit 0
 
 #   Start
     echo "################################################"
@@ -57,8 +78,8 @@
     lenght=0
 
 	#   For Debug purposes
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	SEND_MESSAGE:"$SEND_MESSAGE
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	SEND_FILE:"$SEND_FILE
+		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID:"$CHAT_ID
+		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY:"$API_KEY
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE:"$ENABLE_MESSAGE
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FOLDER LENGTH:"$N

@@ -4,10 +4,12 @@
         "Wait": 5,
         "InstanceFile": "/home/jfc/scripts/rclone.temp",
         "DriveServerSide": true,
-        "MaxTransfer": "670G",
-        "EnableMessage": true,
-        "SendMessage": "/home/jfc/scripts/telegram-message.sh",
-        "SendFile": "/home/jfc/scripts/telegram-message-file.sh"
+        "MaxTransfer": "670G"
+        },
+    "telegram":{
+        "Enable": true,
+        "ChatID": "123456789",
+        "APIkey": "123:ABCDE"
         },
     "folders": [
         {
