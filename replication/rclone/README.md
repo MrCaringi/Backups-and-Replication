@@ -25,10 +25,13 @@ Where:
     "config":{        	->	Config Array:
         "Debug": true,  ->	true/false      This enable/disable more "verbosity" output
         "Wait": 5,      -> 	seconds         Delay between tasks
-        "InstanceFile": 1, -> 	file path   In order to prevent concurrence, there is a .temp file validation
+        "InstanceFile": /path/rclone_wip.temp, -> 	file path   In order to prevent concurrence, there is a .temp file validation
+        "DriveServerSide": true,        ->  Enable rclone flag  "--drive-server-side-across-configs" Allow server-side operations to work across different drive configs.
+        "MaxTransfer": "670G",          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
         "EnableMessage": true,  ->  true/false      Enable if you have the scripts for Telegram Messages, for more information: https://github.com/MrCaringi/notifications
         "SendMessage": "/home/jfc/scripts/telegram-message.sh",     -> path of the script used to send Telegram Mesage (text only)
         "SendFile": "/home/jfc/scripts/telegram-message-file.sh"    -> path of the script used to send Telegram Mesage with file (logs)
+
         },
     "folders": [        -> Folder array, you can add as many origin/destination combination you prefer
         {

@@ -2,7 +2,7 @@
 
 ###############################
 #               RCLONE Cloud Replica
-#   version 0.2
+#
 #   This script is for RCLONE SYNC your publics clouds
 #
 ##   HOW TO USE IT (in a Cron Job)
@@ -25,6 +25,7 @@
 #       2021-07-21  v0.3    Improving concurrence instances validation
 #       2021-08-04  v0.4.1  Elapsed time in notification
 #       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
+#       2021-08-09  v0.5    Enable server-side-config and max-tranfer quota
 #
 ###############################
 
@@ -33,10 +34,11 @@
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
     WAIT=`cat $1 | jq --raw-output '.config.Wait'`
     INSTANCE_FILE=`cat $1 | jq --raw-output '.config.InstanceFile'`
+    DriveServerSide=`cat $1 | jq --raw-output '.config.DriveServerSide'`
+    MaxTransfer=`cat $1 | jq --raw-output '.config.MaxTransfer'`
 	ENABLE_MESSAGE=`cat $1 | jq --raw-output '.config.EnableMessage'`
     SEND_MESSAGE=`cat $1 | jq --raw-output '.config.SendMessage'`
     SEND_FILE=`cat $1 | jq --raw-output '.config.SendFile'`
-
 
 #   Start
     echo "################################################"
@@ -62,6 +64,8 @@
 		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FOLDER LENGTH:"$N
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	INSTANCE_FILE:"$INSTANCE_FILE
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	process:"$process
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DriveServerSide:"$DriveServerSide
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	MaxTransfer:"$MaxTransfer
 	
     #	CHECKING FOR ANOTHER INSTANCES
         echo "===================================================="
@@ -110,7 +114,7 @@
 		#   Building the log file
 		rand=$((1000 + RANDOM % 8500))
 		#	RCLONE
-		rclone sync ${DIR_O} ${DIR_D} --log-file=rclone-log_${rand}.log
+		rclone sync ${DIR_O} ${DIR_D} --log-file=rclone-log_${rand}.log --drive-server-side-across-configs=${DriveServerSide} max-transfer=${MaxTransfer}
 		#	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"

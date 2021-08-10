@@ -3,6 +3,8 @@
         "Debug": true,
         "Wait": 5,
         "InstanceFile": "/home/jfc/scripts/rclone.temp",
+        "DriveServerSide": true,
+        "MaxTransfer": "670G",
         "EnableMessage": true,
         "SendMessage": "/home/jfc/scripts/telegram-message.sh",
         "SendFile": "/home/jfc/scripts/telegram-message-file.sh"
