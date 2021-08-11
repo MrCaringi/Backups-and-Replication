@@ -7,8 +7,9 @@ Internally it is a `rclone sync /origin/ /destination/` automation tool
 - Can send Telegram Notifications (message and log files)
 - Validates parallel intances
 - origin/remote folder can be easily modificable (for example when a Team Drive is lost)
-- v0.4  Time Elapsed included in logs and notification
-- v1.0  All-in-one code refactor
+- v0.4  Feature: Time Elapsed included in logs and notification
+- v1.0  Feature: All-in-one code refactor
+- v1.1  Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 # How to Use
 ##  In the Terminal
 ```
@@ -27,7 +28,8 @@ Delete text afte commas (,) in order to use it:
         "Wait": 5,      -> 	seconds         Delay between tasks
         "InstanceFile": "/path/rclone_wip.temp",     -> 	file path   In order to prevent concurrence, there is a .temp file validation
         "DriveServerSide": true,       ->   true/false  Enable rclone flag  "--drive-server-side-across-configs" Allow server-side operations to work across different drive configs.
-        "MaxTransfer": "670G"          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
+        "MaxTransfer": "670G",          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
+        "BwLimit": "1G"     ->   Bandwidth limit in KiByte/s, or use suffix B|K|M|G|T|P or a full timetable.
         },
     "telegram":{
         "Enable": true,             ->  true/false      Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group)
