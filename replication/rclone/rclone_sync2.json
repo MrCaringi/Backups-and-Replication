@@ -2,7 +2,7 @@
     "config":{
         "Debug": true,
         "Wait": 5,
-        "InstanceFile": "/home/jfc/scripts/rclone.temp",
+        "InstanceFile": "/path/rclone.temp",
         "DriveServerSide": true,
         "MaxTransfer": "670G"
         },
