@@ -14,8 +14,8 @@
 ##   REQUIREMENTS
 #       - rclone remotes propperly configured 
 #
-##	RSYNC CONFIGURATION File !!!!
-#   Please see https://github.com/MrCaringi/borg/tree/master/replication/rclone for a example of "rclone_sync2.json" file
+##	RCLONE REPLICA CONFIGURATION File !!!!
+#   Please refer to https://github.com/MrCaringi/borg/tree/master/replication/rclone for a example of "rclone_sync2.json" file
 #
 #
 ##	SCRIPT MODIFICATION NOTES
@@ -26,7 +26,7 @@
 #       2021-08-04  v0.4.1  Elapsed time in notification
 #       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-#       2021-08-10  v1      All-in-one
+#       2021-08-10  v1.0.1      All-in-one
 #
 ###############################
 
@@ -37,7 +37,6 @@
     INSTANCE_FILE=`cat $1 | jq --raw-output '.config.InstanceFile'`
     DriveServerSide=`cat $1 | jq --raw-output '.config.DriveServerSide'`
     MaxTransfer=`cat $1 | jq --raw-output '.config.MaxTransfer'`
-
     #   Telegram Config
     ENABLE_MESSAGE=`cat $1 | jq --raw-output '.telegram.Enable'`
     CHAT_ID=`cat $1 | jq --raw-output '.telegram.ChatID'`
@@ -46,9 +45,9 @@
 ##  Telegram Notification Functions
     function TelegramSendMessage(){
         #   Variables
-            HEADER=${1}
-            LINE1=${2}
-            LINE2=${3}
+        HEADER=${1}
+        LINE1=${2}
+        LINE2=${3}
 
         curl -s \
         --data parse_mode=HTML \
@@ -68,7 +67,7 @@
         "chat_id=${CHAT_ID}" \
         -F document=@${FILE} \
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}" \
-        https://api.telegram.org/bot$API_KEY/sendDocument
+        https://api.telegram.org/bot${API_KEY}/sendDocument
 }
 
 #   Start
@@ -88,11 +87,11 @@
     lenght=0
 
 	#   For Debug purposes
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID:"$CHAT_ID
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY:"$API_KEY
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE:"$ENABLE_MESSAGE
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
-		[ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FOLDER LENGTH:"$N
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID:"$CHAT_ID
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY:"$API_KEY
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE:"$ENABLE_MESSAGE
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FOLDER LENGTH:"$N
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	INSTANCE_FILE:"$INSTANCE_FILE
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	process:"$process
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DriveServerSide:"$DriveServerSide
