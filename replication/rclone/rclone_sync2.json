@@ -4,7 +4,8 @@
         "Wait": 5,
         "InstanceFile": "/path/rclone.temp",
         "DriveServerSide": true,
-        "MaxTransfer": "670G"
+        "MaxTransfer": "670G",
+        "BwLimit": "1G"
         },
     "telegram":{
         "Enable": true,

@@ -27,6 +27,7 @@
 #       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
 #       2021-08-10  v1.0.1.1      All-in-one
+#       2021-08-11  v1.1      Feature: Bandwidth limit
 #
 ###############################
 
@@ -37,6 +38,8 @@
     INSTANCE_FILE=`cat $1 | jq --raw-output '.config.InstanceFile'`
     DriveServerSide=`cat $1 | jq --raw-output '.config.DriveServerSide'`
     MaxTransfer=`cat $1 | jq --raw-output '.config.MaxTransfer'`
+    BwLimit=`cat $1 | jq --raw-output '.config.BwLimit'`
+    
     #   Telegram Config
     ENABLE_MESSAGE=`cat $1 | jq --raw-output '.telegram.Enable'`
     CHAT_ID=`cat $1 | jq --raw-output '.telegram.ChatID'`
@@ -96,6 +99,7 @@
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	process:"$process
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DriveServerSide:"$DriveServerSide
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	MaxTransfer:"$MaxTransfer
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BwLimit:"$BwLimit
 
 
     #	CHECKING FOR ANOTHER INSTANCES
@@ -152,7 +156,7 @@
             fi
 
 		#	RCLONE
-		rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --log-file=log_${LOG_DATE}.log
+		rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit}--log-file=log_${LOG_DATE}.log
 		
         #	If rclone failed/warned notify
         if [ $? -ne 0 ]; then

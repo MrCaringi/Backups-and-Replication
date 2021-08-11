@@ -27,7 +27,8 @@ Delete text afte commas (,) in order to use it:
         "Wait": 5,      -> 	seconds         Delay between tasks
         "InstanceFile": "/path/rclone_wip.temp",     -> 	file path   In order to prevent concurrence, there is a .temp file validation
         "DriveServerSide": true,       ->   true/false  Enable rclone flag  "--drive-server-side-across-configs" Allow server-side operations to work across different drive configs.
-        "MaxTransfer": "670G"          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
+        "MaxTransfer": "670G",          ->  Enable rclone flag "--max-transfer". Maximum size of data to transfer. (default off)
+        "BwLimit": "1G"     ->   Bandwidth limit in KiByte/s, or use suffix B|K|M|G|T|P or a full timetable.
         },
     "telegram":{
         "Enable": true,             ->  true/false      Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group)
