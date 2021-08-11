@@ -7,8 +7,9 @@ Internally it is a `rclone sync /origin/ /destination/` automation tool
 - Can send Telegram Notifications (message and log files)
 - Validates parallel intances
 - origin/remote folder can be easily modificable (for example when a Team Drive is lost)
-- v0.4  Time Elapsed included in logs and notification
-- v1.0  All-in-one code refactor
+- v0.4  Feature: Time Elapsed included in logs and notification
+- v1.0  Feature: All-in-one code refactor
+- v1.1  Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 # How to Use
 ##  In the Terminal
 ```
