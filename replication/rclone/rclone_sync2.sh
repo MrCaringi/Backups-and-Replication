@@ -156,7 +156,7 @@
             fi
 
 		#	RCLONE
-		rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit}--log-file=log_${LOG_DATE}.log
+		rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit} --log-file=log_${LOG_DATE}.log
 		
         #	If rclone failed/warned notify
         if [ $? -ne 0 ]; then

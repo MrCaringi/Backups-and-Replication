@@ -1,7 +1,7 @@
 {
     "config":{
         "Debug": true,
-        "Wait": 5,
+        "Wait": 2,
         "InstanceFile": "/path/rclone.temp",
         "DriveServerSide": true,
         "MaxTransfer": "670G",
