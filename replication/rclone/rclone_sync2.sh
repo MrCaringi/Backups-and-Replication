@@ -26,7 +26,7 @@
 #       2021-08-04  v0.4.1  Elapsed time in notification
 #       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-#       2021-08-10  v1.0.1      All-in-one
+#       2021-08-10  v1.0.1.1      All-in-one
 #
 ###############################
 
@@ -142,11 +142,17 @@
         #   Notify
         [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 
         
-		#   Building the log file
-		rand=$((1000 + RANDOM % 8500))
+		#   Initializing the log file
+            LOG_DATE="task_${I}_$(date +%Y%m%d-%H%M%S)"
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	LOG_DATE:"$LOG_DATE
+            touch log_${LOG_DATE}.log
+            if [ $? -ne 0 ]; then
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not create log file: log_${LOG_DATE}.log"
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR: could not create log file: log_${LOG_DATE}.log" >/dev/null 2>&1
+            fi
 
 		#	RCLONE
-		rclone sync ${DIR_O} ${DIR_D} --log-file=rclone-log_${rand}.log --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer}
+		rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --log-file=log_${LOG_DATE}.log
 		
         #	If rclone failed/warned notify
         if [ $? -ne 0 ]; then
@@ -161,23 +167,20 @@
 
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Iteration Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"
 
-        #   Verifying which type of message to be sent (log or message only)
-            lenght=`wc -c rclone-log_${rand}.log | awk '{print $1}'`
+        #   Verifying which type of message to be sent (log file or message only)
+            lenght=`wc -c log_${LOG_DATE}.log | awk '{print $1}'`
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	log file lenght: "$lenght
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && TelegramSTelegramSendFile "#RCLONE_Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time:${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" rclone-log_${rand}.log >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#RCLONE_Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" log_${LOG_DATE}.log >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has no info, sending message"
                 [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
             fi
-		#   Sending the File to Telegram
-            
-            #   Log message not sent
             
         #   Flushing & Deleting the file
-            rm rclone-log_${rand}.log
+            rm log_${LOG_DATE}.log
 		sleep $WAIT
         echo $(date +%Y%m%d-%H%M%S)"	Finished RCLONE from: ${DIR_O} to: ${DIR_D}"
         i=$(($i + 1))
