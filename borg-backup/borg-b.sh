@@ -1,12 +1,13 @@
 #!/bin/sh
 
 ###############################
-#  BORG BACKUP SCRIPT   v0.4
+#   v1.0
+#           BORG-BACKUP SCRIPT
 #
-#	sh borg-b.sh DOCKER /mnt/iscsi-borg/nostromo-docker /mnt/nostromo-docker 7 4 3 NP
+#	sh borg-b.sh borg-b.json
 #
 #	Parametros
-#	1 $TITLE - Titulo del Backup	DOCKER 
+#	1 $1 - .json file for configuration
 #	2 $REP - Repositorio, ejemplo 	/mnt/iscsi-borg/nostromo-docker
 #	3 $ORI - Origen, ejemplo	/mnt/nostromo-docker
 #	4 $D - Prune Days	7
