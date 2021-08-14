@@ -10,13 +10,18 @@
         },
     "Task": [
         {
-            "Repository": "",
-            "PREFIX": "",
-            "Compression": "",
-            "EnablePRUNE": "",
-            "KeepDaily": "",
-            "KeepWeekly": "",
-            "KeepMonthly": ""
+            "Repository": "REPO",
+            "BorgPassphrase": "",
+            "ArchivePath": "",
+            "PREFIX": "prefix",
+            "Compression": "auto,lzma,9",
+            "Filter": "E",
+            "Prune":{
+                "Enable": true,
+                "KeepDaily": "D",
+                "KeepWeekly": "W",
+                "KeepMonthly": "M"
+                }
         },
         {
             "From": "remote1:",
