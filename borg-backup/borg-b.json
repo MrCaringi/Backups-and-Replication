@@ -1,21 +1,22 @@
 {
-    "config":{
+    "GeneralConfig":{
         "Debug": true,
-        "Wait": 2,
-        "InstanceFile": "/path/rclone.temp",
-        "DriveServerSide": true,
-        "MaxTransfer": "670G",
-        "BwLimit": "1G"
+        
         },
-    "telegram":{
+    "Telegram":{
         "Enable": true,
         "ChatID": "-123456789",
         "APIkey": "123:ABCDE"
         },
-    "folders": [
+    "Task": [
         {
-            "From": "/local/path",
-            "To": "remote1:"
+            "Repository": "",
+            "PREFIX": "",
+            "Compression": "",
+            "EnablePRUNE": "",
+            "KeepDaily": "",
+            "KeepWeekly": "",
+            "KeepMonthly": ""
         },
         {
             "From": "remote1:",

@@ -8,21 +8,39 @@
 #
 #	Parametros
 #	1 $1 - .json file for configuration
-#	2 $REP - Repositorio, ejemplo 	/mnt/iscsi-borg/nostromo-docker
-#	3 $ORI - Origen, ejemplo	/mnt/nostromo-docker
-#	4 $D - Prune Days	7
-#	5 $W - Prune Weeks	4
-#	6 $M - Prune Months	6
-#   7 $P - Disable PRUNE NP
 # 
 #	Modification Log
 #		2020-04-24  First version
 #		2020-04-25  Uploaded a GitHub version
 #       2021-08-06  v0.3    Disable PRUNE Option
 #       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
+#       2021-08-13  v1.0    Feature: All-in-One code refactor
 #
 ###############################
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===============================================================================================
 #	Asignacion de Variables
     TITLE="${1}-$(date +"%Y%m%d")"
     REP=${2}
