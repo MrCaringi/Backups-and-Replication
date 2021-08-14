@@ -107,7 +107,8 @@
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	COMPRESSION:"$COMPRESSION
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FILTER:"$FILTER
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_ENABLE="$PRUNE_ENABLE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPDAILY="$PRUNE_KEEPDAILY 
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPDAILY="$PRUNE_KEEPDAILY
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPWEEKLY="$PRUNE_KEEPWEEKLY
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPMONTHLY="$PRUNE_KEEPMONTHLY
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i  

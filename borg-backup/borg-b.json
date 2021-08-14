@@ -11,8 +11,8 @@
     "Task": [
         {
             "Repository": "REPO",
-            "BorgPassphrase": "",
-            "ArchivePath": "",
+            "BorgPassphrase": "REPOSITORY PASSWORD",
+            "ArchivePath": "/path/folder/",
             "PREFIX": "prefix",
             "Compression": "auto,lzma,9",
             "Filter": "E",
