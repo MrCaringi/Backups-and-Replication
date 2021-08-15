@@ -6,9 +6,12 @@
 #
 #	sh borg-b.sh borg-b.json
 #
-#	Parametros
+#	Paremeters
 #	1 $1 - .json file for configuration
-# 
+#
+#   Requirements
+#       - jq    for json data parsing
+#
 #	Modification Log
 #		2020-04-24  First version
 #		2020-04-25  Uploaded a GitHub version
@@ -67,8 +70,8 @@
         TIME_START=$(date +%s)
         DATE_START=$(date +%F)
     #   Setting Loop variables
-    N=`jq '.Task | length ' $1`
-    i=0
+        N=`jq '.Task | length ' $1`
+        i=0
 	#   For Debug purposes
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	WAIT:"$WAIT
@@ -76,82 +79,65 @@
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID:"$CHAT_ID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY:"$API_KEY
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Task Qty:"$N
+        [ $DEBUG == true ] && echo "================================================"
 
 #   Entering into the Loop
     while [ $i -lt $N ]
         do
-            echo "================================================"
             I=$((i+1))
-            echo $(date +%Y%m%d-%H%M%S)"	Task: ${I} of ${N}"
+
             #   Iteration time
                 TIMEi_START=$(date +%s)
                 DATEi_START=$(date +%F)
 
             #	Getting Task Configuration
-            REPO=`cat $1 | jq --raw-output ".Task[$i].Repository"`
+            BORG_REPO=`cat $1 | jq --raw-output ".Task[$i].Repository"`
             BORG_PASSPHRASE=`cat $1 | jq --raw-output ".Task[$i].BorgPassphrase"`
-            ARCHIVE_PATH=`cat $1 | jq --raw-output ".Task[$i].ArchivePath"`
-            PREFIX=`cat $1 | jq --raw-output ".Task[$i].PREFIX"`
-            COMPRESSION=`cat $1 | jq --raw-output ".Task[$i].Compression"`
-            FILTER=`cat $1 | jq --raw-output ".Task[$i].Filter"`
-            PRUNE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].Prune.Enable"`
-            PRUNE_KEEPDAILY=`cat $1 | jq --raw-output ".Task[$i].Prune.KeepDaily"`
-            PRUNE_KEEPWEEKLY=`cat $1 | jq --raw-output ".Task[$i].Prune.KeepWeekly"`
-            PRUNE_KEEPMONTHLY=`cat $1 | jq --raw-output ".Task[$i].Prune.KeepMonthly"`
-            PRUNE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].Prune.Options"`
-            CHECK_ENABLE=`cat $1 | jq --raw-output ".Task[$i].Check.Enable"`
-            CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].Check.Options"`
+            PREFIX=`cat $1 | jq --raw-output ".Task[$i].Prefix"`
+            #   Borg Create vars
+            CREATE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.Enable"`
+            CREATE_ARCHIVE=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.ArchivePath"`
+            CREATE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.Options"`
+            #   Borg Prune vars
+            PRUNE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgPrune.Enable"`
+            PRUNE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgPrune.Options"`
+            #   Borg Check vars
+            CHECK_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Enable"`
+            CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Options"`
+
+        #   Setting up some variables
+            FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
+            # Setting this, so the repo does not need to be given on the command line:
+            export BORG_REPO
+            # Setting this, so you won't be asked for your repository passphrase:
+            export BORG_PASSPHRASE
+
 
             #   For Debug purposes
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	REPO:"$REPO
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO:"$BORG_REPO
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE:"$BORG_PASSPHRASE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ARCHIVE_PATH:"$ARCHIVE_PATH
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PREFIX:"$PREFIX
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	COMPRESSION:"$COMPRESSION
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FILTER:"$FILTER
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ENABLE:"$CREATE_ENABLE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ARCHIVE:"$CREATE_ARCHIVE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_OPTIONS="$CREATE_OPTIONS
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_ENABLE="$PRUNE_ENABLE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPDAILY="$PRUNE_KEEPDAILY
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPWEEKLY="$PRUNE_KEEPWEEKLY
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPMONTHLY="$PRUNE_KEEPMONTHLY
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_OPTIONS="$PRUNE_OPTIONS
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_ENABLE="$CHECK_ENABLE
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_OPTIONS="$CHECK_OPTIONS
-
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FULLREP="$FULLREP
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i  
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i
+            
+            #   Notification
+                echo "================================================"
+                echo $(date +%Y%m%d-%H%M%S)"	Starting BORG BACKUP Task: ${I} of ${N}"
+                echo $(date +%Y%m%d-%H%M%S)"	REPO ${REPO}, Archive Path: ${ARCHIVE_PATH}"
+                echo $(date +%Y%m%d-%H%M%S)"	Backup full name: ${FULLREP}"
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG_Backup" "Starting Task: ${I} of ${N}" "${FULLREP}" >/dev/null 2>&1 
+exit 1
+            #   Borg Create
+                log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
 
-            echo $(date +%Y%m%d-%H%M%S)"	Starting BORG BACKUP from: ${DIR_O} to: ${DIR_D}"
- exit 1           
-            #	Ruta de repositorio + nombre de backup
-FULLREP="${REP}::${TITLE}"
-
-#	Parametros
-#
-#   PASSPHRASE='password'
-#   
-. /home/jfc/scripts/borg.conf
-
-echo "=============================================================================="
-
-# Setting this, so the repo does not need to be given on the command line:
-export BORG_REPO=$REP
-
-# Setting this, so you won't be asked for your repository passphrase:
-export BORG_PASSPHRASE=${PASSPHRASE}
-
-# some helpers and error handling:
-info() { printf "\n%s %s\n\n" "$( date )" "$*"; }
-trap 'echo $( date ) Backup interrupted ; exit 2' INT TERM
-
-info "Starting backup"
-echo $(date +%Y%m%d-%H%M)" Starting backup of ${TITLE}"
-bash /home/jfc/scripts/telegram-message.sh "#Borg_Backup" "Repo: #${TITLE}" "Starting backup" > /dev/null 2>&1
-
-# Backup the most important directories into an archive named after
-# the machine this script is currently running on:
-
-##  Running the backup and capturing the output to a variable
-#   log variable will be used to sent the log via telegram
 log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
 
 backup_exit=$?

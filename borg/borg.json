@@ -11,19 +11,18 @@
     "Task": [
         {
             "Repository": "/path/REPO",
-            "BorgPassphrase": "REPOSITORY PASSWORD",
-            "ArchivePath": "/path/folder/",
-            "PREFIX": "prefix",
-            "Compression": "auto,lzma,9",
-            "Filter": "E",
-            "Prune":{
+            "BorgPassphrase": "REPOSITORY PASSWORD", 
+            "Prefix": "Prefix_MyBackup",     
+            "BorgCreate":{
                 "Enable": true,
-                "KeepDaily": "D",
-                "KeepWeekly": "W",
-                "KeepMonthly": "M",
-                "Options": "prune options"
+                "ArchivePath": "/path/folder/",
+                "Options": "--stats --list --filter=E --compression auto,lzma,9"
                 },
-            "Check":{
+            "BorgPrune":{
+                "Enable": true,
+                "Options": "-v -s --list --keep-daily=7 --keep-weekly=2 --keep-monthly=6"
+                },
+            "BorgCheck":{
                 "Enable": true,
                 "Options": "--verify-data --repair --save-space"
                 }
