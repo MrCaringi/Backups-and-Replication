@@ -98,6 +98,9 @@
             PRUNE_KEEPDAILY=`cat $1 | jq --raw-output ".Task[$i].Prune.KeepDaily"`
             PRUNE_KEEPWEEKLY=`cat $1 | jq --raw-output ".Task[$i].Prune.KeepWeekly"`
             PRUNE_KEEPMONTHLY=`cat $1 | jq --raw-output ".Task[$i].Prune.KeepMonthly"`
+            PRUNE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].Prune.Options"`
+            CHECK_ENABLE=`cat $1 | jq --raw-output ".Task[$i].Check.Enable"`
+            CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].Check.Options"`
 
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	REPO:"$REPO
@@ -110,15 +113,48 @@
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPDAILY="$PRUNE_KEEPDAILY
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPWEEKLY="$PRUNE_KEEPWEEKLY
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_KEEPMONTHLY="$PRUNE_KEEPMONTHLY
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_OPTIONS="$PRUNE_OPTIONS
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_ENABLE="$CHECK_ENABLE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_OPTIONS="$CHECK_OPTIONS
+
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i  
 
-exit 1
+            echo $(date +%Y%m%d-%H%M%S)"	Starting BORG BACKUP from: ${DIR_O} to: ${DIR_D}"
+ exit 1           
+            #	Ruta de repositorio + nombre de backup
+FULLREP="${REP}::${TITLE}"
 
+#	Parametros
+#
+#   PASSPHRASE='password'
+#   
+. /home/jfc/scripts/borg.conf
 
-            echo $(date +%Y%m%d-%H%M%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
-            
-                  
+echo "=============================================================================="
+
+# Setting this, so the repo does not need to be given on the command line:
+export BORG_REPO=$REP
+
+# Setting this, so you won't be asked for your repository passphrase:
+export BORG_PASSPHRASE=${PASSPHRASE}
+
+# some helpers and error handling:
+info() { printf "\n%s %s\n\n" "$( date )" "$*"; }
+trap 'echo $( date ) Backup interrupted ; exit 2' INT TERM
+
+info "Starting backup"
+echo $(date +%Y%m%d-%H%M)" Starting backup of ${TITLE}"
+bash /home/jfc/scripts/telegram-message.sh "#Borg_Backup" "Repo: #${TITLE}" "Starting backup" > /dev/null 2>&1
+
+# Backup the most important directories into an archive named after
+# the machine this script is currently running on:
+
+##  Running the backup and capturing the output to a variable
+#   log variable will be used to sent the log via telegram
+log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
+
+backup_exit=$?
             
             #   Notify
             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 

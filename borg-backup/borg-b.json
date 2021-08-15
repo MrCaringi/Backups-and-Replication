@@ -10,7 +10,7 @@
         },
     "Task": [
         {
-            "Repository": "REPO",
+            "Repository": "/path/REPO",
             "BorgPassphrase": "REPOSITORY PASSWORD",
             "ArchivePath": "/path/folder/",
             "PREFIX": "prefix",
@@ -20,7 +20,12 @@
                 "Enable": true,
                 "KeepDaily": "D",
                 "KeepWeekly": "W",
-                "KeepMonthly": "M"
+                "KeepMonthly": "M",
+                "Options": "prune options"
+                },
+            "Check":{
+                "Enable": true,
+                "Options": "--verify-data --repair --save-space"
                 }
         },
         {
