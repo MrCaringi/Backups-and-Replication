@@ -1,16 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
 ###############################
 #   v1.0
 #           BORG-BACKUP SCRIPT
 #
-#	sh borg-b.sh borg-b.json
+#   How to Use
+#	    bash borg-b.sh borg-b.json
 #
 #	Paremeters
-#	1 $1 - .json file for configuration
+#	    1 $1 - .json file for configuration
 #
 #   Requirements
-#       - jq    for json data parsing
+#       - jq    Package for json data parsing
 #
 #	Modification Log
 #		2020-04-24  First version
@@ -63,7 +64,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING BORG BACKUP SCRIPT            #"
-    echo "#                v1.0                          #"
+    echo "#                 v1.0                         #"
     echo "#                                              #"
     echo "################################################"
     #   General Start time
@@ -112,7 +113,6 @@
             # Setting this, so you won't be asked for your repository passphrase:
             export BORG_PASSPHRASE
 
-
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO:"$BORG_REPO
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE:"$BORG_PASSPHRASE
@@ -128,14 +128,21 @@
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i
             
-            #   Notification
+            #   Initial Notification
                 echo "================================================"
                 echo $(date +%Y%m%d-%H%M%S)"	Starting BORG BACKUP Task: ${I} of ${N}"
                 echo $(date +%Y%m%d-%H%M%S)"	REPO ${REPO}, Archive Path: ${ARCHIVE_PATH}"
                 echo $(date +%Y%m%d-%H%M%S)"	Backup full name: ${FULLREP}"
                 [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG_Backup" "Starting Task: ${I} of ${N}" "${FULLREP}" >/dev/null 2>&1 
-exit 1
+
             #   Borg Create
+
+
+            #   Borg Prune
+
+
+
+            #   Borg Check
                 log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
 
 log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
