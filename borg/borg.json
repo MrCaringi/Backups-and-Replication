@@ -24,7 +24,7 @@
                 },
             "BorgCheck":{
                 "Enable": true,
-                "Options": "--verify-data --repair --save-space"
+                "Options": "-v --verify-data --show-rc"
                 }
         },
         {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################
-#   v1.0
+#       v1.0
 #           BORG-BACKUP SCRIPT
 #
 #   How to Use
@@ -22,7 +22,7 @@
 #
 ###############################
 
-##      Getting the Configuration
+##      Getting the Main Configuration
     #   General Config
     DEBUG=`cat $1 | jq --raw-output '.GeneralConfig.Debug'`
     WAIT=`cat $1 | jq --raw-output '.GeneralConfig.Wait'`
@@ -58,7 +58,7 @@
         -F document=@${FILE} \
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument
-}
+    }
 
 #   Start
     echo "################################################"
@@ -86,32 +86,27 @@
     while [ $i -lt $N ]
         do
             I=$((i+1))
-
-            #   Iteration time
-                TIMEi_START=$(date +%s)
-                DATEi_START=$(date +%F)
-
             #	Getting Task Configuration
-            BORG_REPO=`cat $1 | jq --raw-output ".Task[$i].Repository"`
-            BORG_PASSPHRASE=`cat $1 | jq --raw-output ".Task[$i].BorgPassphrase"`
-            PREFIX=`cat $1 | jq --raw-output ".Task[$i].Prefix"`
+                BORG_REPO=`cat $1 | jq --raw-output ".Task[$i].Repository"`
+                BORG_PASSPHRASE=`cat $1 | jq --raw-output ".Task[$i].BorgPassphrase"`
+                PREFIX=`cat $1 | jq --raw-output ".Task[$i].Prefix"`
             #   Borg Create vars
-            CREATE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.Enable"`
-            CREATE_ARCHIVE=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.ArchivePath"`
-            CREATE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.Options"`
+                CREATE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.Enable"`
+                CREATE_ARCHIVE=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.ArchivePath"`
+                CREATE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCreate.Options"`
             #   Borg Prune vars
-            PRUNE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgPrune.Enable"`
-            PRUNE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgPrune.Options"`
+                PRUNE_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgPrune.Enable"`
+                PRUNE_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgPrune.Options"`
             #   Borg Check vars
-            CHECK_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Enable"`
-            CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Options"`
+                CHECK_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Enable"`
+                CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Options"`
 
-        #   Setting up some variables
-            FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
-            # Setting this, so the repo does not need to be given on the command line:
-            export BORG_REPO
-            # Setting this, so you won't be asked for your repository passphrase:
-            export BORG_PASSPHRASE
+            #   Setting up Main vars
+                FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
+                # Setting this, so the repo does not need to be given on the command line:
+                export BORG_REPO
+                # Setting this, so you won't be asked for your repository passphrase:
+                export BORG_PASSPHRASE
 
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO:"$BORG_REPO
@@ -128,24 +123,63 @@
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i
             
-            #   Initial Notification
-                echo "================================================"
-                echo $(date +%Y%m%d-%H%M%S)"	Starting BORG BACKUP Task: ${I} of ${N}"
-                echo $(date +%Y%m%d-%H%M%S)"	REPO ${REPO}, Archive Path: ${ARCHIVE_PATH}"
-                echo $(date +%Y%m%d-%H%M%S)"	Backup full name: ${FULLREP}"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG_Backup" "Starting Task: ${I} of ${N}" "${FULLREP}" >/dev/null 2>&1 
-
             #   Borg Create
+                if [ $CREATE_ENABLE == true ]; then
+                    #   Initial Notification
+                        echo "================================================"
+                        echo $(date +%Y%m%d-%H%M%S)"	Starting BORG CREATE BACKUP Task: ${I} of ${N}"
+                        echo $(date +%Y%m%d-%H%M%S)"	REPO ${REPO}, Archive Path: ${ARCHIVE_PATH}"
+                        echo $(date +%Y%m%d-%H%M%S)"	Backup full name: ${FULLREP}"
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #Create_Backup" "Starting Task: ${I} of ${N}" "${FULLREP}" >/dev/null 2>&1 
+                    #   Starting Iteration time
+                        TIMEi_START=$(date +%s)
+                        DATEi_START=$(date +%F)
 
+                    #   Borg Create Command
+                        log_create=`borg create ${CREATE_OPTIONS} ${FULLREP} ${CREATE_ARCHIVE} 2>&1`
+                        backup_exit=$?
+
+
+                    #   Elapsed time calculation for the iteration
+                        TIMEi_END=$(date +%s)
+                        TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%T")
+                        DATEi_END=$(date +%F)
+                        DAYSi_ELAPSE=$(( ($(date -d $DATEi_END +%s) - $(date -d $DATEi_START +%s) )/(60*60*24) ))
+
+##  Sending log to Telegram
+#   Building the log file
+rand=$((10 + RANDOM % 89))
+echo "========== BORG CREATE" >> ${TITLE}_${rand}.log
+echo "$log_create" >> ${TITLE}_${rand}.log
+echo >> ${TITLE}_${rand}.log
+echo "========== BORG PRUNE" >> ${TITLE}_${rand}.log
+echo $(date +"%Y%m%d %HH%MM%SS") >> ${TITLE}_${rand}.log
+echo >> ${TITLE}_${rand}.log
+echo "$log_prune" >> ${TITLE}_${rand}.log
+echo "========== END          $(date +"%Y%m%d %HH%MM%SS")" >> ${TITLE}_${rand}.log
+
+#   Sending the File to Telegram
+bash /home/jfc/scripts/telegram-message-file.sh "#Borg_Backup Repo: #${TITLE}" "Log File" ${TITLE}_${rand}.log > /dev/null 2>&1
+
+
+
+
+                    
+                fi
 
             #   Borg Prune
+                if [ $CREATE_ENABLE == true ]; then
+                    
+                    log_prune=`borg prune -v -s --list --prefix ${1} --keep-daily=$D --keep-weekly=$W --keep-monthly=$M $REP 2>&1`
 
+
+                fi
 
 
             #   Borg Check
-                log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
 
-log_create=`borg create --stats --list --filter=E --compression auto,lzma,9 ${FULLREP} ${ORI} 2>&1`
+                    log_check=`borg check -v --verify-data --show-rc $REPO 2>&1`
+
 
 backup_exit=$?
             
