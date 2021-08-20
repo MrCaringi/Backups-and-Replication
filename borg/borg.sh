@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################
-#       v1.0.1
+#       v1.0.2
 #           BORG-BACKUP SCRIPT
 #
 #   How to Use
@@ -18,7 +18,7 @@
 #		2020-04-25  Uploaded a GitHub version
 #       2021-08-06  v0.3    Disable PRUNE Option
 #       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-#       2021-08-19  v1.0.1    Feature: All-in-One code refactor
+#       2021-08-19  v1.0.2    Feature: All-in-One code refactor
 #
 ###############################
 
@@ -88,7 +88,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING BORG BACKUP SCRIPT            #"
-    echo "#                 v1.0.1                       #"
+    echo "#                 v1.0.2                       #"
     echo "#                                              #"
     echo "################################################"
 
@@ -106,6 +106,12 @@
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY:"$API_KEY
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Task Qty:"$N
         [ $DEBUG == true ] && echo "================================================"
+
+    #   Printing out the current batch / config file used    
+        echo $(date +%Y%m%d-%H%M%S)"	Current Batch/.json: "${1}
+        echo $(date +%Y%m%d-%H%M%S)"	Total Tasks: "${N}
+        echo "================================================"
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG" "Current Batch: ${1}" "Total Tasks: ${N}" >/dev/null 2>&1
 
 #   Entering into the Loop
     while [ $i -lt $N ]
@@ -350,7 +356,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED BORG BACKUP SCRIPT            #"
-    echo "#                 v1.0.1                       #"
+    echo "#                 v1.0.2                       #"
     echo "#                                              #"
     echo "################################################"
 
