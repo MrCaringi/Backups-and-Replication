@@ -108,9 +108,10 @@
         [ $DEBUG == true ] && echo "================================================"
 
     #   Printing out the current batch / config file used    
-    echo $(date +%Y%m%d-%H%M%S)"	Current Batch/.json: ${1}"
-    echo $(date +%Y%m%d-%H%M%S)"	Total Tasks: ${N}"
-    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG" "Current Batch: ${1}" "Total Tasks: ${N}" >/dev/null 2>&1
+        echo $(date +%Y%m%d-%H%M%S)"	Current Batch/.json: "${1}
+        echo $(date +%Y%m%d-%H%M%S)"	Total Tasks: "${N}
+        echo "================================================"
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG" "Current Batch: ${1}" "Total Tasks: ${N}" >/dev/null 2>&1
 
 #   Entering into the Loop
     while [ $i -lt $N ]
