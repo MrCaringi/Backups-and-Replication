@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################
-#       v1.0
+#       v1.0.1
 #           BORG-BACKUP SCRIPT
 #
 #   How to Use
@@ -18,9 +18,27 @@
 #		2020-04-25  Uploaded a GitHub version
 #       2021-08-06  v0.3    Disable PRUNE Option
 #       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-#       2021-08-19  v1.0    Feature: All-in-One code refactor
+#       2021-08-19  v1.0.1    Feature: All-in-One code refactor
 #
 ###############################
+
+##      In First place: verify Input and "jq" package
+        #   Input Parameter
+        if [ $# -eq 0 ]
+            then
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Input Parameter is EMPTY!"
+                exit 1
+            else
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Argument found: ${1}"
+        fi
+        #   Package Exist
+        dpkg -s jq &> /dev/null
+        if [ $? -eq 0 ] ; then
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
+            else
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package jq is not present!"
+                exit 1
+        fi
 
 ##      Getting the Main Configuration
     #   General Config
@@ -32,7 +50,7 @@
     CHAT_ID=`cat $1 | jq --raw-output '.Telegram.ChatID'`
     API_KEY=`cat $1 | jq --raw-output '.Telegram.APIkey'`
 
-##  Telegram Notification Functions
+##  Functions
     function TelegramSendMessage(){
         #   Variables
         HEADER=${1}
@@ -61,13 +79,19 @@
         https://api.telegram.org/bot${API_KEY}/sendDocument
     }
 
+    function package_exists(){
+        dpkg -s "$1" &> /dev/null
+        return $?
+    }
+
 ##   Start
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING BORG BACKUP SCRIPT            #"
-    echo "#                 v1.0                         #"
+    echo "#                 v1.0.1                       #"
     echo "#                                              #"
     echo "################################################"
+
     #   General Start time
         TIME_START=$(date +%s)
         DATE_START=$(date +%F)
@@ -326,7 +350,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED BORG BACKUP SCRIPT            #"
-    echo "#                 v1.0                         #"
+    echo "#                 v1.0.1                       #"
     echo "#                                              #"
     echo "################################################"
 
