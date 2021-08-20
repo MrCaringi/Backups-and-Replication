@@ -90,3 +90,10 @@ Example
 | Task.BorgPrune.Options | Text | `borg prune` Options https://borgbackup.readthedocs.io/en/stable/usage/prune.html |
 | Task.BorgCheck.Enable | true / false | Enable Backup Check for this task |
 | Task.BorgCheck.Options | Text | `borg check` Options https://borgbackup.readthedocs.io/en/stable/usage/check.html
+
+##  Version Story
+- 2020-04-24  First version
+- 2020-04-25  Uploaded a GitHub version
+- 2021-08-06  v0.3    Disable PRUNE Option
+- 2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
+- 2021-08-19  v1.0    Feature: All-in-One code refactor
