@@ -1,0 +1,31 @@
+{
+    "GeneralConfig":{
+        "Debug": true,
+        "Wait": 2
+        },
+    "Telegram":{
+        "Enable": true,
+        "ChatID": "-123",
+        "APIkey": "123:ABC"
+        },
+    "Task": [
+        {
+            "Repository": "/data/borg-testing/test_repo",
+            "BorgPassphrase": "testingtesting", 
+            "Prefix": "MyBackup",     
+            "BorgCreate":{
+                "Enable": true,
+                "ArchivePath": "/home/jfc/.tldr",
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
+                },
+            "BorgPrune":{
+                "Enable": true,
+                "Options": "-v --stats --info --list --keep-daily=7 --keep-weekly=2 --keep-monthly=6"
+                },
+            "BorgCheck":{
+                "Enable": true,
+                "Options": "-v --verify-data --show-rc"
+                }
+        }    
+    ]
+}
