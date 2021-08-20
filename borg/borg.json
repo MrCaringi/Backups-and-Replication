@@ -11,11 +11,11 @@
     "Task": [
         {
             "Repository": "/data/borg-testing/test_repo",
-            "BorgPassphrase": "testingtesting", 
+            "BorgPassphrase": "testingtrepo_passwordesting", 
             "Prefix": "MyBackup",     
             "BorgCreate":{
                 "Enable": true,
-                "ArchivePath": "/home/jfc/.tldr",
+                "ArchivePath": "/home/user/",
                 "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
                 },
             "BorgPrune":{
@@ -26,6 +26,24 @@
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
                 }
-        }    
+        },
+        {
+            "Repository": "/other/borg-repo",
+            "BorgPassphrase": "repo_password", 
+            "Prefix": "My_Other_Backup",     
+            "BorgCreate":{
+                "Enable": true,
+                "ArchivePath": "/data/pictures",
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
+                },
+            "BorgPrune":{
+                "Enable": true,
+                "Options": "-v --stats --info --list --keep-last=5"
+                },
+            "BorgCheck":{
+                "Enable": true,
+                "Options": "-v --repository-only --show-rc"
+                }
+        }
     ]
 }
