@@ -5,39 +5,27 @@
         },
     "Telegram":{
         "Enable": true,
-        "ChatID": "-123456789",
-        "APIkey": "123:ABCDE"
+        "ChatID": "-123",
+        "APIkey": "123:ABC"
         },
     "Task": [
         {
-            "Repository": "/path/REPO",
-            "BorgPassphrase": "REPOSITORY PASSWORD", 
-            "Prefix": "Prefix_MyBackup",     
+            "Repository": "/data/borg-testing/test_repo",
+            "BorgPassphrase": "testingtesting", 
+            "Prefix": "MyBackup",     
             "BorgCreate":{
                 "Enable": true,
-                "ArchivePath": "/path/folder/",
-                "Options": "--stats --list --filter=E --compression auto,lzma,9"
+                "ArchivePath": "/home/jfc/.tldr",
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
-                "Options": "-v -s --list --keep-daily=7 --keep-weekly=2 --keep-monthly=6"
+                "Options": "-v --stats --info --list --keep-daily=7 --keep-weekly=2 --keep-monthly=6"
                 },
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
                 }
-        },
-        {
-            "From": "remote1:",
-            "To": "remote2:"
-        },
-        {
-            "From": "remote2:",
-            "To": "remote3:"
-        },
-        {
-            "From": "remote3:",
-            "To": "remote4:"
-        }     
+        }    
     ]
 }
