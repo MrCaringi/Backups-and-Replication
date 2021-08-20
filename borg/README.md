@@ -96,4 +96,4 @@ Example
 - 2020-04-25  Uploaded a GitHub version
 - 2021-08-06  v0.3    Disable PRUNE Option
 - 2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-- 2021-08-19  v1.0    Feature: All-in-One code refactor
+- 2021-08-20  v1.0.2    Feature: All-in-One code refactor
