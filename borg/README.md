@@ -2,19 +2,22 @@
 Bash Script for Borg Backup, Prune and Check
 
 ##   BEWARE!
-Before use, and in order to make your life easier, learn how to manually use at least these three commands:
-- `borg create`
-- `borg prune`
-- `borg check`
+**Before use, and in order to make your life easier, learn how to manually use at least these three Borg Commands:**
+- `borg create`     https://borgbackup.readthedocs.io/en/stable/usage/create.html
+- `borg prune`      https://borgbackup.readthedocs.io/en/stable/usage/prune.html
+- `borg check`      https://borgbackup.readthedocs.io/en/stable/usage/check.html
 
 ## How to Use
+Open your terminal, then run
 ```
-#   Open your terminal, then run
 bash /path/borg.sh /path/borg.json
 ```
 
-## Parameters
+### Parameters
 1 .json file
+
+### Packages requirement
+- `jq`    Package for json data parsing
 
 ##  How to fill the config file (.json)
 Example
@@ -69,5 +72,21 @@ Example
     ]
 }
 ```
-### Instrunctions
-
+### .json Instructions
+| Parameter | Value | Description |
+|---------------------- | -----------| ---------------------------------|
+| GeneralConfig.Debug | true / false | Enable more verbosity in the program log |
+| GeneralConfig.Wait | number | Seconds to wait between task |
+| Telegram.Enable | true / false | Enable Telegram Notifications |
+| Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
+| Telegram.APIkey | alphanumeric | Telegram Bot API Key |
+| Task.Repository | Path | Full path to Repository |
+| Task.BorgPassphrase | alphanumeric | Repository's password |
+| Task.Prefix | alphanumeric | Backup Name |
+| Task.BorgCreate.Enable | true / false | Enable Backup Creation for this task |
+| Task.BorgCreate.ArchivePath | Path | Full path to the folder that is going to be backed up |
+| Task.BorgCreate.Options | Text | `borg create` options https://borgbackup.readthedocs.io/en/stable/usage/create.html |
+| Task.BorgPrune.Enable | true / false | Enable Backup Prune (automatic deletion) for this task |
+| Task.BorgPrune.Options | Text | `borg prune` Options https://borgbackup.readthedocs.io/en/stable/usage/prune.html |
+| Task.BorgCheck.Enable | true / false | Enable Backup Check for this task |
+| Task.BorgCheck.Options | Text | `borg check` Options https://borgbackup.readthedocs.io/en/stable/usage/check.html
