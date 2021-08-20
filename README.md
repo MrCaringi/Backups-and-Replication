@@ -1,5 +1,5 @@
 # Backups & Replication Repository
-Scripts for backups and replication activities
+Scripts for backups and replication automation
 
 ### Folder Structure
 - borg:    for Borg-backup related scripts
