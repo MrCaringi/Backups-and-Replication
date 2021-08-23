@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ###############################
+#   v1.2
 #               RCLONE Cloud Replica
 #
 #   This script is for RCLONE SYNC your publics clouds
@@ -28,9 +29,27 @@
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
 #       2021-08-10  v1.0.1.1      All-in-one
 #       2021-08-11  v1.1      Feature: Bandwidth limit
+#       2021-08-23  v1.2      Feature: Task's flags
 #
 ###############################
 
+##      In First place: verify Input and "jq" package
+        #   Input Parameter
+        if [ $# -eq 0 ]
+            then
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Input Parameter is EMPTY!"
+                exit 1
+            else
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Argument found: ${1}"
+        fi
+        #   Package Exist
+        dpkg -s jq &> /dev/null
+        if [ $? -eq 0 ] ; then
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
+            else
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package jq is not present!"
+                exit 1
+        fi
 ##      Getting the Configuration
     #   General Config
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
@@ -77,6 +96,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING RCLONE REPLICATION            #"
+    echo "#                 v1.2                         #"
     echo "#                                              #"
     echo "################################################"
     #   General Start time
