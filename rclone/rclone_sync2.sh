@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ###############################
+#   v1.2
 #               RCLONE Cloud Replica
 #
 #   This script is for RCLONE SYNC your publics clouds
@@ -28,9 +29,28 @@
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
 #       2021-08-10  v1.0.1.1      All-in-one
 #       2021-08-11  v1.1      Feature: Bandwidth limit
+#       2021-08-23  v1.2      Feature: Task's flags
 #
 ###############################
 
+    echo $(date +%Y%m%d-%H%M%S)"	Last changelog: 2021-08-23  v1.2      Feature: Task's flags"
+##      In First place: verify Input and "jq" package
+        #   Input Parameter
+        if [ $# -eq 0 ]
+            then
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Input Parameter is EMPTY!"
+                exit 1
+            else
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Argument found: ${1}"
+        fi
+        #   Package Exist
+        dpkg -s jq &> /dev/null
+        if [ $? -eq 0 ] ; then
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
+            else
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package jq is not present!"
+                exit 1
+        fi
 ##      Getting the Configuration
     #   General Config
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
@@ -77,6 +97,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING RCLONE REPLICATION            #"
+    echo "#                 v1.2                         #"
     echo "#                                              #"
     echo "################################################"
     #   General Start time
@@ -134,6 +155,8 @@
 		#	Getting From/To Directory
         DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
         DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
+        EnableCustomFlags=`cat $1 | jq --raw-output ".folders[$i].EnableCustomFlags"`
+        Flags=`cat $1 | jq --raw-output ".folders[$i].Flags"`
         echo $(date +%Y%m%d-%H%M%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
 		#   For Debug purposes
@@ -141,7 +164,9 @@
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DIR_D:"$DIR_D
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DIR:"$DIR
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
-            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i        
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	EnableCustomFlags="$EnableCustomFlags
+            [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Flags="$Flags 
         
         #   Notify
         [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 
@@ -155,14 +180,27 @@
                 [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR: could not create log file: log_${LOG_DATE}.log" >/dev/null 2>&1
             fi
 
-		#	RCLONE
-		rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit} --log-file=log_${LOG_DATE}.log
-		
-        #	If rclone failed/warned notify
-        if [ $? -ne 0 ]; then
-            echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+		##	RCLONE Command
+        if [ $EnableCustomFlags == true ]; then
+                #   There is Custom Flags for the task
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	EnableCustomFlags parameter is enable (true)"
+                rclone sync ${DIR_O} ${DIR_D} ${Flags} --log-file=log_${LOG_DATE}.log
+                #	If rclone failed/warned notify
+                if [ $? -ne 0 ]; then
+                    echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                fi
+            else
+                #   No Custom Flags for the task
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	EnableCustomFlags paremeter is disabled (false)"
+                rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit} --log-file=log_${LOG_DATE}.log
+                #	If rclone failed/warned notify
+                if [ $? -ne 0 ]; then
+                    echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                fi
         fi
+        
         #   Elapsed time calculation for the iteration
             TIMEi_END=$(date +%s)
             TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%T")

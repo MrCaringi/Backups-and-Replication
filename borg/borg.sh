@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################
-#       v1.0.2
+#       v1.0.3
 #           BORG-BACKUP SCRIPT
 #
 #   How to Use
@@ -18,7 +18,7 @@
 #		2020-04-25  Uploaded a GitHub version
 #       2021-08-06  v0.3    Disable PRUNE Option
 #       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-#       2021-08-19  v1.0.2    Feature: All-in-One code refactor
+#       2021-08-19  v1.0.3    Feature: All-in-One code refactor
 #
 ###############################
 
@@ -88,7 +88,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING BORG BACKUP SCRIPT            #"
-    echo "#                 v1.0.2                       #"
+    echo "#                 v1.0.3                       #"
     echo "#                                              #"
     echo "################################################"
 
@@ -163,7 +163,7 @@
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Repository ${BORG_REPO}, Archive Path: ${CREATE_ARCHIVE}"
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Backup full name: ${FULLREP}"
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Options: ${CREATE_OPTIONS}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #CREATE_Backup" "Starting Task: ${I} of ${N}" "Repository: ${BORG_REPO}" "Archive: ${CREATE_ARCHIVE}" >/dev/null 2>&1 
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #CREATE_Backup" "Starting Create Task: ${I} of ${N}" "Repository: ${BORG_REPO}" "Archive: ${CREATE_ARCHIVE}" >/dev/null 2>&1 
                     #   Starting Iteration time
                         TIMEi_START=$(date +%s)
                         DATEi_START=$(date +%F)
@@ -177,6 +177,7 @@
                             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #CREATE_Backup" "#ERROR: could not create log file: BORG_log_${LOG_DATE}.log" >/dev/null 2>&1
                         fi
                         echo "==========    BORG CREATE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "  Options used: "${CREATE_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Create Command
@@ -225,7 +226,7 @@
                         echo $(date +%Y%m%d-%H%M%S)"	PRUNE Repository ${BORG_REPO}"
                         echo $(date +%Y%m%d-%H%M%S)"	PRUNE Options: ${PRUNE_OPTIONS}"
                         echo $(date +%Y%m%d-%H%M%S)"	PRUNE PREFIX: ${PREFIX}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #PRUNE_Backup" "Starting Task: ${I} of ${N}" "Repository: ${BORG_REPO}" "Prune PREFIX: ${PREFIX}" >/dev/null 2>&1 
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #PRUNE_Backup" "Starting Prune Task: ${I} of ${N}" "Repository: ${BORG_REPO}" "Prune PREFIX: ${PREFIX}" >/dev/null 2>&1 
                     #   Starting Iteration time
                         TIMEi_START=$(date +%s)
                         DATEi_START=$(date +%F)
@@ -239,6 +240,7 @@
                             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #PRUNE_Backup" "#ERROR: could not create log file: BORG_log_${LOG_DATE}.log" >/dev/null 2>&1
                         fi
                         echo "==========    BORG PRUNE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "  Options used: "${PRUNE_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Prune Command
@@ -287,7 +289,7 @@
                         echo $(date +%Y%m%d-%H%M%S)"	CHECK Repository ${BORG_REPO}"
                         echo $(date +%Y%m%d-%H%M%S)"	CHECK Options: ${CHECK_OPTIONS}"
                         echo $(date +%Y%m%d-%H%M%S)"	CHECK PREFIX: ${PREFIX}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #CHECK_Backup" "Starting Task: ${I} of ${N}" "Repository: ${BORG_REPO}" "Check PREFIX: ${PREFIX}" >/dev/null 2>&1 
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #CHECK_Backup" "Starting Check Task: ${I} of ${N}" "Repository: ${BORG_REPO}" "Check PREFIX: ${PREFIX}" >/dev/null 2>&1 
                     #   Starting Iteration time
                         TIMEi_START=$(date +%s)
                         DATEi_START=$(date +%F)
@@ -301,6 +303,7 @@
                             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #CHECK_Backup" "#ERROR: could not create log file: BORG_log_${LOG_DATE}.log" >/dev/null 2>&1
                         fi
                         echo "==========    BORG CHECK        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "  Options used: "${CHECK_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Check Command
@@ -352,11 +355,12 @@
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #Finished" "Total Task of ${N}" "Total Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #Finished" "Current Batch: ${1}" "Total Task of ${N}" "Total Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
+
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED BORG BACKUP SCRIPT            #"
-    echo "#                 v1.0.2                       #"
+    echo "#                 v1.0.3                       #"
     echo "#                                              #"
     echo "################################################"
 
