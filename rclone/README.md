@@ -72,9 +72,9 @@ Delete text afte commas (,) in order to use it:
 | Config.MaxTransfer | Number + Suffix | Enable rclone flag `--max-transfer`. Maximum size of data to transfer. |
 | Config.BwLimit | Number + Suffix | Bandwidth limit in KiByte/s, or use suffix B|K|M|G|T|P or a full timetable |
 | telegram.Enable | true/false | Enable Telegram Notifications |
-| telegram.ChatID | Number | Number that identify Telegram Chat/Group (you can get this when you add the bot @getmyid_bot to your chat/group) |
+| telegram.ChatID | Number | Number that identify Telegram Chat/Group (you can get this when you add the bot `@getmyid_bot` to your chat/group) |
 | telegram.APIkey | Text | Telegram Bot API Key |
 | folders.From | path/remote | Origin |
 | folders.To | path/remote | Destination |
-| folders.EnableCustomFlags | true/false | if this parameter is equal to "true", then `folders.Flags`will be used as flags if `rclonce sync` command |
-| folders.Flags | text | if "folders.EnableCustomFlags" is enable for the task, this text will be used instead of `Config.DriveServerSide`, `Config.MaxTransfer` and `Config.BwLimit` parameters |
+| folders.EnableCustomFlags | true/false | if this parameter is equal to "**true**", then `folders.Flags`will be used as flags for `rclonce sync` command |
+| folders.Flags | text | if "**folders.EnableCustomFlags**" is enable for the task, this text will be used instead of `Config.DriveServerSide`, `Config.MaxTransfer` and `Config.BwLimit` parameters |
