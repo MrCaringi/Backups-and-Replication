@@ -33,6 +33,7 @@
 #
 ###############################
 
+    echo $(date +%Y%m%d-%H%M%S)"	Last changelog: 2021-08-23  v1.2      Feature: Task's flags"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
