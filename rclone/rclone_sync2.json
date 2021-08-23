@@ -17,7 +17,7 @@
             "From": "/local/path",
             "To": "remote1:",
             "EnableCustomFlags": true,
-            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx --max-transfer=670G --bwlimit=1G"
+            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx,svg --max-transfer=670G --bwlimit=1G"
         },
         {
             "From": "remote1:",
