@@ -16,23 +16,23 @@
         {
             "From": "/local/path",
             "To": "remote1:",
-            "CustomFlags": true,
+            "EnableCustomFlags": true,
             "Flags": "--fast-list --drive-export-formats --max-transfer=670G --bwlimit=1G"
         },
         {
             "From": "remote1:",
             "To": "remote2:",
-            "CustomFlags": false
+            "EnableCustomFlags": false
         },
         {
             "From": "remote2:",
             "To": "remote3:",
-            "CustomFlags": false
+            "EnableCustomFlags": false
         },
         {
             "From": "remote3:",
             "To": "remote4:",
-            "CustomFlags": false
+            "EnableCustomFlags": false
         }     
     ]
 }

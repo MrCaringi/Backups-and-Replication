@@ -47,22 +47,21 @@ Delete text afte commas (,) in order to use it:
         {
             "From": "remote1:",
             "To": "remote2:",
-            "CustomFlags": false
+            "EnableCustomFlags": false
         },
         {
             "From": "remote2:",
             "To": "remote3:",
-            "CustomFlags": false
+            "EnableCustomFlags": false
         },
         {
             "From": "remote3:",
             "To": "remote4:",
-            "CustomFlags": false
+            "EnableCustomFlags": false
         }     
     ]
 }
 ```
-
 | Parameter | Value | Description |
 |---------------------- | -----------| ---------------------------------|
 | Config.Debug | true/false | Enable more verbosity in the program log |
