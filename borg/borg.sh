@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################
-#       v1.0.3
+#
 #           BORG-BACKUP SCRIPT
 #
 #   How to Use
@@ -18,11 +18,13 @@
 #		2020-04-25  Uploaded a GitHub version
 #       2021-08-06  v0.3    Disable PRUNE Option
 #       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-#       2021-08-19  v1.0.3    Feature: All-in-One code refactor
-#       2021-08-23  v1.1.0      Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
+#       2021-08-19  v1.0.3  Feature: All-in-One code refactor
+#       2021-08-23  v1.1.1  Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
 #
 ###############################
-
+    
+#   Current Version
+    VERSION="v1.1.1"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -96,7 +98,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING BORG BACKUP SCRIPT            #"
-    echo "#                 v1.1.0                       #"
+    echo "#                 ${VERSION}                       #"
     echo "#                                              #"
     echo "################################################"
 
@@ -143,6 +145,9 @@
                 CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Options"`
 
             #   Setting up Main vars
+                CREATE_STATUS="DISABLED"
+                PRUNE_STATUS="DISABLED"
+                CHECK_STATUS="DISABLED"
                 FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
                 # Setting this, so the repo does not need to be given on the command line:
                 export BORG_REPO
@@ -203,10 +208,9 @@
                         echo >> BORG_log_${LOG_DATE}.log
                         echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
                     # Borg Create: Use highest exit code to build the message
-                        CREATE_STATUS="DISABLED"
                         if [ ${borg_create_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished successfully"
-                            CREATE_STATUS="SUCESS"
+                            CREATE_STATUS="SUCCESS"
                         elif [ ${borg_create_exit} -eq 1 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished with warnings"
                             CREATE_STATUS="WARNING"
@@ -253,7 +257,6 @@
                         echo "==========    Ending PRUNE        Elapsed time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
                     # Use highest exit code to build the message
-                        PRUNE_STATUS="DISABLED"
                         if [ ${borg_prune_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Prune finished successfully"
                             PRUNE_STATUS="SUCCESS"
@@ -301,7 +304,6 @@
                         echo "==========    Ending CHECK        Elapsed time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
                     # Use highest exit code to build the message
-                        CHECK_STATUS="DISABLED"
                         if [ ${borg_check_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Check finished successfully"
                             CHECK_STATUS="SUCCESS"
@@ -343,7 +345,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED BORG BACKUP SCRIPT            #"
-    echo "#                 v1.1.0                       #"
+    echo "#                 ${VERSION}                       #"
     echo "#                                              #"
     echo "################################################"
 
