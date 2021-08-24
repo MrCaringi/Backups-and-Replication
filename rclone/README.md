@@ -42,7 +42,7 @@ Delete text afte commas (,) in order to use it:
             "From": "/local/path",
             "To": "remote1:",
             "EnableCustomFlags": true,
-            "Flags": "--fast-list --drive-export-formats --max-transfer=670G --bwlimit=1G"
+            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx --max-transfer=670G --bwlimit=1G"
         },
         {
             "From": "remote1:",
