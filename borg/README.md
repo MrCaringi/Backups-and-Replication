@@ -97,3 +97,4 @@ Example
 - 2021-08-06  v0.3    Disable PRUNE Option
 - 2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
 - 2021-08-20  v1.0.3    Feature: All-in-One code refactor
+- 2021-08-23  v1.1.0      Feature: Fewer Telegram Messages
