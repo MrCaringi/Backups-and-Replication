@@ -16,7 +16,7 @@
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/home/user/",
-                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
+                "Options": "--stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
@@ -34,7 +34,7 @@
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/data/pictures",
-                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
+                "Options": "--stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
