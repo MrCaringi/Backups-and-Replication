@@ -64,11 +64,12 @@
         LINE7=${8}
         LINE8=${9}
         LINE9=${10}
+        LINE10=${11}
 
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
-        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}" \
+        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}%0A${LINE10}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
@@ -115,7 +116,8 @@
         [ $DEBUG == true ] && echo "================================================"
 
     #   Printing out the current batch / config file used
-        BATCH=$(`echo ${1} | awk -F'/' '{print $NF}'`)  
+        BATCH=`echo ${1} | awk -F'/' '{print $NF}'`
+        echo $BATCH
         echo $(date +%Y%m%d-%H%M%S)"	Current Batch/.json: "${1}
         echo $(date +%Y%m%d-%H%M%S)"	Total Tasks: "${N}
         echo "================================================"
@@ -185,7 +187,7 @@
                         DATEc_START=$(date +%F)
                     
                     #   nitializing the CREATE log file
-                        echo "==========    BORG CREATE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Starting CREATE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
                         echo "Options used: "${CREATE_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
 
@@ -199,7 +201,7 @@
                         DATEc_END=$(date +%F)
                         DAYSc_ELAPSE=$(( ($(date -d $DATEc_END +%s) - $(date -d $DATEc_START +%s) )/(60*60*24) ))
                         echo >> BORG_log_${LOG_DATE}.log
-                        echo "==========    BORG BACKUP        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
                     # Borg Create: Use highest exit code to build the message
                         CREATE_STATUS="DISABLED"
                         if [ ${borg_create_exit} -eq 0 ]; then
@@ -233,7 +235,7 @@
                         DATEp_START=$(date +%F)
                     
                     #   Initializing the PRUNE log file
-                        echo "==========    BORG PRUNE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Starting PRUNE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
                         echo "Options used: "${PRUNE_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo "Prune PREFIX: "${PREFIX} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
@@ -248,7 +250,7 @@
                         DATEp_END=$(date +%F)
                         DAYSp_ELAPSE=$(( ($(date -d $DATEp_END +%s) - $(date -d $DATEp_START +%s) )/(60*60*24) ))
                         echo >> BORG_log_${LOG_DATE}.log
-                        echo "==========    BORG PRUNE        Elapsed time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Ending PRUNE        Elapsed time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
                     # Use highest exit code to build the message
                         PRUNE_STATUS="DISABLED"
@@ -282,7 +284,7 @@
                         DATEk_START=$(date +%F)
                     
                     #   Borg CHECK: Initializing the log file
-                        echo "==========    BORG CHECK        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Starting CHECK        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
                         echo "Options used: "${CHECK_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
 
@@ -296,7 +298,7 @@
                         DATEk_END=$(date +%F)
                         DAYSk_ELAPSE=$(( ($(date -d $DATEk_END +%s) - $(date -d $DATEk_START +%s) )/(60*60*24) ))
                         echo >> BORG_log_${LOG_DATE}.log
-                        echo "==========    BORG CHECK        Elapsed time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Ending CHECK        Elapsed time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
                     # Use highest exit code to build the message
                         CHECK_STATUS="DISABLED"
@@ -318,9 +320,9 @@
                 fi
                 
                 #   Building Telegram Messages
-                    REPO=$(`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`)  
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Borg Create Status: #${CREATE_STATUS}" "Borg Create Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Borg Prune Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Borg Check Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #CREATE_Backup" "Log File for Task ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
+                    REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" " " "Borg Create Status: #${CREATE_STATUS}" "Borg Create Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Borg Prune Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Borg Check Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}
                 i=$(($i + 1))
