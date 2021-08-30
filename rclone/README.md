@@ -77,3 +77,16 @@ Delete text afte commas (,) in order to use it:
 | folders.To | path/remote | Destination |
 | folders.EnableCustomFlags | true/false | if this parameter is equal to "**true**", then `folders.Flags`will be used as flags for `rclonce sync` command |
 | folders.Flags | text | if "**folders.EnableCustomFlags**" is enable for the task, this text will be used instead of `Config.DriveServerSide`, `Config.MaxTransfer` and `Config.BwLimit` parameters |
+
+### Changelog
+- 2021-07-07  First version
+- 2021-07-09  Fixing documentation
+- 2021-07-18  v0.2    Improved telegram messages
+- 2021-07-21  v0.3    Improving concurrence instances validation
+- 2021-08-04  v0.4.1  Elapsed time in notification
+- 2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
+- 2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
+- 2021-08-10  v1.0.1.1      All-in-one
+- 2021-08-11  v1.1      Feature: Bandwidth limit
+- 2021-08-23  v1.2      Feature: Task's flags
+- 2021-08-30  v1.3.0    Feature: Fewer Messages

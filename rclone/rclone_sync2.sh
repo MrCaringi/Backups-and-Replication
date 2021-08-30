@@ -30,10 +30,12 @@
 #       2021-08-10  v1.0.1.1      All-in-one
 #       2021-08-11  v1.1      Feature: Bandwidth limit
 #       2021-08-23  v1.2      Feature: Task's flags
+#       2021-08-30  v1.3.0    Feature: Fewer Messages
 #
 ###############################
 
-    echo $(date +%Y%m%d-%H%M%S)"	Last changelog: 2021-08-23  v1.2      Feature: Task's flags"
+    echo $(date +%Y%m%d-%H%M%S)"	2021-08-30  v1.3.0    Feature: Fewer Messages"
+    VERSION="v1.3.0"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -71,11 +73,19 @@
         HEADER=${1}
         LINE1=${2}
         LINE2=${3}
+        LINE3=${4}
+        LINE4=${5}
+        LINE5=${6}
+        LINE6=${7}
+        LINE7=${8}
+        LINE8=${9}
+        LINE9=${10}
+        LINE10=${11}
 
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
-        --data text="<b>${1}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}" \
+        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}%0A${LINE10}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
@@ -97,7 +107,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING RCLONE REPLICATION            #"
-    echo "#                 v1.2                         #"
+    echo "#                 ${VERSION}                       #"
     echo "#                                              #"
     echo "################################################"
     #   General Start time
@@ -109,6 +119,8 @@
     i=0
     process=0
     lenght=0
+    BATCH=`echo ${1} | awk -F'/' '{print $NF}'`
+    echo $BATCH
 
 	#   For Debug purposes
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID:"$CHAT_ID
@@ -129,7 +141,7 @@
 
         if [ -f ${INSTANCE_FILE}  ];then
             echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: An another instance of this script is already running, if it not right, please remove the file $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Total Task: ${N}" " " "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
             exit 1
             else
                 echo $(date +"%Y%m%d %H:%M:%S")"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
@@ -139,9 +151,12 @@
         touch $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not create $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" " " "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
+    
+    #   Notify
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Total Task: ${N}" >/dev/null 2>&1 
 
     while [ $i -lt $N ]
     do
@@ -168,9 +183,6 @@
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	EnableCustomFlags="$EnableCustomFlags
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Flags="$Flags 
         
-        #   Notify
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "RCLONE from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1 
-        
 		#   Initializing the log file
             LOG_DATE="task_${I}_$(date +%Y%m%d-%H%M%S)"
             [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	LOG_DATE:"$LOG_DATE
@@ -188,7 +200,7 @@
                 #	If rclone failed/warned notify
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                 fi
             else
                 #   No Custom Flags for the task
@@ -197,7 +209,7 @@
                 #	If rclone failed/warned notify
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y%m%d-%H%M%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, #ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                 fi
         fi
         
@@ -218,7 +230,7 @@
                 [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#RCLONE_Replica" "Task: ${I} of ${N}, Log for ${DIR_O} to: ${DIR_D}, Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" log_${LOG_DATE}.log >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Log has no info, sending message"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}, From ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "From ${DIR_O} to: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
             fi
             
         #   Flushing & Deleting the file
@@ -244,7 +256,7 @@
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
-    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Finished" "Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
