@@ -30,12 +30,12 @@
 #       2021-08-10  v1.0.1.1      All-in-one
 #       2021-08-11  v1.1      Feature: Bandwidth limit
 #       2021-08-23  v1.2      Feature: Task's flags
-#       2021-08-30  v1.3.0    Feature: Fewer Messages
+#       2021-08-31  v1.3.1    Feature: Fewer Messages
 #
 ###############################
 
     echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-08-30  v1.3.0    Feature: Fewer Messages"
-    VERSION="v1.3.0"
+    VERSION="v1.3.1"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -50,8 +50,7 @@
         if [ $? -eq 0 ] ; then
                 echo $(date +%Y-%m-%d_%H:%M:%S)"	INFO: Package jq is present"
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: Package jq is not present!"
-                exit 1
+                echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: Package jq (or dpkg tool) is not present!"
         fi
 ##      Getting the Configuration
     #   General Config
