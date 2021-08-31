@@ -89,4 +89,4 @@ Delete text afte commas (,) in order to use it:
 - 2021-08-10  v1.0.1.1      All-in-one
 - 2021-08-11  v1.1      Feature: Bandwidth limit
 - 2021-08-23  v1.2      Feature: Task's flags
-- 2021-08-30  v1.3.0    Feature: Fewer Messages
+- 2021-08-31  v1.3.1    Feature: Fewer Messages
