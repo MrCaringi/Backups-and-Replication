@@ -40,7 +40,7 @@ Example
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/home/user/",
-                "Options": "--stats --info --list --filter=E --compression auto,lzma,6"
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
@@ -58,7 +58,7 @@ Example
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/data/Photo/",
-                "Options": "--stats --info --list --filter=E --compression auto,lzma,6"
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
@@ -98,3 +98,4 @@ Example
 - 2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
 - 2021-08-20  v1.0.3    Feature: All-in-One code refactor
 - 2021-08-24  v1.1.1    Feature: Fewer Telegram Messages
+- 2021-09-10  v1.2.0    Feature: Number of Files
