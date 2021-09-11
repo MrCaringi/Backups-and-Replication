@@ -40,7 +40,7 @@ Example
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/home/user/",
-                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,6"
                 },
             "BorgPrune":{
                 "Enable": true,
@@ -58,7 +58,7 @@ Example
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/data/Photo/",
-                "Options": "--stats --info --list --filter=E --compression auto,lzma,9"
+                "Options": "--stats --info --list --filter=E --compression auto,lzma,6"
                 },
             "BorgPrune":{
                 "Enable": true,
