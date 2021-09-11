@@ -20,11 +20,12 @@
 #       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
 #       2021-08-19  v1.0.3  Feature: All-in-One code refactor
 #       2021-08-23  v1.1.1  Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
+#       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
 #
 ###############################
     
 #   Current Version
-    VERSION="v1.1.1"
+    VERSION="v1.2.0"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -67,11 +68,13 @@
         LINE8=${9}
         LINE9=${10}
         LINE10=${11}
+        LINE11=${12}
+        LINE12=${13}
 
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
-        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}%0A${LINE10}" \
+        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}%0A${LINE10}%0A${LINE11}%0A${LINE12}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
@@ -109,12 +112,12 @@
         N=`jq '.Task | length ' $1`
         i=0
 	#   For Debug purposes
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG:"$DEBUG
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	WAIT:"$WAIT
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE:"$ENABLE_MESSAGE
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID:"$CHAT_ID
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY:"$API_KEY
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Task Qty:"$N
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG: "$DEBUG
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	WAIT: "$WAIT
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE: "$ENABLE_MESSAGE
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID: "$CHAT_ID
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY: "$API_KEY
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Task Qty: "$N
         [ $DEBUG == true ] && echo "================================================"
 
     #   Printing out the current batch / config file used
@@ -156,23 +159,23 @@
 
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO:"$BORG_REPO
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE:"$BORG_PASSPHRASE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PREFIX:"$PREFIX
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ENABLE:"$CREATE_ENABLE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ARCHIVE:"$CREATE_ARCHIVE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_OPTIONS="$CREATE_OPTIONS
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_ENABLE="$PRUNE_ENABLE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_OPTIONS="$PRUNE_OPTIONS
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_ENABLE="$CHECK_ENABLE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_OPTIONS="$CHECK_OPTIONS
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FULLREP="$FULLREP
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N="$N
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i="$i
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO: "$BORG_REPO
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE: "$BORG_PASSPHRASE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PREFIX: "$PREFIX
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ENABLE: "$CREATE_ENABLE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ARCHIVE: "$CREATE_ARCHIVE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_OPTIONS: "$CREATE_OPTIONS
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_ENABLE: "$PRUNE_ENABLE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_OPTIONS: "$PRUNE_OPTIONS
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_ENABLE: "$CHECK_ENABLE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_OPTIONS: "$CHECK_OPTIONS
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FULLREP: "$FULLREP
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N: "$N
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i: "$i
 
             #   Initializing the log file
                 LOG_DATE="task_${I}_$(date +%Y%m%d-%H%M%S)"
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	LOG_DATE:"$LOG_DATE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	LOG_DATE: "$LOG_DATE
                 touch BORG_log_${LOG_DATE}.log
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y%m%d-%H%M%S)"	ERROR: could not create log file: BORG_log_${LOG_DATE}.log"
@@ -207,10 +210,16 @@
                         DAYSc_ELAPSE=$(( ($(date -d $DATEc_END +%s) - $(date -d $DATEc_START +%s) )/(60*60*24) ))
                         echo >> BORG_log_${LOG_DATE}.log
                         echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
+
+                    #   Getting the number of lines for borg create log
+                        NUMBER_FILES=$(awk '{if(NR==11) print $4}' BORG_log_${LOG_DATE}.log)
+                        echo $(date +%Y%m%d-%H%M%S)"	CREATE Number of Files: ${NUMBER_FILES}"
+
                     # Borg Create: Use highest exit code to build the message
                         if [ ${borg_create_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished successfully"
                             CREATE_STATUS="SUCCESS"
+                            [ $NUMBER_FILES -eq 0 ] && CREATE_STATUS="WARNING" NUMBER_FILES="#NONE!" PRUNE_ENABLE="false" && echo $(date +%Y%m%d-%H%M%S)"	Disabling BORG PRUNE!"
                         elif [ ${borg_create_exit} -eq 1 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished with warnings"
                             CREATE_STATUS="WARNING"
@@ -323,7 +332,7 @@
                 
                 #   Building Telegram Messages
                     REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" " " "Borg Create Status: #${CREATE_STATUS}" "Borg Create Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Borg Prune Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Borg Check Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Borg Create Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Borg Create Files: ${NUMBER_FILES}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Borg Prune Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Borg Check Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
                     [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}
