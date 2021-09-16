@@ -204,7 +204,7 @@
                         echo >> BORG_log_${LOG_DATE}.log
                         echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
-                    #   Getting domr info from borg create log
+                    #   Getting some info from borg create log
                         NUMBER_FILES=$(awk '{if(NR==11) print $4}' BORG_log_${LOG_DATE}.log)
                         CREATE_SIZE=$(awk '{if(NR==15) print $7}' BORG_log_${LOG_DATE}.log)
                         CREATE_SIZE_UNIT=$(awk '{if(NR==15) print $8}' BORG_log_${LOG_DATE}.log)
