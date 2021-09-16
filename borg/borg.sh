@@ -21,11 +21,12 @@
 #       2021-08-19  v1.0.3  Feature: All-in-One code refactor
 #       2021-08-23  v1.1.1  Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
 #       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
+#       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
 #
 ###############################
     
 #   Current Version
-    VERSION="v1.2.0"
+    VERSION="v1.2.1"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -58,23 +59,11 @@
     function TelegramSendMessage(){
         #   Variables
         HEADER=${1}
-        LINE1=${2}
-        LINE2=${3}
-        LINE3=${4}
-        LINE4=${5}
-        LINE5=${6}
-        LINE6=${7}
-        LINE7=${8}
-        LINE8=${9}
-        LINE9=${10}
-        LINE10=${11}
-        LINE11=${12}
-        LINE12=${13}
 
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
-        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}%0A${LINE10}%0A${LINE11}%0A${LINE12}" \
+        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}%0A${4}%0A${5}%0A${6}%0A${7}%0A${8}%0A${9}%0A${10}%0A${11}%0A${12}%0A${13}%0A${14}%0A${15}%0A${16}%0A${17}%0A${18}%0A${19}%0A${20}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
@@ -148,6 +137,10 @@
                 CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Options"`
 
             #   Setting up Main vars
+                NUMBER_FILES=""
+                CREATE_SIZE=""
+                CREATE_SIZE_UNIT=""
+                CREATE_ALL_DEDUP_SIZE=""
                 CREATE_STATUS="DISABLED"
                 PRUNE_STATUS="DISABLED"
                 CHECK_STATUS="DISABLED"
@@ -194,7 +187,7 @@
                         TIMEc_START=$(date +%s)
                         DATEc_START=$(date +%F)
                     
-                    #   nitializing the CREATE log file
+                    #   Initializing the CREATE log file
                         echo "==========    Starting CREATE        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
                         echo "Options used: "${CREATE_OPTIONS} >> BORG_log_${LOG_DATE}.log
                         echo >> BORG_log_${LOG_DATE}.log
@@ -211,8 +204,11 @@
                         echo >> BORG_log_${LOG_DATE}.log
                         echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
-                    #   Getting the number of lines for borg create log
+                    #   Getting some info from borg create log
                         NUMBER_FILES=$(awk '{if(NR==11) print $4}' BORG_log_${LOG_DATE}.log)
+                        CREATE_SIZE=$(awk '{if(NR==15) print $7}' BORG_log_${LOG_DATE}.log)
+                        CREATE_SIZE_UNIT=$(awk '{if(NR==15) print $8}' BORG_log_${LOG_DATE}.log)
+                        CREATE_ALL_DEDUP_SIZE="${CREATE_SIZE} ${CREATE_SIZE_UNIT}"
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Number of Files: ${NUMBER_FILES}"
 
                     # Borg Create: Use highest exit code to build the message
@@ -332,7 +328,7 @@
                 
                 #   Building Telegram Messages
                     REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Borg Create Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Borg Create Files: ${NUMBER_FILES}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Borg Prune Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Borg Check Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Elapsed Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Files: ${NUMBER_FILES}" "Deduplicated Size: ${CREATE_ALL_DEDUP_SIZE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Elapsed Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Elapsed Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
                     [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}

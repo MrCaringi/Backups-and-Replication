@@ -99,3 +99,4 @@ Example
 - 2021-08-20  v1.0.3    Feature: All-in-One code refactor
 - 2021-08-24  v1.1.1    Feature: Fewer Telegram Messages
 - 2021-09-10  v1.2.0    Feature: Number of Files
+- 2021-09-15  v1.2.1    Bug: Number of Files reset
