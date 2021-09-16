@@ -115,7 +115,7 @@
         echo $(date +%Y%m%d-%H%M%S)"	Current Batch/.json: "${1}
         echo $(date +%Y%m%d-%H%M%S)"	Total Tasks: "${N}
         echo "================================================"
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${BATCH}" "Starting Batch: ${1}" "Total Borg Tasks: ${N}" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${BATCH}" "Starting Batch: ${1}" "Total Borg Tasks: ${N}" "Release Version: ${VERSION}">/dev/null 2>&1
 
 #   Entering into the Loop
     while [ $i -lt $N ]
