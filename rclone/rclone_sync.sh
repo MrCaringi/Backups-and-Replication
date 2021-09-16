@@ -203,7 +203,7 @@
                 #	If rclone failed/warned notify
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                 fi
             else
                 #   No Custom Flags for the task
@@ -212,7 +212,7 @@
                 #	If rclone failed/warned notify
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                 fi
         fi
         
