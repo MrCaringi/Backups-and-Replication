@@ -17,10 +17,11 @@
 #
 ##	SCRIPT MODIFICATION NOTES
 #       2021-10-20  v1.0  First version
+#       2021-10-20  v1.0.1  Ending Notification message
 #
 ###############################
 
-    VERSION="v1.0.0"
+    VERSION="v1.0.1"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-08-30  ${VERSION}"
     
 ##      In First place: verify Input and "jq" package
@@ -142,11 +143,12 @@
     #
     #   END
     #   
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_REMOTE_CHECK" "Total Qty of Remotes:" "$N" >/dev/null 2>&1
         echo $(date +%Y-%m-%d_%H:%M:%S)"    TOTAL ERRORS:  " $E
         echo " "
         echo "################################################"
         echo "#                                              #"
-        echo "#       STARTING RCLONE REMOTE CHECK           #"
+        echo "#       ENDING RCLONE REMOTE CHECK           #"
         echo "#                                              #"
         echo "################################################"
 
