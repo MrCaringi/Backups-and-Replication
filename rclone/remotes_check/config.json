@@ -1,0 +1,10 @@
+{
+    "config":{
+        "Debug": true
+    },
+    "telegram":{
+        "Enable": true,
+        "ChatID": "-123456789",
+        "APIkey": "123:ABCDE"
+        }
+}
