@@ -13,7 +13,7 @@
 #   $1  Path to ".json" config file
 #
 ##   REQUIREMENTS
-#       - rclone remotes propperly configured
+#       - rclone remotes has to be propperly configured
 #
 ##	SCRIPT MODIFICATION NOTES
 #       2021-10-20  v1.0  First version
@@ -117,7 +117,7 @@
         for remote in ${REMOTES}
         do 
             R=" "
-            echo " $(date +%Y-%m-%d_%H:%M:%S)   Working with Remote:  " $remote
+            echo "$(date +%Y-%m-%d_%H:%M:%S)   Working with Remote:  " $remote
             
             #   Verifying if REMOTE WORKS!
             rclone lsd $remote
@@ -131,7 +131,7 @@
                 echo $(date +%Y-%m-%d_%H:%M:%S)"	HOSTNAME:  " $HOSTNAME >> remote-check.log
                 echo " " >> remote-check.log
                 rclone lsd $remote >> remote-check.log 2>&1
-                [ $ENABLE_MESSAGE == true ] && TelegramSendFile remote-check.log "#REMOTE_CHECK" "#ERROR: This remote is not available" "${remote}"  >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendFile remote-check.log "#RCLONE_REMOTE_CHECK" " " "#ERROR" "This remote is not available:" "${remote}"  >/dev/null 2>&1
                 rm remote-check.log
                 
             else
@@ -139,7 +139,9 @@
             fi
             echo "================================================"
         done
+    #
     #   END
+    #   
         echo $(date +%Y-%m-%d_%H:%M:%S)"    TOTAL ERRORS:  " $E
         echo " "
         echo "################################################"
