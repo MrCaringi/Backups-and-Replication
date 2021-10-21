@@ -9,7 +9,7 @@ Internally it is a `rclone lsd <remote>` automation tool
 # How to Use
 ##  In the Terminal
 ```
-`bash rclone_remote-check.sh config.json`
+bash rclone_remote-check.sh config.json
 ```
 Where:
 - "rclone_remote-check.sh" is the script
