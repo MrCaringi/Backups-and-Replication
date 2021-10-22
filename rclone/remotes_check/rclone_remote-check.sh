@@ -18,27 +18,29 @@
 ##	SCRIPT MODIFICATION NOTES
 #       2021-10-20  v1.0  First version
 #       2021-10-20  v1.0.1  End message
+#       2021-10-22  v1.1.0  TOC Version
 #
 ###############################
 
-    VERSION="v1.0.1"
-    echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-08-30  ${VERSION}"
+##  Version Control
+    VERSION="v1.1.0"
+    echo $(date +%Y/%m/%d\ %H:%M:%S)" INFO: Release 2021-08-30  ${VERSION}"
     
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
             then
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: Input Parameter is EMPTY!"
+                echo $(date +%Y/%m/%d\ %H:%M:%S)" ERROR: Input Parameter is EMPTY!"
                 exit 1
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	INFO: Argument found: ${1}"
+                echo $(date +%Y/%m/%d\ %H:%M:%S)" INFO: Argument found: ${1}"
         fi
         #   Package Exist
         dpkg -s jq &> /dev/null
         if [ $? -eq 0 ] ; then
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	INFO: Package jq is present"
+                echo $(date +%Y/%m/%d\ %H:%M:%S)" INFO: Package jq is present"
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: Package jq (or dpkg tool) is not present!"
+                echo $(date +%Y/%m/%d\ %H:%M:%S)" ERROR: Package jq (or dpkg tool) is not present!"
                 sudo apt install -y jq
         fi
 ##      Getting the Configuration
@@ -89,67 +91,78 @@
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}"$'\n'"${LINE2}"$'\n'"${LINE3}"$'\n'"${LINE4}"$'\n'"${LINE5}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument
 }
-
-#   Start
+#
+#   START
+#
+    echo " "
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING RCLONE REMOTE CHECK           #"
     echo "#                 ${VERSION}                       #"
     echo "#                                              #"
     echo "################################################"
+    echo " "
 
 
-##  Time to CHECK
+#  Time to CHECK
     N=$(rclone listremotes | wc -l)
     i=0
     HOSTNAME=`hostname`
 
 	#   For Debug purposes
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	CHAT_ID:  "$CHAT_ID
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	API_KEY:  "$API_KEY
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	ENABLE_MESSAGE:  "$ENABLE_MESSAGE
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DEBUG:  "$DEBUG
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	REMOTES QTY:  "$N
+        [ $DEBUG == true ] && echo $(date +%Y/%m/%d\ %H:%M:%S)" CHAT_ID:  "$CHAT_ID
+        [ $DEBUG == true ] && echo $(date +%Y/%m/%d\ %H:%M:%S)" API_KEY:  "$API_KEY
+        [ $DEBUG == true ] && echo $(date +%Y/%m/%d\ %H:%M:%S)" ENABLE_MESSAGE:  "$ENABLE_MESSAGE
+        [ $DEBUG == true ] && echo $(date +%Y/%m/%d\ %H:%M:%S)" DEBUG:  "$DEBUG
+        [ $DEBUG == true ] && echo $(date +%Y/%m/%d\ %H:%M:%S)" REMOTES QTY:  "$N
+    echo "=================================================================="
+#
+#   LOOP
+#
+    E=0
+    REMOTES=$(rclone listremotes)
 
-    #   Loop
-        E=0
-        REMOTES=$(rclone listremotes)
-
-        for remote in ${REMOTES}
-        do 
-            R=" "
-            echo "$(date +%Y-%m-%d_%H:%M:%S)   Working with Remote:  " $remote
-            
-            #   Verifying if REMOTE WORKS!
-            rclone lsd $remote
-            R=$?
-            echo $(date +%Y-%m-%d_%H:%M:%S)"    Result:  " $R
-            if [ $R -eq 1 ] ; then
-                E=$(($E + 1))
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	RESULT:  "  $R > remote-check.log
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	REMOTE ERROR:  " $remote
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	REMOTE ERROR:  " $remote >> remote-check.log
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	HOSTNAME:  " $HOSTNAME >> remote-check.log
-                echo " " >> remote-check.log
-                rclone lsd $remote >> remote-check.log 2>&1
-                [ $ENABLE_MESSAGE == true ] && TelegramSendFile remote-check.log "#RCLONE_REMOTE_CHECK" " " "#ERROR" "This remote is not available:" "${remote}"  >/dev/null 2>&1
-                rm remote-check.log
-                
-            else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	REMOTE OK:  " $remote
-            fi
-            echo "================================================"
-        done
-    #
-    #   END
-    #   
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_REMOTE_CHECK" "Total Qty of Remotes: $N" "Total Qty of Errors: $E" " " "Script Version: ${VERSION}">/dev/null 2>&1
-        echo $(date +%Y-%m-%d_%H:%M:%S)"    TOTAL ERRORS:  " $E
+    for remote in ${REMOTES}
+    do 
+        R=" "
+        echo $(date +%Y/%m/%d\ %H:%M:%S)" Working on REMOTE:  " $remote
         echo " "
-        echo "################################################"
-        echo "#                                              #"
-        echo "#         ENDING RCLONE REMOTE CHECK           #"
-        echo "#                                              #"
-        echo "################################################"
+        
+        #   Verifying if REMOTE WORKS!
+        rclone lsd $remote
+        R=$?
+        echo " "
+        echo $(date +%Y/%m/%d\ %H:%M:%S)" RCLONE test Result:  " $R
 
-    exit 0
+        #   If everythig goes well
+        if [ $R -eq 0 ] ; then
+            echo $(date +%Y/%m/%d\ %H:%M:%S)" REMOTE OK:  " $remote
+        
+        #   If not
+        else
+            E=$(($E + 1))
+            echo $(date +%Y/%m/%d\ %H:%M:%S)" ERROR Type:  "  $R > remote-check.log
+            echo $(date +%Y/%m/%d\ %H:%M:%S)" REMOTE with ERROR:  " $remote
+            echo $(date +%Y/%m/%d\ %H:%M:%S)" REMOTE with ERROR:  " $remote >> remote-check.log
+            echo $(date +%Y/%m/%d\ %H:%M:%S)" HOSTNAME:  " $HOSTNAME >> remote-check.log
+            echo " " >> remote-check.log
+            rclone lsd $remote >> remote-check.log 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendFile remote-check.log "#RCLONE_REMOTE_CHECK" " " "#ERROR type: $R" "This remote is not available:" "${remote}"  >/dev/null 2>&1
+            rm remote-check.log
+        fi
+        echo " "
+        echo "=================================================================="
+    done
+#
+#   END
+#   
+    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_REMOTE_CHECK" "Total Qty of Remotes: $N" "Total Qty of Errors: $E" " " "Script Version: ${VERSION}">/dev/null 2>&1
+    echo $(date +%Y/%m/%d\ %H:%M:%S)" TOTAL ERRORS:  " $E
+    echo " "
+    echo "################################################"
+    echo "#                                              #"
+    echo "#         ENDING RCLONE REMOTE CHECK           #"
+    echo "#                                              #"
+    echo "################################################"
+
+exit 0
