@@ -5,13 +5,13 @@ This is a (very simple) Bash script created in order to check if a RCLONE REMOTE
 Internally it is a `rclone lsd <remote>` automation tool
 
 ### Telegram Messages
-![Telegram Messages](https://user-images.githubusercontent.com/47096567/138364779-b4670055-b4b4-4def-aa35-dbf8c84d02dd.png)
+![image](https://user-images.githubusercontent.com/47096567/138532667-0495523e-6ca6-40ab-b49c-dcc2987104c2.png)
 
 ### Error Example
-![Error Example](https://user-images.githubusercontent.com/47096567/138364950-ba122529-06a3-41c3-a6ae-ce294b41387b.png)
+![image](https://user-images.githubusercontent.com/47096567/138532708-0d58e469-44d7-4de4-bf9a-0b48425eeea2.png)
 
 ### Log
-![Terminal Logs](https://user-images.githubusercontent.com/47096567/138364837-5c665a69-a9ae-49ff-8a5e-599e738ea4bd.png)
+![image](https://user-images.githubusercontent.com/47096567/138532723-7441026e-c21e-4a23-8cef-e5f446cf9f09.png)
 
 
 ##  Features
