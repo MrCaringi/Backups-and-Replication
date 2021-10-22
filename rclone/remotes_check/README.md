@@ -50,3 +50,4 @@ Delete text afte commas (,) in order to use it:
 ### Changelog
 - 2021-10-21	v1.0.0  First version
 - 2021-10-21	v1.0.1  Ending Notification message
+- 2021-10-22	v1.1.0  TOC Edition
