@@ -15,7 +15,7 @@ Internally it is a `rclone sync /origin/ /destination/` automation tool
 # How to Use
 ##  In the Terminal
 ```
-bash rclone_sync2.sh rclone_sync2.json
+bash rclone_sync.sh config.json
 ```
 Where:
 - "rclone_sync2.sh" is the script
