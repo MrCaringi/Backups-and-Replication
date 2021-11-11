@@ -41,12 +41,12 @@ Delete text afte commas (,) in order to use it:
     "selfHealingFeatures":{
         "DedupeFlags": "--dedupe-mode newest",
         "SourceDedupeText": [
-            "'Duplicate object found in source'",
-            "'Duplicate directory found in source'"
+            "Duplicate object found in source",
+            "Duplicate directory found in source"
         ],
         "DestinationeDedupeText": [
-            "'Duplicate directory found in destination'",
-            "'Duplicate object found in source'"
+            "Duplicate directory found in destination",
+            "Duplicate object found in source"
         ]
         },
     "folders": [
