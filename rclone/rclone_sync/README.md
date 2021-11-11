@@ -11,10 +11,11 @@ Internally it is a `rclone sync /origin/ /destination/` automation tool
 - v1.0  Feature: All-in-one code refactor
 - v1.1  Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 - v1.2  Feature: Global Flags can be used in a syncronization task
+- v1.4.0      Feature: Smart Dedupe based on `rclone sync` logs
 # How to Use
 ##  In the Terminal
 ```
-bash rclone_sync2.sh rclone_sync2.json
+bash rclone_sync.sh config.json
 ```
 Where:
 - "rclone_sync2.sh" is the script
@@ -37,17 +38,30 @@ Delete text afte commas (,) in order to use it:
         "ChatID": "-123456789",
         "APIkey": "123:ABCDE"
         },
+    "selfHealingFeatures":{
+        "DedupeFlags": "--dedupe-mode newest",
+        "SourceDedupeText": [
+            "'Duplicate object found in source'",
+            "'Duplicate directory found in source'"
+        ],
+        "DestinationeDedupeText": [
+            "'Duplicate directory found in destination'",
+            "'Duplicate object found in source'"
+        ]
+        },
     "folders": [
         {
             "From": "/local/path",
             "To": "remote1:",
             "EnableCustomFlags": true,
-            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx --max-transfer=670G --bwlimit=1G"
+            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx,svg --max-transfer=670G --bwlimit=1G",
+            "EnableSelfHealing": true
         },
         {
             "From": "remote1:",
             "To": "remote2:",
-            "EnableCustomFlags": false
+            "EnableCustomFlags": false,
+            "EnableSelfHealing": true
         },
         {
             "From": "remote2:",
@@ -73,10 +87,14 @@ Delete text afte commas (,) in order to use it:
 | telegram.Enable | true/false | Enable Telegram Notifications |
 | telegram.ChatID | Number | Number that identify Telegram Chat/Group (you can get this when you add the bot `@getmyid_bot` to your chat/group) |
 | telegram.APIkey | Text | Telegram Bot API Key |
+| selfHealingFeatures.DedupeFlags | Text | Parameters for `rclone dedupe` command |
+| selfHealingFeatures.SourceDedupeText |Text | List of strings used to detect if there duplicated files/folders in Source |
+| selfHealingFeatures.DestinationeDedupeText | Text | List of strings used to detect if there duplicated files/folders in Destination |
 | folders.From | path/remote | Origin |
 | folders.To | path/remote | Destination |
 | folders.EnableCustomFlags | true/false | if this parameter is equal to "**true**", then `folders.Flags`will be used as flags for `rclonce sync` command |
 | folders.Flags | text | if "**folders.EnableCustomFlags**" is enable for the task, this text will be used instead of `Config.DriveServerSide`, `Config.MaxTransfer` and `Config.BwLimit` parameters |
+| folders.EnableSelfHealing | true/false | Enable `rclone dedupe` command for remotes |
 
 ### Changelog
 - 2021-07-07  First version
@@ -90,3 +108,4 @@ Delete text afte commas (,) in order to use it:
 - 2021-08-11  v1.1      Feature: Bandwidth limit
 - 2021-08-23  v1.2      Feature: Task's flags
 - 2021-08-31  v1.3.1    Feature: Fewer Messages
+- 2021-11-11  v1.4.0      Feature: Smart Dedupe
