@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 ###############################
-#   v1.2
 #               RCLONE Cloud Replica
 #
 #   This script is for RCLONE SYNC your publics clouds
@@ -31,11 +30,12 @@
 #       2021-08-11  v1.1      Feature: Bandwidth limit
 #       2021-08-23  v1.2      Feature: Task's flags
 #       2021-08-31  v1.3.1    Feature: Fewer Messages
+#       2021-11-11  v1.4.0      Feature: Smart Dedup
 #
 ###############################
 
-    echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-08-30  v1.3.0    Feature: Fewer Messages"
-    VERSION="v1.3.1"
+    echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-11-11  v1.4.0      Feature: Smart Dedup"
+    VERSION="v1.4.0"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -66,8 +66,12 @@
     CHAT_ID=`cat $1 | jq --raw-output '.telegram.ChatID'`
     API_KEY=`cat $1 | jq --raw-output '.telegram.APIkey'`
 
+    #   Self-Healing Config
+    DedupeFlags=`cat $1 | jq --raw-output '.selfHealingFeatures.DedupeFlags'`
+
+
 ##  Telegram Notification Functions
-    function TelegramSendMessage(){
+    function TelegramSendMessage {
         #   Variables
         HEADER=${1}
         LINE1=${2}
@@ -88,7 +92,7 @@
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
-    function TelegramSendFile(){
+    function TelegramSendFile {
         #   Variables
         FILE=${1}
         HEADER=${2}
@@ -105,6 +109,67 @@
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}"$'\n'"${LINE2}"$'\n'"${LINE3}"$'\n'"${LINE4}"$'\n'"${LINE5}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument
 }
+
+##  Dedup Check functions
+    function CheckDuplicatedSource {
+        #   Variables
+        CONFIG=${1}
+        TEXT=${2}
+        Result=0
+        N=0
+        j=0
+        N=`jq '.selfHealingFeatures.SourceDedupeText | length ' $1`
+        [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedSource"
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $N $j
+        while [ $j -lt $N ]
+        do
+            #   Getting the text to evaluate
+            DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.SourceDedupeText[$j]"`
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Using DedupeText (${j}): " ${DedupeText}
+            grep -qi "${DedupeText}" ${TEXT}
+            if [ $? -eq 0 ]; then
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Duplication in Source detected: "${DedupeText}
+                    if [ $Result -eq 0 ]; then
+                        Result=10
+                    fi
+                else
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      DedupeText Not Found!"
+            fi
+            j=$(($j + 1))
+        done
+        return ${Result}
+    }
+
+    function CheckDuplicatedDestination {
+        #   Variables
+        CONFIG=${1}
+        TEXT=${2}
+        Result=0
+        N=0
+        j=0
+        N=`jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1`
+        [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedDestination"
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $N $j
+        while [ $j -lt $N ]
+        do
+            #   Getting the text to evaluate
+            DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.DestinationeDedupeText[$j]"`
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Using DedupeText (${j}): " ${DedupeText}
+            grep -qi "${DedupeText}" ${TEXT}
+            if [ $? -eq 0 ]; then
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Duplication in Source detected: "${DedupeText}
+                    if [ $Result -eq 0 ]; then
+                        Result=10
+                    fi
+                else
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      DedupeText Not Found!"
+            fi
+            j=$(($j + 1))
+        done
+
+        return ${Result}
+    }
+
 
 #   Start
     echo "################################################"
@@ -136,6 +201,8 @@
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DriveServerSide:"$DriveServerSide
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	MaxTransfer:"$MaxTransfer
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	BwLimit:"$BwLimit
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DedupeFlags:"$DedupeFlags
+
 
 
     #	CHECKING FOR ANOTHER INSTANCES
@@ -143,14 +210,14 @@
         echo "checking for another intances"
 
         if [ -f ${INSTANCE_FILE}  ];then
-            echo $(date +"%Y%m%d %H:%M:%S")"    ERROR: An another instance of this script is already running, if it not right, please remove the file $INSTANCE_FILE"
+            echo $(date +%Y-%m-%d_%H:%M:%S)"    ERROR: An another instance of this script is already running, if it not right, please remove the file $INSTANCE_FILE"
             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Total Task: ${N}" " " "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
             exit 1
             else
-                echo $(date +"%Y%m%d %H:%M:%S")"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
+                echo $(date +%Y-%m-%d_%H:%M:%S)"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
         fi
         #   Creating the *.temp file
-        echo $(date +"%Y%m%d %H:%M:%S")"    INFO: creating the $INSTANCE_FILE file."
+        echo $(date +%Y-%m-%d_%H:%M:%S)"    INFO: creating the $INSTANCE_FILE file."
         touch $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not create $INSTANCE_FILE"
@@ -175,6 +242,7 @@
         DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
         EnableCustomFlags=`cat $1 | jq --raw-output ".folders[$i].EnableCustomFlags"`
         Flags=`cat $1 | jq --raw-output ".folders[$i].Flags"`
+        EnableSelfHealing=`cat $1 | jq --raw-output ".folders[$i].EnableSelfHealing"`
         echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
 		#   For Debug purposes
@@ -184,7 +252,8 @@
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	N="$N
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	i="$i
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableCustomFlags="$EnableCustomFlags
-            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Flags="$Flags 
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Flags="$Flags
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableSelfHealing="$EnableSelfHealing
         
 		#   Initializing the log file
             LOG_DATE="task_${I}_$(date +%Y%m%d-%H%M%S)"
@@ -203,7 +272,7 @@
                 #	If rclone failed/warned notify
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                 fi
             else
                 #   No Custom Flags for the task
@@ -212,10 +281,34 @@
                 #	If rclone failed/warned notify
                 if [ $? -ne 0 ]; then
                     echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                 fi
         fi
         
+        #   Smart Self-Healing
+            if [ $EnableSelfHealing == true ]; then
+
+                #   Verifying if there is duplicated files in Source
+                    CheckDuplicatedSource $1 log_${LOG_DATE}.log
+                    if [ $? -eq 10 ]; then
+                        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	There is duplicated files in Source"
+                        touch dedupe_o_log_${LOG_DATE}.log
+                        rclone dedupe ${DedupeFlags} ${DIR_O} --log-file=dedupe_o_log_${LOG_DATE}.log
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_o_log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_O}"  >/dev/null 2>&1
+                        rm dedupe_o_log_${LOG_DATE}.log
+                    fi
+
+                #   Verifying if there is duplicated files in Destination
+                    CheckDuplicatedDestination $1 log_${LOG_DATE}.log
+                    if [ $? -eq 10 ]; then
+                        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	There is duplicated files in Destination"
+                        touch dedupe_d_log_${LOG_DATE}.log
+                        clone dedupe ${DedupeFlags} ${DIR_D} --log-file=dedupe_d_log_${LOG_DATE}.log
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_d_log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_D}"  >/dev/null 2>&1
+                        rm dedupe_d_log_${LOG_DATE}.log
+                    fi
+            fi
+
         #   Elapsed time calculation for the iteration
             TIMEi_END=$(date +%s)
             TIMEi_ELAPSE=$(date -u -d "0 $TIMEi_END seconds - $TIMEi_START seconds" +"%T")
@@ -263,6 +356,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
+    echo "#                 ${VERSION}                       #"
     echo "#                                              #"
     echo "################################################"
 

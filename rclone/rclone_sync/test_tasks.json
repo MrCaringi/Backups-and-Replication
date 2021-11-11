@@ -12,17 +12,30 @@
         "ChatID": "-123456789",
         "APIkey": "123:ABCDE"
         },
+    "selfHealingFeatures":{
+        "DedupeFlags": "--dedupe-mode newest",
+        "SourceDedupeText": [
+            "'Duplicate object found in source'",
+            "'Duplicate directory found in source'"
+        ],
+        "DestinationeDedupeText": [
+            "'Duplicate directory found in destination'",
+            "'Duplicate object found in source'"
+        ]
+        },
     "folders": [
         {
             "From": "/local/path",
             "To": "remote1:",
             "EnableCustomFlags": true,
-            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx,svg --max-transfer=670G --bwlimit=1G"
+            "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx,svg --max-transfer=670G --bwlimit=1G",
+            "EnableSelfHealing": true
         },
         {
             "From": "remote1:",
             "To": "remote2:",
-            "EnableCustomFlags": false
+            "EnableCustomFlags": false,
+            "EnableSelfHealing": true
         },
         {
             "From": "remote2:",
