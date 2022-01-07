@@ -24,18 +24,22 @@
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
 #       2021-08-04  v0.4.1  Elapsed time in notification
-#       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
+#       2021-08-06  v0.4.2.3  Including DAYS in Elapsed time in notification
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-#       2021-08-10  v1.0.1.1      All-in-one
+#       2021-08-10  v1.0.1.1  All-in-one
 #       2021-08-11  v1.1      Feature: Bandwidth limit
 #       2021-08-23  v1.2      Feature: Task's flags
 #       2021-08-31  v1.3.1    Feature: Fewer Messages
-#       2021-11-11  v1.4.0      Feature: Smart Dedup
+#       2021-11-11  v1.4.0    Feature: Smart Dedup
+#       2022-01-06  v1.5.0    Fix: Single Task
 #
 ###############################
 
-    echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-11-11  v1.4.0      Feature: Smart Dedup"
-    VERSION="v1.4.0"
+##  Version vars
+    VERSION="v1.5.0"
+    VERSION_TEXT="Fix: Single Task"
+    echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
+    
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -108,7 +112,7 @@
         -F document=@${FILE} \
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}"$'\n'"${LINE2}"$'\n'"${LINE3}"$'\n'"${LINE4}"$'\n'"${LINE5}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument
-}
+    }
 
 ##  Dedup Check functions
     function CheckDuplicatedSource {
@@ -116,12 +120,12 @@
         CONFIG=${1}
         TEXT=${2}
         Result=0
-        N=0
+        Nd=0
         j=0
-        N=`jq '.selfHealingFeatures.SourceDedupeText | length ' $1`
+        Nd=`jq '.selfHealingFeatures.SourceDedupeText | length ' $1`
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedSource"
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $N $j
-        while [ $j -lt $N ]
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $Nd $j
+        while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
             DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.SourceDedupeText[$j]"`
@@ -145,12 +149,12 @@
         CONFIG=${1}
         TEXT=${2}
         Result=0
-        N=0
+        Nd=0
         j=0
-        N=`jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1`
+        Nd=`jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1`
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedDestination"
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $N $j
-        while [ $j -lt $N ]
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $Nd $j
+        while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
             DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.DestinationeDedupeText[$j]"`
@@ -225,25 +229,26 @@
             exit 1
         fi
     
-    #   Notify
+    #   Notify Version
         [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "Release Version: ${VERSION}" >/dev/null 2>&1 
 
     while [ $i -lt $N ]
     do
-        echo "================================================"
-        I=$((i+1))
-        echo $(date +%Y-%m-%d_%H:%M:%S)"	Task: ${I} of ${N}"
+        #   Staring VARS
+            echo "================================================"
+            I=$((i+1))
+            echo $(date +%Y-%m-%d_%H:%M:%S)"	Task: ${I} of ${N}"
         #   Iteration time
             TIMEi_START=$(date +%s)
             DATEi_START=$(date +%F)
 
 		#	Getting From/To Directory
-        DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
-        DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
-        EnableCustomFlags=`cat $1 | jq --raw-output ".folders[$i].EnableCustomFlags"`
-        Flags=`cat $1 | jq --raw-output ".folders[$i].Flags"`
-        EnableSelfHealing=`cat $1 | jq --raw-output ".folders[$i].EnableSelfHealing"`
-        echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
+            DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
+            DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
+            EnableCustomFlags=`cat $1 | jq --raw-output ".folders[$i].EnableCustomFlags"`
+            Flags=`cat $1 | jq --raw-output ".folders[$i].Flags"`
+            EnableSelfHealing=`cat $1 | jq --raw-output ".folders[$i].EnableSelfHealing"`
+            echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
 		#   For Debug purposes
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DIR_O:"$DIR_O
@@ -265,25 +270,25 @@
             fi
 
 		##	RCLONE Command
-        if [ $EnableCustomFlags == true ]; then
-                #   There is Custom Flags for the task
-                [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableCustomFlags parameter is enable (true)"
-                rclone sync ${DIR_O} ${DIR_D} ${Flags} --log-file=log_${LOG_DATE}.log
-                #	If rclone failed/warned notify
-                if [ $? -ne 0 ]; then
-                    echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
-                fi
-            else
-                #   No Custom Flags for the task
-                [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableCustomFlags paremeter is disabled (false)"
-                rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit} --log-file=log_${LOG_DATE}.log
-                #	If rclone failed/warned notify
-                if [ $? -ne 0 ]; then
-                    echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
-                fi
-        fi
+            if [ $EnableCustomFlags == true ]; then
+                    #   There is Custom Flags for the task
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableCustomFlags parameter is enable (true)"
+                    rclone sync ${DIR_O} ${DIR_D} ${Flags} --log-file=log_${LOG_DATE}.log
+                    #	If rclone failed/warned notify
+                    if [ $? -ne 0 ]; then
+                        echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    fi
+                else
+                    #   No Custom Flags for the task
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableCustomFlags paremeter is disabled (false)"
+                    rclone sync ${DIR_O} ${DIR_D} --drive-server-side-across-configs=${DriveServerSide} --max-transfer=${MaxTransfer} --bwlimit=${BwLimit} --log-file=log_${LOG_DATE}.log
+                    #	If rclone failed/warned notify
+                    if [ $? -ne 0 ]; then
+                        echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                    fi
+            fi
         
         #   Smart Self-Healing
             if [ $EnableSelfHealing == true ]; then
@@ -331,9 +336,11 @@
             
         #   Flushing & Deleting the file
             rm log_${LOG_DATE}.log
+        
 		sleep $WAIT
         echo $(date +%Y-%m-%d_%H:%M:%S)"	Finished RCLONE from: ${DIR_O} to: ${DIR_D}"
         i=$(($i + 1))
+        
     done
     
 ##   The end
