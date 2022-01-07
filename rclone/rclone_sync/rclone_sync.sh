@@ -24,18 +24,22 @@
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-21  v0.3    Improving concurrence instances validation
 #       2021-08-04  v0.4.1  Elapsed time in notification
-#       2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
+#       2021-08-06  v0.4.2.3  Including DAYS in Elapsed time in notification
 #       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-#       2021-08-10  v1.0.1.1      All-in-one
+#       2021-08-10  v1.0.1.1  All-in-one
 #       2021-08-11  v1.1      Feature: Bandwidth limit
 #       2021-08-23  v1.2      Feature: Task's flags
 #       2021-08-31  v1.3.1    Feature: Fewer Messages
-#       2021-11-11  v1.4.0      Feature: Smart Dedup
+#       2021-11-11  v1.4.0    Feature: Smart Dedup
+#       2022-01-06  v1.5.0    Fix: Single Task
 #
 ###############################
 
-    echo $(date +%Y-%m-%d_%H:%M:%S)"	2021-11-11  v1.4.0      Feature: Smart Dedup"
-    VERSION="v1.4.0"
+##  Version vars
+    VERSION="v1.5.0"
+    VERSION_TEXT="Fix: Single Task"
+    echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
+    
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
