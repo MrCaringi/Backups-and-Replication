@@ -11,7 +11,8 @@ Internally it is a `rclone sync /origin/ /destination/` automation tool
 - v1.0  Feature: All-in-one code refactor
 - v1.1  Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 - v1.2  Feature: Global Flags can be used in a syncronization task
-- v1.4.0      Feature: Smart Dedupe based on `rclone sync` logs
+- v1.4.0    Feature: Smart Dedupe based on `rclone sync` logs
+- v1.5.0    Fix: Single Task
 # How to Use
 ##  In the Terminal
 ```
@@ -104,8 +105,9 @@ Delete text afte commas (,) in order to use it:
 - 2021-08-04  v0.4.1  Elapsed time in notification
 - 2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
 - 2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-- 2021-08-10  v1.0.1.1      All-in-one
+- 2021-08-10  v1.0.1.1  All-in-one
 - 2021-08-11  v1.1      Feature: Bandwidth limit
 - 2021-08-23  v1.2      Feature: Task's flags
 - 2021-08-31  v1.3.1    Feature: Fewer Messages
-- 2021-11-11  v1.4.0      Feature: Smart Dedupe
+- 2021-11-11  v1.4.0    Feature: Smart Dedupe
+- 2022-01-06  v1.5.0    Fix: Single Task
