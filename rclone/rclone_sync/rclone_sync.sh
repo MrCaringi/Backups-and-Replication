@@ -32,12 +32,13 @@
 #       2021-08-31  v1.3.1    Feature: Fewer Messages
 #       2021-11-11  v1.4.0    Feature: Smart Dedup
 #       2022-01-06  v1.5.0    Fix: Single Task
+#       2022-02-15  v1.5.1    Fix: Dedupe Syntax
 #
 ###############################
 
 ##  Version vars
-    VERSION="v1.5.0"
-    VERSION_TEXT="Fix: Single Task"
+    VERSION="v1.5.1"
+    VERSION_TEXT="Fix: Dedupe Syntax"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
@@ -124,20 +125,20 @@
         j=0
         Nd=`jq '.selfHealingFeatures.SourceDedupeText | length ' $1`
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedSource"
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $Nd $j
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     N / j:" $Nd $j
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
             DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.SourceDedupeText[$j]"`
-            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Using DedupeText (${j}): " ${DedupeText}
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Duplication in Source detected: "${DedupeText}
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Duplication in Source detected: "${DedupeText}
                     if [ $Result -eq 0 ]; then
                         Result=10
                     fi
                 else
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      DedupeText Not Found!"
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     DedupeText Not Found!"
             fi
             j=$(($j + 1))
         done
@@ -153,20 +154,20 @@
         j=0
         Nd=`jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1`
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedDestination"
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $Nd $j
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     N / j:" $Nd $j
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
             DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.DestinationeDedupeText[$j]"`
-            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Using DedupeText (${j}): " ${DedupeText}
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Duplication in Source detected: "${DedupeText}
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Duplication in Source detected: "${DedupeText}
                     if [ $Result -eq 0 ]; then
                         Result=10
                     fi
                 else
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      DedupeText Not Found!"
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     DedupeText Not Found!"
             fi
             j=$(($j + 1))
         done
@@ -218,10 +219,10 @@
             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Total Task: ${N}" " " "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
             exit 1
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
+                echo $(date +%Y-%m-%d_%H:%M:%S)"     INFO: NO another instance is running. No $INSTANCE_FILE file was found."
         fi
         #   Creating the *.temp file
-        echo $(date +%Y-%m-%d_%H:%M:%S)"    INFO: creating the $INSTANCE_FILE file."
+        echo $(date +%Y-%m-%d_%H:%M:%S)"     INFO: creating the $INSTANCE_FILE file."
         touch $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not create $INSTANCE_FILE"
@@ -277,7 +278,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                     fi
                 else
                     #   No Custom Flags for the task
@@ -286,7 +287,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                     fi
             fi
         
@@ -308,7 +309,7 @@
                     if [ $? -eq 10 ]; then
                         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	There is duplicated files in Destination"
                         touch dedupe_d_log_${LOG_DATE}.log
-                        clone dedupe ${DedupeFlags} ${DIR_D} --log-file=dedupe_d_log_${LOG_DATE}.log
+                        rclone dedupe ${DedupeFlags} ${DIR_D} --log-file=dedupe_d_log_${LOG_DATE}.log
                         [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_d_log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_D}"  >/dev/null 2>&1
                         rm dedupe_d_log_${LOG_DATE}.log
                     fi
@@ -346,7 +347,7 @@
 ##   The end
     echo $(date +%Y-%m-%d_%H:%M:%S)"	RCLONE Finished Task: ${I} of ${N}"
     #   Deleting the *.temp file
-        echo $(date +"%Y-%m-%d_%H:%M:%S")"    INFO: Deleting the $INSTANCE_FILE file."
+        echo $(date +"%Y-%m-%d_%H:%M:%S")"     INFO: Deleting the $INSTANCE_FILE file."
         rm $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not remove $INSTANCE_FILE"
