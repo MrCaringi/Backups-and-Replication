@@ -125,20 +125,20 @@
         j=0
         Nd=`jq '.selfHealingFeatures.SourceDedupeText | length ' $1`
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedSource"
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $Nd $j
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     N / j:" $Nd $j
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
             DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.SourceDedupeText[$j]"`
-            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Using DedupeText (${j}): " ${DedupeText}
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Duplication in Source detected: "${DedupeText}
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Duplication in Source detected: "${DedupeText}
                     if [ $Result -eq 0 ]; then
                         Result=10
                     fi
                 else
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      DedupeText Not Found!"
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     DedupeText Not Found!"
             fi
             j=$(($j + 1))
         done
@@ -154,20 +154,20 @@
         j=0
         Nd=`jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1`
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedDestination"
-        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      N / j:" $Nd $j
+        [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     N / j:" $Nd $j
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
             DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.DestinationeDedupeText[$j]"`
-            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Using DedupeText (${j}): " ${DedupeText}
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      Duplication in Source detected: "${DedupeText}
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Duplication in Source detected: "${DedupeText}
                     if [ $Result -eq 0 ]; then
                         Result=10
                     fi
                 else
-                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"      DedupeText Not Found!"
+                    [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     DedupeText Not Found!"
             fi
             j=$(($j + 1))
         done
@@ -219,10 +219,10 @@
             [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Total Task: ${N}" " " "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
             exit 1
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"    INFO: NO another instance is running. No $INSTANCE_FILE file was found."
+                echo $(date +%Y-%m-%d_%H:%M:%S)"     INFO: NO another instance is running. No $INSTANCE_FILE file was found."
         fi
         #   Creating the *.temp file
-        echo $(date +%Y-%m-%d_%H:%M:%S)"    INFO: creating the $INSTANCE_FILE file."
+        echo $(date +%Y-%m-%d_%H:%M:%S)"     INFO: creating the $INSTANCE_FILE file."
         touch $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not create $INSTANCE_FILE"
@@ -347,7 +347,7 @@
 ##   The end
     echo $(date +%Y-%m-%d_%H:%M:%S)"	RCLONE Finished Task: ${I} of ${N}"
     #   Deleting the *.temp file
-        echo $(date +"%Y-%m-%d_%H:%M:%S")"    INFO: Deleting the $INSTANCE_FILE file."
+        echo $(date +"%Y-%m-%d_%H:%M:%S")"     INFO: Deleting the $INSTANCE_FILE file."
         rm $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not remove $INSTANCE_FILE"

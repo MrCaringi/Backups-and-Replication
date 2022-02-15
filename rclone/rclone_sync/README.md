@@ -2,25 +2,25 @@
 I needed a way to syncronize several public clouds folders (team drive for example) for backup purposes.
 # RCLONE REPLICATION Script
 This is a (very simple) Bash script for syncing directories with rclone remotes or remote-to-remote.
-Internally it is a `rclone sync /origin/ /destination/` automation tool
-##  Features
-- Can send Telegram Notifications (message and log files)
-- Validates parallel intances
-- origin/remote folder can be easily modificable (for example when a Team Drive is lost)
-- v0.4  Feature: Time Elapsed included in logs and notification
-- v1.0  Feature: All-in-one code refactor
-- v1.1  Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
-- v1.2  Feature: Global Flags can be used in a syncronization task
+Internally it is (basically) a `rclone sync /origin/ /destination/` automation tool
+##  Main (versioned) Features
+- Can send Telegram Notifications (messages and log files)
+- Validates parallel intances (in order to prevent conflicts)
+- origin/remote folder can be easily modificable (for example when a Team Drive is lost, you can remove/add new ones)
+- v0.4.0    Feature: Time Elapsed included in logs and notification
+- v1.0.0    Feature: All-in-one code refactor
+- v1.1.0    Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
+- v1.2.0    Feature: Global Flags can be used in a syncronization task
 - v1.4.0    Feature: Smart Dedupe based on `rclone sync` logs
-- v1.5.0    Fix: Single Task
+
 # How to Use
 ##  In the Terminal
 ```
 bash rclone_sync.sh config.json
 ```
 Where:
-- "rclone_sync2.sh" is the script
-- "rclone_sync2.json" is the configuration file
+- "rclone_sync.sh" is the script
+- "config.json" is the configuration file
 
 ##  How to fill the config file (rclone_sync2.json)
 Delete text afte commas (,) in order to use it:
@@ -111,3 +111,4 @@ Delete text afte commas (,) in order to use it:
 - 2021-08-31  v1.3.1    Feature: Fewer Messages
 - 2021-11-11  v1.4.0    Feature: Smart Dedupe
 - 2022-01-06  v1.5.0    Fix: Single Task
+- 2022-02-15  v1.5.1    Fix: Dedupe Syntax
