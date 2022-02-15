@@ -32,12 +32,13 @@
 #       2021-08-31  v1.3.1    Feature: Fewer Messages
 #       2021-11-11  v1.4.0    Feature: Smart Dedup
 #       2022-01-06  v1.5.0    Fix: Single Task
+#       2022-02-15  v1.5.1    Fix: Dedupe Syntax
 #
 ###############################
 
 ##  Version vars
-    VERSION="v1.5.0"
-    VERSION_TEXT="Fix: Single Task"
+    VERSION="v1.5.1"
+    VERSION_TEXT="Fix: Dedupe Syntax"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
@@ -277,7 +278,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                     fi
                 else
                     #   No Custom Flags for the task
@@ -286,7 +287,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during RSYNCing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
                     fi
             fi
         
@@ -308,7 +309,7 @@
                     if [ $? -eq 10 ]; then
                         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	There is duplicated files in Destination"
                         touch dedupe_d_log_${LOG_DATE}.log
-                        clone dedupe ${DedupeFlags} ${DIR_D} --log-file=dedupe_d_log_${LOG_DATE}.log
+                        rclone dedupe ${DedupeFlags} ${DIR_D} --log-file=dedupe_d_log_${LOG_DATE}.log
                         [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_d_log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_D}"  >/dev/null 2>&1
                         rm dedupe_d_log_${LOG_DATE}.log
                     fi
