@@ -25,6 +25,10 @@
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         },
         {
@@ -43,6 +47,10 @@
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --repository-only --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         }
     ]
