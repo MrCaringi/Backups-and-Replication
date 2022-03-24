@@ -6,6 +6,7 @@ Bash Script for Borg Backup, Prune and Check
 - `borg create`     https://borgbackup.readthedocs.io/en/stable/usage/create.html
 - `borg prune`      https://borgbackup.readthedocs.io/en/stable/usage/prune.html
 - `borg check`      https://borgbackup.readthedocs.io/en/stable/usage/check.html
+- `borg compact`    https://borgbackup.readthedocs.io/en/stable/usage/compact.html
 
 ## How to Use
 Open your terminal, then run
@@ -49,6 +50,10 @@ Example
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         },
         {
@@ -67,6 +72,10 @@ Example
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         }    
     ]
@@ -90,6 +99,8 @@ Example
 | Task.BorgPrune.Options | Text | `borg prune` Options https://borgbackup.readthedocs.io/en/stable/usage/prune.html |
 | Task.BorgCheck.Enable | true / false | Enable Backup Check for this task |
 | Task.BorgCheck.Options | Text | `borg check` Options https://borgbackup.readthedocs.io/en/stable/usage/check.html
+| Task.BorgCompact.Enable | true / false | Enable Compact for this task |
+| Task.BorgCompact.Options | Text | `borg compact` Options https://borgbackup.readthedocs.io/en/stable/usage/compact.html
 
 ##  Version Story
 - 2020-04-24  First version
@@ -100,3 +111,4 @@ Example
 - 2021-08-24  v1.1.1    Feature: Fewer Telegram Messages
 - 2021-09-10  v1.2.0    Feature: Number of Files
 - 2021-09-15  v1.2.1    Bug: Number of Files reset
+- 2022-03-23  v1.3.0    Feature: new `Compact` command for borg version 1.2+
