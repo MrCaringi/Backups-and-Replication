@@ -152,11 +152,11 @@
                 CHECK_STATUS="DISABLED"
                 FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
                 # Setting this, so the repo does not need to be given on the command line:
-                export BORG_REPO
+                    export BORG_REPO
                 # Setting this, so you won't be asked for your repository passphrase:
-                export BORG_PASSPHRASE
-
-                [ $Check_IKWID == true ] && BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES && export BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
+                    export BORG_PASSPHRASE
+                # Setting this,  automatic “answerers” for For “This is a potentially dangerous function…” (check –repair)
+                    [ $Check_IKWID == true ] && BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES && export BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
 
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
