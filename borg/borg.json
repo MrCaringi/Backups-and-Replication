@@ -1,7 +1,8 @@
 {
     "GeneralConfig":{
         "Debug": true,
-        "Wait": 2
+        "Wait": 2,
+        "Check_IKWID": false
         },
     "Telegram":{
         "Enable": true,

@@ -18,6 +18,7 @@ bash /path/borg.sh /path/borg.json
 1 .json file
 
 ### Packages requirement
+- `borg`  Main program
 - `jq`    Package for json data parsing
 
 ##  How to fill the config file (.json)
@@ -26,7 +27,8 @@ Example
 {
     "GeneralConfig":{
         "Debug": true,
-        "Wait": 2
+        "Wait": 2,
+        "Check_IKWID": false
         },
     "Telegram":{
         "Enable": true,
@@ -86,6 +88,7 @@ Example
 |---------------------- | -----------| ---------------------------------|
 | GeneralConfig.Debug | true / false | Enable more verbosity in the program log |
 | GeneralConfig.Wait | number | Seconds to wait between task |
+| GeneralConfig.Check_IKWID | true / false | Enable the export of the variable `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES` https://borgbackup.readthedocs.io/en/stable/usage/general.html |
 | Telegram.Enable | true / false | Enable Telegram Notifications |
 | Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
 | Telegram.APIkey | alphanumeric | Telegram Bot API Key |

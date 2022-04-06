@@ -48,8 +48,9 @@
 
 ##      Getting the Main Configuration
     #   General Config
-    DEBUG=`cat $1 | jq --raw-output '.GeneralConfig.Debug'`
-    WAIT=`cat $1 | jq --raw-output '.GeneralConfig.Wait'`
+    DEBUG=$(cat $1 | jq --raw-output '.GeneralConfig.Debug')
+    WAIT=$(cat $1 | jq --raw-output '.GeneralConfig.Wait')
+    Check_IKWID=$(cat $1 | jq --raw-output '.GeneralConfig.Check_IKWID')
     
     #   Telegram Config
     ENABLE_MESSAGE=`cat $1 | jq --raw-output '.Telegram.Enable'`
@@ -104,6 +105,7 @@
 	#   For Debug purposes
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG: "$DEBUG
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	WAIT: "$WAIT
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Check_IKWID: "$Check_IKWID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE: "$ENABLE_MESSAGE
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID: "$CHAT_ID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY: "$API_KEY
@@ -154,10 +156,13 @@
                 # Setting this, so you won't be asked for your repository passphrase:
                 export BORG_PASSPHRASE
 
+                [ $Check_IKWID == true ] && BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES && export BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
+
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO: "$BORG_REPO
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE: "$BORG_PASSPHRASE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_CHECK_I_KNOW_WHAT_I_AM_DOING: "$BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PREFIX: "$PREFIX
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ENABLE: "$CREATE_ENABLE
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ARCHIVE: "$CREATE_ARCHIVE
