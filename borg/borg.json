@@ -1,7 +1,8 @@
 {
     "GeneralConfig":{
         "Debug": true,
-        "Wait": 2
+        "Wait": 2,
+        "Check_IKWID": false
         },
     "Telegram":{
         "Enable": true,
@@ -25,6 +26,10 @@
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         },
         {
@@ -43,6 +48,10 @@
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --repository-only --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         }
     ]

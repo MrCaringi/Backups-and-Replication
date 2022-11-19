@@ -6,6 +6,7 @@ Bash Script for Borg Backup, Prune and Check
 - `borg create`     https://borgbackup.readthedocs.io/en/stable/usage/create.html
 - `borg prune`      https://borgbackup.readthedocs.io/en/stable/usage/prune.html
 - `borg check`      https://borgbackup.readthedocs.io/en/stable/usage/check.html
+- `borg compact`    https://borgbackup.readthedocs.io/en/stable/usage/compact.html
 
 ## How to Use
 Open your terminal, then run
@@ -17,6 +18,7 @@ bash /path/borg.sh /path/borg.json
 1 .json file
 
 ### Packages requirement
+- `borg`  Main program
 - `jq`    Package for json data parsing
 
 ##  How to fill the config file (.json)
@@ -25,7 +27,8 @@ Example
 {
     "GeneralConfig":{
         "Debug": true,
-        "Wait": 2
+        "Wait": 2,
+        "Check_IKWID": false
         },
     "Telegram":{
         "Enable": true,
@@ -49,6 +52,10 @@ Example
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         },
         {
@@ -67,6 +74,10 @@ Example
             "BorgCheck":{
                 "Enable": true,
                 "Options": "-v --verify-data --show-rc"
+                },
+            "BorgCompact":{
+                "Enable": true,
+                "Options": "--cleanup-commits --threshold 10"
                 }
         }    
     ]
@@ -77,6 +88,7 @@ Example
 |---------------------- | -----------| ---------------------------------|
 | GeneralConfig.Debug | true / false | Enable more verbosity in the program log |
 | GeneralConfig.Wait | number | Seconds to wait between task |
+| GeneralConfig.Check_IKWID | true / false | Enable the export of the variable `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES` https://borgbackup.readthedocs.io/en/stable/usage/general.html |
 | Telegram.Enable | true / false | Enable Telegram Notifications |
 | Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
 | Telegram.APIkey | alphanumeric | Telegram Bot API Key |
@@ -90,6 +102,8 @@ Example
 | Task.BorgPrune.Options | Text | `borg prune` Options https://borgbackup.readthedocs.io/en/stable/usage/prune.html |
 | Task.BorgCheck.Enable | true / false | Enable Backup Check for this task |
 | Task.BorgCheck.Options | Text | `borg check` Options https://borgbackup.readthedocs.io/en/stable/usage/check.html
+| Task.BorgCompact.Enable | true / false | Enable Compact for this task |
+| Task.BorgCompact.Options | Text | `borg compact` Options https://borgbackup.readthedocs.io/en/stable/usage/compact.html
 
 ##  Version Story
 - 2020-04-24  First version
@@ -100,3 +114,4 @@ Example
 - 2021-08-24  v1.1.1    Feature: Fewer Telegram Messages
 - 2021-09-10  v1.2.0    Feature: Number of Files
 - 2021-09-15  v1.2.1    Bug: Number of Files reset
+- 2022-03-23  v1.3.0    Feature: new `Compact` command for borg version 1.2+
