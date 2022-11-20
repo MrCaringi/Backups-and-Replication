@@ -339,9 +339,6 @@
                         echo $(date +%Y%m%d-%H%M%S)"	BORG CHECK BACKUP is disabled for Task: ${I} of ${N}"
                 fi
 
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	COMPACT_ENABLE: "$COMPACT_ENABLE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	COMPACT_OPTIONS: "$COMPACT_OPTIONS
-
             #   Borg Compact
                 if [ $COMPACT_ENABLE == true ]; then
                     #   Initial Notification
