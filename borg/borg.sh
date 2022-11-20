@@ -8,7 +8,7 @@
 #	    bash borg-b.sh borg-b.json
 #
 #   How to download and update to the lastest version of this script
-#       wget https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/testing/borg/borg.sh && chmod +x borg.sh
+#       wget https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/borg/borg.sh && chmod +x borg.sh
 #
 #	Paremeters
 #	    1 $1 - .json file for configuration
