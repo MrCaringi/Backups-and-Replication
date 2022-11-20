@@ -23,9 +23,9 @@
 #       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
 #       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
 #       2022-03-23  v1.3.0  Feature: Compact    borg_feature_v1.3.0_compact
-#       2022-11-18  v1.4.0    Feature: using `--glob-archives` instead of `--prefix`
+#       2022-11-18  v1.4.0  Feature: new jq package valitation / migrating to --glob-archives / improving telegram logs
 ###############################
-    
+
 #   Current Version
     VERSION="v1.4.0"
 ##      In First place: verify Input and "jq" package
@@ -216,7 +216,7 @@
                         echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
                     #   Getting some info from borg create log
-                        NUMBER_FILES=$(grep "Number of files:" log BORG_log_${LOG_DATE}.log | awk '{print $NF}')
+                        NUMBER_FILES=$(grep "Number of files:" BORG_log_${LOG_DATE}.log | awk '{print $NF}')
                         CREATE_SIZE=$(grep "This archive:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
                         CREATE_ALL_DEDUP_SIZE="${CREATE_SIZE}"
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Number of Files: ${NUMBER_FILES}"
@@ -260,7 +260,7 @@
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Prune Command
-                        borg prune --prefix ${PREFIX} ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
+                        borg prune --glob-archives ${PREFIX} ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_prune_exit=$?
                     
                     #   Elapsed time calculation for the iteration
@@ -357,7 +357,7 @@
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Compact Command
-                        borg compact --prefix ${PREFIX} ${COMPACT_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
+                        borg compact ${COMPACT_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_compact_exit=$?
                     
                     #   Elapsed time calculation for the iteration
