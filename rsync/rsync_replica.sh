@@ -62,7 +62,7 @@ HOST=`cat $1 | jq --raw-output '.destination.Host'`
 RSYNCUSER=`cat $1 | jq --raw-output '.destination.RsyncUser'`
 RSYNCPASS=`cat $1 | jq --raw-output '.destination.RsyncPass'`
 IPRSYNC=`cat $1 | jq --raw-output '.destination.IPDest'`
-MAC=`cat $1 | jq --raw-output '.destination.MAC'`
+AC=`cat $1 | jq --raw-output '.destination.MAC'`
 
 ##   Starting WOL
     echo "=============================================================================="

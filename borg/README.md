@@ -1,12 +1,12 @@
 # Borg Backup Script
-Bash Script for Borg Backup, Prune and Check
+Bash Script for Borg Backup, Prune, Compact and Check
 
 ##   BEWARE!
-**Before use, and in order to make your life easier, learn how to manually use at least these three Borg Commands:**
+**Before use, and in order to make your life easier, learn how to manually use at least these four Borg Commands:**
 - `borg create`     https://borgbackup.readthedocs.io/en/stable/usage/create.html
 - `borg prune`      https://borgbackup.readthedocs.io/en/stable/usage/prune.html
-- `borg check`      https://borgbackup.readthedocs.io/en/stable/usage/check.html
 - `borg compact`    https://borgbackup.readthedocs.io/en/stable/usage/compact.html
+- `borg check`      https://borgbackup.readthedocs.io/en/stable/usage/check.html
 
 ## How to Use
 Open your terminal, then run
@@ -115,3 +115,4 @@ Example
 - 2021-09-10  v1.2.0    Feature: Number of Files
 - 2021-09-15  v1.2.1    Bug: Number of Files reset
 - 2022-03-23  v1.3.0    Feature: new `Compact` command for borg version 1.2+
+- 2022-11-18  v1.4.0    Feature: new `jq` package valitation / migrating to `--glob-archives` / improving telegram logs
