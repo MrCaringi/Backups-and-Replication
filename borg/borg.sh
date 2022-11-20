@@ -153,6 +153,7 @@
                 CREATE_STATUS="DISABLED"
                 PRUNE_STATUS="DISABLED"
                 CHECK_STATUS="DISABLED"
+                COMPACT_STATUS="DISABLED"
                 FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
                 # Setting this, so the repo does not need to be given on the command line:
                     export BORG_REPO
