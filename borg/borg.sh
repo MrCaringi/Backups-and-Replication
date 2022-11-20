@@ -7,6 +7,9 @@
 #   How to Use
 #	    bash borg-b.sh borg-b.json
 #
+#   How to download and update to the lastest version of this script
+#       wget -O borg.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/borg/borg.sh && chmod +x borg.sh
+#
 #	Paremeters
 #	    1 $1 - .json file for configuration
 #
@@ -22,11 +25,12 @@
 #       2021-08-23  v1.1.1  Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
 #       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
 #       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
-#
+#       2022-03-23  v1.3.0  Feature: Compact    borg_feature_v1.3.0_compact
+#       2022-11-18  v1.4.0  Feature: new jq package validation / migrating to --glob-archives / improving telegram logs
 ###############################
-    
+
 #   Current Version
-    VERSION="v1.2.1"
+    VERSION="v1.4.0"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -37,7 +41,7 @@
                 echo $(date +%Y%m%d-%H%M%S)"	INFO: Argument found: ${1}"
         fi
         #   Package Exist
-        dpkg -s jq &> /dev/null
+        which jq &> /dev/null
         if [ $? -eq 0 ] ; then
                 echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
             else
@@ -47,8 +51,9 @@
 
 ##      Getting the Main Configuration
     #   General Config
-    DEBUG=`cat $1 | jq --raw-output '.GeneralConfig.Debug'`
-    WAIT=`cat $1 | jq --raw-output '.GeneralConfig.Wait'`
+    DEBUG=$(cat $1 | jq --raw-output '.GeneralConfig.Debug')
+    WAIT=$(cat $1 | jq --raw-output '.GeneralConfig.Wait')
+    Check_IKWID=$(cat $1 | jq --raw-output '.GeneralConfig.Check_IKWID')
     
     #   Telegram Config
     ENABLE_MESSAGE=`cat $1 | jq --raw-output '.Telegram.Enable'`
@@ -63,7 +68,7 @@
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
-        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}%0A${4}%0A${5}%0A${6}%0A${7}%0A${8}%0A${9}%0A${10}%0A${11}%0A${12}%0A${13}%0A${14}%0A${15}%0A${16}%0A${17}%0A${18}%0A${19}%0A${20}" \
+        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}%0A${4}%0A${5}%0A${6}%0A${7}%0A${8}%0A${9}%0A${10}%0A${11}%0A${12}%0A${13}%0A${14}%0A${15}%0A${16}%0A${17}%0A${18}%0A${19}%0A${20}%0A${21}%0A${22}%0A${23}%0A${24}%0A${25}%0A${26}%0A${27}%0A${28}%0A${29}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
@@ -103,6 +108,7 @@
 	#   For Debug purposes
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG: "$DEBUG
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	WAIT: "$WAIT
+        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Check_IKWID: "$Check_IKWID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE: "$ENABLE_MESSAGE
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID: "$CHAT_ID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY: "$API_KEY
@@ -135,6 +141,9 @@
             #   Borg Check vars
                 CHECK_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Enable"`
                 CHECK_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCheck.Options"`
+            #   Borg Compact vars
+                COMPACT_ENABLE=`cat $1 | jq --raw-output ".Task[$i].BorgCompact.Enable"`
+                COMPACT_OPTIONS=`cat $1 | jq --raw-output ".Task[$i].BorgCompact.Options"`
 
             #   Setting up Main vars
                 NUMBER_FILES=""
@@ -144,16 +153,20 @@
                 CREATE_STATUS="DISABLED"
                 PRUNE_STATUS="DISABLED"
                 CHECK_STATUS="DISABLED"
+                COMPACT_STATUS="DISABLED"
                 FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
                 # Setting this, so the repo does not need to be given on the command line:
-                export BORG_REPO
+                    export BORG_REPO
                 # Setting this, so you won't be asked for your repository passphrase:
-                export BORG_PASSPHRASE
+                    export BORG_PASSPHRASE
+                # Setting this,  automatic “answerers” for For “This is a potentially dangerous function…” (check –repair)
+                    [ $Check_IKWID == true ] && BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES && export BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
 
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO: "$BORG_REPO
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE: "$BORG_PASSPHRASE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_CHECK_I_KNOW_WHAT_I_AM_DOING: "$BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PREFIX: "$PREFIX
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ENABLE: "$CREATE_ENABLE
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ARCHIVE: "$CREATE_ARCHIVE
@@ -162,6 +175,8 @@
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PRUNE_OPTIONS: "$PRUNE_OPTIONS
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_ENABLE: "$CHECK_ENABLE
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHECK_OPTIONS: "$CHECK_OPTIONS
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	COMPACT_ENABLE: "$COMPACT_ENABLE
+                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	COMPACT_OPTIONS: "$COMPACT_OPTIONS
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	FULLREP: "$FULLREP
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	N: "$N
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	i: "$i
@@ -205,10 +220,9 @@
                         echo "==========    Ending CREATE        Elapsed time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" >> BORG_log_${LOG_DATE}.log
 
                     #   Getting some info from borg create log
-                        NUMBER_FILES=$(awk '{if(NR==11) print $4}' BORG_log_${LOG_DATE}.log)
-                        CREATE_SIZE=$(awk '{if(NR==15) print $7}' BORG_log_${LOG_DATE}.log)
-                        CREATE_SIZE_UNIT=$(awk '{if(NR==15) print $8}' BORG_log_${LOG_DATE}.log)
-                        CREATE_ALL_DEDUP_SIZE="${CREATE_SIZE} ${CREATE_SIZE_UNIT}"
+                        NUMBER_FILES=$(grep "Number of files:" BORG_log_${LOG_DATE}.log | awk '{print $NF}')
+                        CREATE_SIZE=$(grep "This archive:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
+                        CREATE_ALL_DEDUP_SIZE="${CREATE_SIZE}"
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Number of Files: ${NUMBER_FILES}"
 
                     # Borg Create: Use highest exit code to build the message
@@ -250,7 +264,7 @@
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Prune Command
-                        borg prune --prefix ${PREFIX} ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
+                        borg prune --glob-archives ${PREFIX} ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_prune_exit=$?
                     
                     #   Elapsed time calculation for the iteration
@@ -297,7 +311,7 @@
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Check Command
-                        borg check --prefix ${PREFIX} ${CHECK_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
+                        borg check ${CHECK_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_check_exit=$?
                     
                     #   Elapsed time calculation for the iteration
@@ -325,10 +339,57 @@
                         echo "================================================"
                         echo $(date +%Y%m%d-%H%M%S)"	BORG CHECK BACKUP is disabled for Task: ${I} of ${N}"
                 fi
+
+            #   Borg Compact
+                if [ $COMPACT_ENABLE == true ]; then
+                    #   Initial Notification
+                        echo "================================================"
+                        echo $(date +%Y%m%d-%H%M%S)"	Starting BORG COMPACT Task: ${I} of ${N}"
+                        echo $(date +%Y%m%d-%H%M%S)"	CHECK Repository ${BORG_REPO}"
+                        echo $(date +%Y%m%d-%H%M%S)"	CHECK Options: ${COMPACT_OPTIONS}"
+                        echo $(date +%Y%m%d-%H%M%S)"	CHECK PREFIX: ${PREFIX}"
+                    #   Starting Iteration time
+                        TIMEt_START=$(date +%s)
+                        DATEt_START=$(date +%F)
+                    
+                    #   Borg COMPACT: Initializing the log file
+                        echo "==========    Starting COMPACT        Task: ${I} of ${N}" >> BORG_log_${LOG_DATE}.log
+                        echo "Options used: "${COMPACT_OPTIONS} >> BORG_log_${LOG_DATE}.log
+                        echo >> BORG_log_${LOG_DATE}.log
+
+                    ##   Borg Compact Command
+                        borg compact ${COMPACT_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
+                        borg_compact_exit=$?
+                    
+                    #   Elapsed time calculation for the iteration
+                        TIMEt_END=$(date +%s)
+                        TIMEt_ELAPSE=$(date -u -d "0 $TIMEt_END seconds - $TIMEt_START seconds" +"%T")
+                        DATEt_END=$(date +%F)
+                        DAYSt_ELAPSE=$(( ($(date -d $DATEt_END +%s) - $(date -d $DATEt_START +%s) )/(60*60*24) ))
+                        echo >> BORG_log_${LOG_DATE}.log
+                        echo "==========    Ending COMPACT        Elapsed time: ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" >> BORG_log_${LOG_DATE}.log
+
+                    # Use highest exit code to build the message
+                        if [ ${borg_compact_exit} -eq 0 ]; then
+                            echo $(date +%Y%m%d-%H%M%S)" Compact finished successfully"
+                            COMPACT_STATUS="SUCCESS"
+                        elif [ ${borg_compact_exit} -eq 1 ]; then
+                            echo $(date +%Y%m%d-%H%M%S)" Compact finished with warnings"
+                            COMPACT_STATUS="WARNINGS"
+                        else
+                            echo $(date +%Y%m%d-%H%M%S)" Compact finished with Error"
+                            COMPACT_STATUS="ERROR"
+                        fi
+
+                #   No Compact Enabled
+                    else
+                        echo "================================================"
+                        echo $(date +%Y%m%d-%H%M%S)"	BORG COMPACT is disabled for Task: ${I} of ${N}"
+                fi
                 
                 #   Building Telegram Messages
                     REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Elapsed Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Files: ${NUMBER_FILES}" "Deduplicated Size: ${CREATE_ALL_DEDUP_SIZE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Elapsed Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Elapsed Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Elapsed Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Files: ${NUMBER_FILES}" "Deduplicated Size: ${CREATE_ALL_DEDUP_SIZE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Elapsed Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Elapsed Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "Borg Compact Status: #${COMPACT_STATUS}" "Elapsed Time: ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
                     [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}
