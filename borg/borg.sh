@@ -26,7 +26,7 @@
 #       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
 #       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
 #       2022-03-23  v1.3.0  Feature: Compact    borg_feature_v1.3.0_compact
-#       2022-11-18  v1.4.0  Feature: new jq package valitation / migrating to --glob-archives / improving telegram logs
+#       2022-11-18  v1.4.0  Feature: new jq package validation / migrating to --glob-archives / improving telegram logs
 ###############################
 
 #   Current Version
