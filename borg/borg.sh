@@ -264,7 +264,7 @@
                         echo >> BORG_log_${LOG_DATE}.log
 
                     ##   Borg Prune Command
-                        borg prune --glob-archives ${PREFIX} ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
+                        borg prune --glob-archives ${PREFIX}* ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_prune_exit=$?
                     
                     #   Elapsed time calculation for the iteration
