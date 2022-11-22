@@ -5,6 +5,9 @@
 #
 #   This script is for RCLONE SYNC your publics clouds
 #
+##  HOW TO UPDATE THE SCRIPT
+#   wget -O rclone_sync.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/rclone/rclone_sync/rclone_sync.sh && chmod +x borg.sh
+#
 ##   HOW TO USE IT (in a Cron Job)
 #	    0 12 * * * bash /path/rclone_sync2.sh /path/to/rclone_sync2.json
 #
