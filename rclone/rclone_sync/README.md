@@ -25,7 +25,9 @@ Where:
 
 # How to update the script
 ## In the terminal:
-`wget -O rclone_sync.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/rclone/rclone_sync/rclone_sync.sh && chmod +x borg.sh`
+```
+wget -O rclone_sync.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/rclone/rclone_sync/rclone_sync.sh && chmod +x borg.sh
+```
 
 ##  How to fill the config file (rclone_sync2.json)
 Delete text afte commas (,) in order to use it:
