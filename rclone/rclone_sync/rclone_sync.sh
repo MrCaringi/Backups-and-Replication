@@ -33,30 +33,33 @@
 #       2021-11-11  v1.4.0    Feature: Smart Dedup
 #       2022-01-06  v1.5.0    Fix: Single Task
 #       2022-02-15  v1.5.1    Fix: Dedupe Syntax
+#       2022-11-21  v1.6.0    Feature: new telegram message format
 #
 ###############################
 
 ##  Version vars
-    VERSION="v1.5.1"
-    VERSION_TEXT="Fix: Dedupe Syntax"
+    VERSION="v1.6.0"
+    VERSION_TEXT="Feature: new telegram message format"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
             then
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: Input Parameter is EMPTY!"
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Input Parameter is EMPTY!"
                 exit 1
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	INFO: Argument found: ${1}"
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Argument found: ${1}"
         fi
         #   Package Exist
-        dpkg -s jq &> /dev/null
+        which jq &> /dev/null
         if [ $? -eq 0 ] ; then
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	INFO: Package jq is present"
+                echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
             else
-                echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: Package jq (or dpkg tool) is not present!"
+                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package jq is not present!"
+                exit 1
         fi
+
 ##      Getting the Configuration
     #   General Config
     DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
@@ -106,12 +109,16 @@
         LINE3=${5}
         LINE4=${6}
         LINE5=${7}
+        LINE6=${8}
+        LINE7=${9}
+        LINE8=${10}
+        LINE9=${11}
         HOSTNAME=`hostname`
 
         curl -v -4 -F \
         "chat_id=${CHAT_ID}" \
         -F document=@${FILE} \
-        -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}"$'\n'"${LINE2}"$'\n'"${LINE3}"$'\n'"${LINE4}"$'\n'"${LINE5}" \
+        -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}"$'\n'"${LINE2}"$'\n'"${LINE3}"$'\n'"${LINE4}"$'\n'"${LINE5}"$'\n'"${LINE6}"$'\n'"${LINE7}"$'\n'"${LINE8}"$'\n'"${LINE9}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument
     }
 
@@ -231,7 +238,7 @@
         fi
     
     #   Notify Version
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "Release Version: ${VERSION}" >/dev/null 2>&1 
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "<i>Release Version: <code>${VERSION}</code></i>" >/dev/null 2>&1 
 
     while [ $i -lt $N ]
     do
@@ -250,6 +257,10 @@
             Flags=`cat $1 | jq --raw-output ".folders[$i].Flags"`
             EnableSelfHealing=`cat $1 | jq --raw-output ".folders[$i].EnableSelfHealing"`
             echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
+        
+        #   Sync Size calculation for the iteration
+            ORIGIN_SIZE=$(du -sh ${DIR_O} | awk '{print $1}')
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Sync Size: ${ORIGIN_SIZE}"
         
 		#   For Debug purposes
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DIR_O:"$DIR_O
@@ -278,7 +289,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "#ERROR during Syncing" "from: ${DIR_O}" "to: ${DIR_D}" >/dev/null 2>&1
                     fi
                 else
                     #   No Custom Flags for the task
@@ -287,7 +298,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "#ERROR during Syncing" "from: ${DIR_O} to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "#ERROR during Syncing" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" >/dev/null 2>&1
                     fi
             fi
         
@@ -329,10 +340,10 @@
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendFile log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Log for ${DIR_O} to: ${DIR_D}" "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"  >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendFile log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" " " "From: ${DIR_O}" "Sync Size: ${ORIGIN_SIZE}" "To: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"  >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Log has no info, sending message"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" "From ${DIR_O} to: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" " " "Elapsed time: <code>${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}</code>" >/dev/null 2>&1
             fi
             
         #   Flushing & Deleting the file
@@ -360,7 +371,7 @@
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Total Elapsed time: <code>${DAYS_ELAPSE}d ${TIME_ELAPSE}</code>" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
