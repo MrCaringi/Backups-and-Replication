@@ -12,6 +12,7 @@ Internally it is (basically) a `rclone sync /origin/ /destination/` automation t
 - v1.1.0    Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 - v1.2.0    Feature: Global Flags can be used in a syncronization task
 - v1.4.0    Feature: Smart Dedupe based on `rclone sync` logs
+- v1.6.0    Feature: Improved Telegram messages format
 
 # How to Use
 ##  In the Terminal
@@ -21,6 +22,10 @@ bash rclone_sync.sh config.json
 Where:
 - "rclone_sync.sh" is the script
 - "config.json" is the configuration file
+
+# How to update the script
+## In the terminal:
+`wget -O rclone_sync.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/rclone/rclone_sync/rclone_sync.sh && chmod +x borg.sh`
 
 ##  How to fill the config file (rclone_sync2.json)
 Delete text afte commas (,) in order to use it:
@@ -112,3 +117,4 @@ Delete text afte commas (,) in order to use it:
 - 2021-11-11  v1.4.0    Feature: Smart Dedupe
 - 2022-01-06  v1.5.0    Fix: Single Task
 - 2022-02-15  v1.5.1    Fix: Dedupe Syntax
+- 2022-11-21  v1.6.0    Feature: new telegram message format
