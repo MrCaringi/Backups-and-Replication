@@ -262,7 +262,13 @@
             echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
         #   Sync Size calculation for the iteration
-            ORIGIN_SIZE=$(du -sh ${DIR_O} | awk '{print $1}')
+            #   Verifiying if the origin is a remote
+            echo ${DIR_O} | grep : > /dev/null
+            if [ $? -ne 0 ]; then
+                ORIGIN_SIZE=$(du -sh ${DIR_O} | awk '{print $1}')
+            else
+                ORIGIN_SIZE=$(rclone size ${DIR_O} | awk '{if(NR==2) print $3,$4}')
+            fi    
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Sync Size: ${ORIGIN_SIZE}"
         
 		#   For Debug purposes
