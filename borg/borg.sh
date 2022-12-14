@@ -27,10 +27,11 @@
 #       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
 #       2022-03-23  v1.3.0  Feature: Compact    borg_feature_v1.3.0_compact
 #       2022-11-18  v1.4.0  Feature: new jq package validation / migrating to --glob-archives / improving telegram logs
+#       2022-12-13  v1.5.0  Feature: PRUNE size in telegram notification
 ###############################
 
 #   Current Version
-    VERSION="v1.4.0"
+    VERSION="v1.5.0"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -149,6 +150,8 @@
                 NUMBER_FILES=""
                 CREATE_SIZE=""
                 CREATE_SIZE_UNIT=""
+                PRUNE_SIZE=""
+                PRUNE_ALL_DEDUP_SIZE=""
                 CREATE_ALL_DEDUP_SIZE=""
                 CREATE_STATUS="DISABLED"
                 PRUNE_STATUS="DISABLED"
@@ -266,6 +269,10 @@
                     ##   Borg Prune Command
                         borg prune --glob-archives ${PREFIX}* ${PRUNE_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_prune_exit=$?
+                    
+                    #   Getting some info from borg PRUNE log
+                        PRUNE_SIZE=$(grep "Deleted data:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
+                        echo $(date +%Y%m%d-%H%M%S)"	PRUNE size: ${PRUNE_SIZE}"
                     
                     #   Elapsed time calculation for the iteration
                         TIMEp_END=$(date +%s)
@@ -389,7 +396,7 @@
                 
                 #   Building Telegram Messages
                     REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Elapsed Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Files: ${NUMBER_FILES}" "Deduplicated Size: ${CREATE_ALL_DEDUP_SIZE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Elapsed Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Elapsed Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "Borg Compact Status: #${COMPACT_STATUS}" "Elapsed Time: ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Elapsed Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Files: ${NUMBER_FILES}" "Deduplicated Size: ${CREATE_ALL_DEDUP_SIZE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Recovered Size: ${PRUNE_SIZE}" "Elapsed Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Elapsed Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "Borg Compact Status: #${COMPACT_STATUS}" "Elapsed Time: ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
                     [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}
