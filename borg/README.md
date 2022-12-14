@@ -113,7 +113,10 @@ Example
 | Task.BorgCompact.Options | Text | `borg compact` Options https://borgbackup.readthedocs.io/en/stable/usage/compact.html
 
 ##  Screeshots
+Telegram Messages:
 ![Telegram Messages](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/telegram_01.png)
+
+Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/log_01.png)
 ##  Version Story
 - 2020-04-24  First version
