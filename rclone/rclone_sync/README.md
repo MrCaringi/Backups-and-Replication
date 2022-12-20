@@ -21,6 +21,7 @@ bash rclone_sync.sh config.json
 Where:
 - "rclone_sync.sh" is the script
 - "config.json" is the configuration file
+
 ![Terminal Output](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/terminal_01.png)
 
 # How to update the script
@@ -105,8 +106,10 @@ Delete text afte commas (,) in order to use it:
 | folders.EnableSelfHealing | true/false | Enable `rclone dedupe` command for remotes |
 
 ## Screenshots
+Telegram Messages:
 ![Telegram Messages](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/telegram_01.png)
 
+Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/log_01.png)
 
 ### Changelog
