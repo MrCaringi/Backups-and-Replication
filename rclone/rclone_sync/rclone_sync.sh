@@ -1,6 +1,7 @@
 #!/bin/sh
 
-###############################
+##############################################################
+#
 #               RCLONE Cloud Replica
 #
 #   This script is for RCLONE SYNC your publics clouds
@@ -9,18 +10,15 @@
 #   wget -O rclone_sync.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/rclone/rclone_sync/rclone_sync.sh && chmod +x borg.sh
 #
 ##   HOW TO USE IT (in a Cron Job)
-#	    0 12 * * * bash /path/rclone_sync2.sh /path/to/rclone_sync2.json
+#	    0 12 * * * bash /path/rclone_sync2.sh /path/to/config.json
 #
-##  PARAMETERS
+##  PARAMETER
 #   $1  Path to ".json" config file
 #
 ##   REQUIREMENTS
-#       - rclone remotes propperly configured 
+#       - rclone remotes propperly configured (`rclone config`)
 #
-##	RCLONE REPLICA CONFIGURATION File !!!!
-#   Please refer to https://github.com/MrCaringi/borg/tree/master/replication/rclone for a example of "rclone_sync2.json" file
-#
-###############################
+##############################################################
 
 ##  Version vars
     VERSION="v1.7.0"
@@ -121,7 +119,7 @@
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
-            DedupeText=$(jq --raw-output '.selfHealingFeatures.SourceDedupeText[$j]' $1)
+            DedupeText=$(jq --raw-output ".selfHealingFeatures.SourceDedupeText[$j]" $1)
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
@@ -150,7 +148,7 @@
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
-            DedupeText=$(jq --raw-output '.selfHealingFeatures.DestinationeDedupeText[$j]' $1)
+            DedupeText=$(jq --raw-output ".selfHealingFeatures.DestinationeDedupeText[$j]" $1)
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
@@ -200,8 +198,6 @@
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	BwLimit:"$BwLimit
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DedupeFlags:"$DedupeFlags
 
-
-
     #	CHECKING FOR ANOTHER INSTANCES
         echo "===================================================="
         echo "checking for another intances"
@@ -236,11 +232,11 @@
             DATEi_START=$(date +%F)
 
 		#	Getting From/To Directory
-            DIR_O=$(jq --raw-output '.folders[$i].From' $1)
-            DIR_D=$(jq --raw-output '.folders[$i].To' $1)
-            EnableCustomFlags=$(jq --raw-output '.folders[$i].EnableCustomFlags' $1)
-            Flags=$(jq --raw-output '.folders[$i].Flags' $1)
-            EnableSelfHealing=$(jq --raw-output '.folders[$i].EnableSelfHealing' $1)
+            DIR_O=$(jq --raw-output ".folders[$i].From" $1)
+            DIR_D=$(jq --raw-output ".folders[$i].To" $1)
+            EnableCustomFlags=$(jq --raw-output ".folders[$i].EnableCustomFlags" $1)
+            Flags=$(jq --raw-output ".folders[$i].Flags" $1)
+            EnableSelfHealing=$(jq --raw-output ".folders[$i].EnableSelfHealing" $1)
             echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
         #   Sync Size calculation for the iteration
@@ -372,7 +368,10 @@
 
     exit 0
 
-##	SCRIPT MODIFICATION NOTES
+##############################################################
+#
+##	        SCRIPT MODIFICATION NOTES
+#
 #       2022-12-20  v1.7.0    Fix: jq reimplementation
 #       2022-11-21  v1.6.0    Feature: new telegram message format
 #       2022-02-15  v1.5.1    Fix: Dedupe Syntax
@@ -389,3 +388,5 @@
 #       2021-07-18  v0.2    Improved telegram messages
 #       2021-07-09  Fixing documentation
 #       2021-07-07  First version
+#
+##############################################################
