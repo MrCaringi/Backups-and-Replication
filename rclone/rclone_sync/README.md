@@ -21,6 +21,7 @@ bash rclone_sync.sh config.json
 Where:
 - "rclone_sync.sh" is the script
 - "config.json" is the configuration file
+![Terminal Output](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/terminal_01.png)
 
 # How to update the script
 ## In the terminal:
@@ -102,6 +103,11 @@ Delete text afte commas (,) in order to use it:
 | folders.EnableCustomFlags | true/false | if this parameter is equal to "**true**", then `folders.Flags`will be used as flags for `rclonce sync` command |
 | folders.Flags | text | if "**folders.EnableCustomFlags**" is enable for the task, this text will be used instead of `Config.DriveServerSide`, `Config.MaxTransfer` and `Config.BwLimit` parameters |
 | folders.EnableSelfHealing | true/false | Enable `rclone dedupe` command for remotes |
+
+## Screenshots
+![Telegram Messages](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/telegram_01.png)
+
+![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/log_01.png)
 
 ### Changelog
 - 2022-12-20  v1.7.0    Fix: jq reimplementation
