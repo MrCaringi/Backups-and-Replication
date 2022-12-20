@@ -106,6 +106,7 @@ Delete text afte commas (,) in order to use it:
 | folders.EnableSelfHealing | true/false | Enable `rclone dedupe` command for remotes |
 
 ## Screenshots
+
 Telegram Messages:
 ![Telegram Messages](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/telegram_01.png)
 
