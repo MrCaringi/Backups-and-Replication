@@ -12,7 +12,6 @@ Internally it is (basically) a `rclone sync /origin/ /destination/` automation t
 - v1.1.0    Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 - v1.2.0    Feature: Global Flags can be used in a syncronization task
 - v1.4.0    Feature: Smart Dedupe based on `rclone sync` logs
-- v1.6.0    Feature: Improved Telegram messages format
 
 # How to Use
 ##  In the Terminal
@@ -105,18 +104,19 @@ Delete text afte commas (,) in order to use it:
 | folders.EnableSelfHealing | true/false | Enable `rclone dedupe` command for remotes |
 
 ### Changelog
-- 2021-07-07  First version
-- 2021-07-09  Fixing documentation
-- 2021-07-18  v0.2    Improved telegram messages
-- 2021-07-21  v0.3    Improving concurrence instances validation
-- 2021-08-04  v0.4.1  Elapsed time in notification
-- 2021-08-06  v0.4.2.3    including DAYS in Elapsed time in notification
-- 2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-- 2021-08-10  v1.0.1.1  All-in-one
-- 2021-08-11  v1.1      Feature: Bandwidth limit
-- 2021-08-23  v1.2      Feature: Task's flags
-- 2021-08-31  v1.3.1    Feature: Fewer Messages
-- 2021-11-11  v1.4.0    Feature: Smart Dedupe
-- 2022-01-06  v1.5.0    Fix: Single Task
-- 2022-02-15  v1.5.1    Fix: Dedupe Syntax
-- 2022-11-21  v1.6.0    Feature: new telegram message format
+- 2022-12-20  v1.7.0    Fix: jq reimplementation
+- 2022-11-21  v1.6.0    Feature: new telegram message format
+- 2022-02-15  v1.5.1    Fix: Dedupe Syntax
+- 2022-01-06  v1.5.0    Fix: Single Task
+- 2021-11-11  v1.4.0    Feature: Smart Dedup
+- 2021-08-31  v1.3.1    Feature: Fewer Messages
+- 2021-08-23  v1.2      Feature: Task's flags
+- 2021-08-11  v1.1      Feature: Bandwidth limit
+- 2021-08-10  v1.0.1.1  All-in-one
+- 2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
+- 2021-08-06  v0.4.2.3  Including DAYS in Elapsed time in notification
+- 2021-08-04  v0.4.1  Elapsed time in notification
+- 2021-07-21  v0.3    Improving concurrence instances validation
+- 2021-07-18  v0.2    Improved telegram messages
+- 2021-07-09  Fixing documentation
+- 2021-07-07  First version

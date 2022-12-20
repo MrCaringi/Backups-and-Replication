@@ -20,29 +20,11 @@
 ##	RCLONE REPLICA CONFIGURATION File !!!!
 #   Please refer to https://github.com/MrCaringi/borg/tree/master/replication/rclone for a example of "rclone_sync2.json" file
 #
-#
-##	SCRIPT MODIFICATION NOTES
-#       2021-07-07  First version
-#       2021-07-09  Fixing documentation
-#       2021-07-18  v0.2    Improved telegram messages
-#       2021-07-21  v0.3    Improving concurrence instances validation
-#       2021-08-04  v0.4.1  Elapsed time in notification
-#       2021-08-06  v0.4.2.3  Including DAYS in Elapsed time in notification
-#       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
-#       2021-08-10  v1.0.1.1  All-in-one
-#       2021-08-11  v1.1      Feature: Bandwidth limit
-#       2021-08-23  v1.2      Feature: Task's flags
-#       2021-08-31  v1.3.1    Feature: Fewer Messages
-#       2021-11-11  v1.4.0    Feature: Smart Dedup
-#       2022-01-06  v1.5.0    Fix: Single Task
-#       2022-02-15  v1.5.1    Fix: Dedupe Syntax
-#       2022-11-21  v1.6.0    Feature: new telegram message format
-#
 ###############################
 
 ##  Version vars
-    VERSION="v1.6.0"
-    VERSION_TEXT="Feature: new telegram message format"
+    VERSION="v1.7.0"
+    VERSION_TEXT="Fix: jq reimplementation"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
@@ -65,20 +47,20 @@
 
 ##      Getting the Configuration
     #   General Config
-    DEBUG=`cat $1 | jq --raw-output '.config.Debug'`
-    WAIT=`cat $1 | jq --raw-output '.config.Wait'`
-    INSTANCE_FILE=`cat $1 | jq --raw-output '.config.InstanceFile'`
-    DriveServerSide=`cat $1 | jq --raw-output '.config.DriveServerSide'`
-    MaxTransfer=`cat $1 | jq --raw-output '.config.MaxTransfer'`
-    BwLimit=`cat $1 | jq --raw-output '.config.BwLimit'`
+    DEBUG=$(jq --raw-output '.config.Debug' $1)
+    WAIT=$(jq --raw-output '.config.Wait' $1)
+    INSTANCE_FILE=$(jq --raw-output '.config.InstanceFile' $1)
+    DriveServerSide=$(jq --raw-output '.config.DriveServerSide' $1)
+    MaxTransfer=$(jq --raw-output '.config.MaxTransfer' $1)
+    BwLimit=$(jq --raw-output '.config.BwLimit' $1)
     
     #   Telegram Config
-    ENABLE_MESSAGE=`cat $1 | jq --raw-output '.telegram.Enable'`
-    CHAT_ID=`cat $1 | jq --raw-output '.telegram.ChatID'`
-    API_KEY=`cat $1 | jq --raw-output '.telegram.APIkey'`
+    ENABLE_MESSAGE=$(jq --raw-output '.telegram.Enable' $1)
+    CHAT_ID=$(jq --raw-output '.telegram.ChatID' $1)
+    API_KEY=$(jq --raw-output '.telegram.APIkey' $1)
 
     #   Self-Healing Config
-    DedupeFlags=`cat $1 | jq --raw-output '.selfHealingFeatures.DedupeFlags'`
+    DedupeFlags=$(jq --raw-output '.selfHealingFeatures.DedupeFlags' $1)
 
 
 ##  Telegram Notification Functions
@@ -133,13 +115,13 @@
         Result=0
         Nd=0
         j=0
-        Nd=`jq '.selfHealingFeatures.SourceDedupeText | length ' $1`
+        Nd=$(jq '.selfHealingFeatures.SourceDedupeText | length ' $1)
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedSource"
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     N / j:" $Nd $j
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
-            DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.SourceDedupeText[$j]"`
+            DedupeText=$(jq --raw-output '.selfHealingFeatures.SourceDedupeText[$j]' $1)
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
@@ -162,13 +144,13 @@
         Result=0
         Nd=0
         j=0
-        Nd=`jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1`
+        Nd=$(jq '.selfHealingFeatures.DestinationeDedupeText | length ' $1)
         [ $DEBUG == true ] && echo "    ----------    function CheckDuplicatedDestination"
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     N / j:" $Nd $j
         while [ $j -lt $Nd ]
         do
             #   Getting the text to evaluate
-            DedupeText=`cat $1 | jq --raw-output ".selfHealingFeatures.DestinationeDedupeText[$j]"`
+            DedupeText=$(jq --raw-output '.selfHealingFeatures.DestinationeDedupeText[$j]' $1)
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"     Using DedupeText (${j}): " ${DedupeText}
             grep -qi "${DedupeText}" ${TEXT}
             if [ $? -eq 0 ]; then
@@ -198,7 +180,7 @@
         DATE_START=$(date +%F)
 
 ##  Time to RCLONE
-    N=`jq '.folders | length ' $1`
+    N=$(jq '.folders | length ' $1)
     i=0
     process=0
     lenght=0
@@ -254,11 +236,11 @@
             DATEi_START=$(date +%F)
 
 		#	Getting From/To Directory
-            DIR_O=`cat $1 | jq --raw-output ".folders[$i].From"`
-            DIR_D=`cat $1 | jq --raw-output ".folders[$i].To"`
-            EnableCustomFlags=`cat $1 | jq --raw-output ".folders[$i].EnableCustomFlags"`
-            Flags=`cat $1 | jq --raw-output ".folders[$i].Flags"`
-            EnableSelfHealing=`cat $1 | jq --raw-output ".folders[$i].EnableSelfHealing"`
+            DIR_O=$(jq --raw-output '.folders[$i].From' $1)
+            DIR_D=$(jq --raw-output '.folders[$i].To' $1)
+            EnableCustomFlags=$(jq --raw-output '.folders[$i].EnableCustomFlags' $1)
+            Flags=$(jq --raw-output '.folders[$i].Flags' $1)
+            EnableSelfHealing=$(jq --raw-output '.folders[$i].EnableSelfHealing' $1)
             echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
         #   Sync Size calculation for the iteration
@@ -389,3 +371,21 @@
     echo "################################################"
 
     exit 0
+
+##	SCRIPT MODIFICATION NOTES
+#       2022-12-20  v1.7.0    Fix: jq reimplementation
+#       2022-11-21  v1.6.0    Feature: new telegram message format
+#       2022-02-15  v1.5.1    Fix: Dedupe Syntax
+#       2022-01-06  v1.5.0    Fix: Single Task
+#       2021-11-11  v1.4.0    Feature: Smart Dedup
+#       2021-08-31  v1.3.1    Feature: Fewer Messages
+#       2021-08-23  v1.2      Feature: Task's flags
+#       2021-08-11  v1.1      Feature: Bandwidth limit
+#       2021-08-10  v1.0.1.1  All-in-one
+#       2021-08-09  v0.5.1    Enable server-side-config and max-tranfer quota
+#       2021-08-06  v0.4.2.3  Including DAYS in Elapsed time in notification
+#       2021-08-04  v0.4.1  Elapsed time in notification
+#       2021-07-21  v0.3    Improving concurrence instances validation
+#       2021-07-18  v0.2    Improved telegram messages
+#       2021-07-09  Fixing documentation
+#       2021-07-07  First version
