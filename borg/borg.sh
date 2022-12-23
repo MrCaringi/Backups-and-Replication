@@ -1,6 +1,8 @@
 #!/bin/bash
 
-###############################
+#   Last version: 2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
+
+##############################################################
 #
 #           BORG-BACKUP SCRIPT
 #
@@ -16,22 +18,10 @@
 #   Requirements
 #       - jq    Package for json data parsing
 #
-#	Modification Log
-#		2020-04-24  First version
-#		2020-04-25  Uploaded a GitHub version
-#       2021-08-06  v0.3    Disable PRUNE Option
-#       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-#       2021-08-19  v1.0.3  Feature: All-in-One code refactor
-#       2021-08-23  v1.1.1  Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
-#       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
-#       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
-#       2022-03-23  v1.3.0  Feature: Compact    borg_feature_v1.3.0_compact
-#       2022-11-18  v1.4.0  Feature: new jq package validation / migrating to --glob-archives / improving telegram logs
-#       2022-12-13  v1.5.0  Feature: PRUNE size in telegram notification
-###############################
+##############################################################
 
 #   Current Version
-    VERSION="v1.5.0"
+    VERSION="v1.5.1"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -122,7 +112,7 @@
         echo $(date +%Y%m%d-%H%M%S)"	Current Batch/.json: "${1}
         echo $(date +%Y%m%d-%H%M%S)"	Total Tasks: "${N}
         echo "================================================"
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${BATCH}" "Starting Batch: ${1}" "Total Borg Tasks: ${N}" "Release Version: ${VERSION}">/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${BATCH}" "<i>Starting Batch:</i> <code>${1}</code>" "<i>Total Borg Tasks:</i> <code>${N}</code>" "<i>Release Version:</i> <code>${VERSION}</code>">/dev/null 2>&1
 
 #   Entering into the Loop
     while [ $i -lt $N ]
@@ -149,10 +139,9 @@
             #   Setting up Main vars
                 NUMBER_FILES=""
                 CREATE_SIZE=""
-                CREATE_SIZE_UNIT=""
+                CREATE_SIZE_TOTAL=""
                 PRUNE_SIZE=""
-                PRUNE_ALL_DEDUP_SIZE=""
-                CREATE_ALL_DEDUP_SIZE=""
+                PRUNE_SIZE_TOTAL=""
                 CREATE_STATUS="DISABLED"
                 PRUNE_STATUS="DISABLED"
                 CHECK_STATUS="DISABLED"
@@ -224,9 +213,11 @@
 
                     #   Getting some info from borg create log
                         NUMBER_FILES=$(grep "Number of files:" BORG_log_${LOG_DATE}.log | awk '{print $NF}')
-                        CREATE_SIZE=$(grep "This archive:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
-                        CREATE_ALL_DEDUP_SIZE="${CREATE_SIZE}"
                         echo $(date +%Y%m%d-%H%M%S)"	CREATE Number of Files: ${NUMBER_FILES}"
+                        CREATE_SIZE=$(grep "This archive:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
+                        echo $(date +%Y%m%d-%H%M%S)"	CREATE Size: ${CREATE_SIZE}"
+                        CREATE_SIZE_TOTAL=$(grep "All archives:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
+                        echo $(date +%Y%m%d-%H%M%S)"	CREATE Total Size: ${CREATE_SIZE_TOTAL}"
 
                     # Borg Create: Use highest exit code to build the message
                         if [ ${borg_create_exit} -eq 0 ]; then
@@ -273,6 +264,8 @@
                     #   Getting some info from borg PRUNE log
                         PRUNE_SIZE=$(grep "Deleted data:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
                         echo $(date +%Y%m%d-%H%M%S)"	PRUNE reclaimed space: ${PRUNE_SIZE}"
+                        PRUNE_SIZE_TOTAL=$(tail --lines 10 BORG_log_${LOG_DATE}.log | grep "All archives:" | awk '{print $(NF-1),$NF}')
+                        echo $(date +%Y%m%d-%H%M%S)"	PRUNE reclaimed space: ${PRUNE_SIZE_TOTAL}"
                     
                     #   Elapsed time calculation for the iteration
                         TIMEp_END=$(date +%s)
@@ -396,7 +389,7 @@
                 
                 #   Building Telegram Messages
                     REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" " " "Borg Create Status: #${CREATE_STATUS}" "Elapsed Time: ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "Files: ${NUMBER_FILES}" "Deduplicated Size: ${CREATE_ALL_DEDUP_SIZE}" " " "Borg Prune Status: #${PRUNE_STATUS}" "Reclaimed Space: ${PRUNE_SIZE}" "Elapsed Time: ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" " " "Borg Check Status: #${CHECK_STATUS}" "Elapsed Time: ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "Borg Compact Status: #${COMPACT_STATUS}" "Elapsed Time: ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" "Task Repository: <code>${BORG_REPO}</code>" " " "<strong>Borg Create Status: #${CREATE_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "<i>Files:</i> ${NUMBER_FILES}" "<i>Deduplicated Size:</i> ${CREATE_SIZE}" "<i>Total Size:</i> ${CREATE_SIZE_TOTAL}" " " "<strong>Borg Prune Status: #${PRUNE_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" "<i>Reclaimed Space:</i> ${PRUNE_SIZE}" "<i>Total Size:</i> ${PRUNE_SIZE_TOTAL}" " " "<strong>Borg Check Status: #${CHECK_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "<strong>Borg Compact Status: #${COMPACT_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
                     [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}
@@ -413,7 +406,7 @@
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
         
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${BATCH}" "Batch Ended" "Total Borg Tasks: ${N}" "Total Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${BATCH}" "<strong>Batch Ended</strong>" "<i>Total Borg Tasks:</i> <code>${N}</code>" "<i>Total Elapsed time:</i> <code>${DAYS_ELAPSE}d ${TIME_ELAPSE}</code>" >/dev/null 2>&1
 
     echo "################################################"
     echo "#                                              #"
@@ -423,3 +416,21 @@
     echo "################################################"
 
     exit 0
+
+##############################################################
+#       MODIFICATION NOTES:
+#
+#       2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
+#       2022-12-13  v1.5.0  Feature: PRUNE size in telegram notification/log
+#       2022-11-18  v1.4.0  Feature: new jq package validation / migrating to --glob-archives / improving telegram logs
+#       2022-03-23  v1.3.0  Feature: Compact    borg_feature_v1.3.0_compact
+#       2021-09-15  v1.2.1  Bug: Number of Files reset   borg_bug_v1.2.1_create_file_reset
+#       2021-09-10  v1.2.0  Feature: Number of Files    borg_feature_v1.2_number_files
+#       2021-08-23  v1.1.1  Feature: Fewer Telegram Messages   borg_feature_v1.1_fewer_telegram_message
+#       2021-08-19  v1.0.3  Feature: All-in-One code refactor
+#       2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
+#       2021-08-06  v0.3    Disable PRUNE Option
+#       2020-04-25  Uploaded a GitHub version
+#       2020-04-24  First version
+#
+##############################################################
