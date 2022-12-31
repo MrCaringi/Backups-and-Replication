@@ -29,7 +29,7 @@
                 },
             "BorgCompact":{
                 "Enable": true,
-                "Options": "--cleanup-commits --threshold 10"
+                "Options": "-v --cleanup-commits --threshold 10"
                 }
         },
         {
@@ -51,7 +51,7 @@
                 },
             "BorgCompact":{
                 "Enable": true,
-                "Options": "--cleanup-commits --threshold 10"
+                "Options": "-v --cleanup-commits --threshold 10"
                 }
         }
     ]

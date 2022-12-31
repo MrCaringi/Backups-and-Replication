@@ -62,7 +62,7 @@ Example
                 },
             "BorgCompact":{
                 "Enable": true,
-                "Options": "--cleanup-commits --threshold 10"
+                "Options": "-v --cleanup-commits --threshold 10"
                 }
         },
         {
@@ -84,7 +84,7 @@ Example
                 },
             "BorgCompact":{
                 "Enable": true,
-                "Options": "--cleanup-commits --threshold 10"
+                "Options": "-v --cleanup-commits --threshold 10"
                 }
         }    
     ]
