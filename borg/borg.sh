@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#   Last version: 2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
+#       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 
 ##############################################################
 #
@@ -21,7 +21,7 @@
 ##############################################################
 
 #   Current Version
-    VERSION="v1.5.1"
+    VERSION="v1.5.2"
 ##      In First place: verify Input and "jq" package
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -59,7 +59,7 @@
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
-        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}%0A${4}%0A${5}%0A${6}%0A${7}%0A${8}%0A${9}%0A${10}%0A${11}%0A${12}%0A${13}%0A${14}%0A${15}%0A${16}%0A${17}%0A${18}%0A${19}%0A${20}%0A${21}%0A${22}%0A${23}%0A${24}%0A${25}%0A${26}%0A${27}%0A${28}%0A${29}" \
+        --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}%0A${4}%0A${5}%0A${6}%0A${7}%0A${8}%0A${9}%0A${10}%0A${11}%0A${12}%0A${13}%0A${14}%0A${15}%0A${16}%0A${17}%0A${18}%0A${19}%0A${20}%0A${21}%0A${22}%0A${23}%0A${24}%0A${25}%0A${26}%0A${27}%0A${28}%0A${29}%0A${30}%0A${31}%0A${32}%0A${33}%0A${34}%0A${35}%0A${36}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
 
@@ -142,6 +142,7 @@
                 CREATE_SIZE_TOTAL=""
                 PRUNE_SIZE=""
                 PRUNE_SIZE_TOTAL=""
+                COMPACT_SIZE=""
                 CREATE_STATUS="DISABLED"
                 PRUNE_STATUS="DISABLED"
                 CHECK_STATUS="DISABLED"
@@ -265,7 +266,7 @@
                         PRUNE_SIZE=$(grep "Deleted data:" BORG_log_${LOG_DATE}.log | awk '{print $(NF-1),$NF}')
                         echo $(date +%Y%m%d-%H%M%S)"	PRUNE reclaimed space: ${PRUNE_SIZE}"
                         PRUNE_SIZE_TOTAL=$(tail --lines 10 BORG_log_${LOG_DATE}.log | grep "All archives:" | awk '{print $(NF-1),$NF}')
-                        echo $(date +%Y%m%d-%H%M%S)"	PRUNE reclaimed space: ${PRUNE_SIZE_TOTAL}"
+                        echo $(date +%Y%m%d-%H%M%S)"	PRUNE new total Repository size: ${PRUNE_SIZE_TOTAL}"
                     
                     #   Elapsed time calculation for the iteration
                         TIMEp_END=$(date +%s)
@@ -361,6 +362,10 @@
                         borg compact ${COMPACT_OPTIONS} ${BORG_REPO} >> BORG_log_${LOG_DATE}.log 2>&1
                         borg_compact_exit=$?
                     
+                    #   Getting some info from borg COMPACT log
+                        COMPACT_SIZE=$(grep "compaction freed about" BORG_log_${LOG_DATE}.log | awk '{print $4,$5}')
+                        echo $(date +%Y%m%d-%H%M%S)"	Compaction freed about: ${PRUNE_SIZE}"
+
                     #   Elapsed time calculation for the iteration
                         TIMEt_END=$(date +%s)
                         TIMEt_ELAPSE=$(date -u -d "0 $TIMEt_END seconds - $TIMEt_START seconds" +"%T")
@@ -389,7 +394,7 @@
                 
                 #   Building Telegram Messages
                     REPO=`echo ${BORG_REPO} | awk -F'/' '{print $NF}'`
-                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" "Task Repository: <code>${BORG_REPO}</code>" " " "<strong>Borg Create Status: #${CREATE_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "<i>Files:</i> ${NUMBER_FILES}" "<i>Deduplicated Size:</i> ${CREATE_SIZE}" "<i>Total Size:</i> ${CREATE_SIZE_TOTAL}" " " "<strong>Borg Prune Status: #${PRUNE_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" "<i>Reclaimed Space:</i> ${PRUNE_SIZE}" "<i>Total Size:</i> ${PRUNE_SIZE_TOTAL}" " " "<strong>Borg Check Status: #${CHECK_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "<strong>Borg Compact Status: #${COMPACT_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
+                    [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#BORG #${REPO}" "Task Resume: ${I} of ${N}" "Task Prefix: #${PREFIX}" "Task Repository: <code>${BORG_REPO}</code>" " " "<strong>Borg Create Status: #${CREATE_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSc_ELAPSE}d ${TIMEc_ELAPSE}" "<i>Files:</i> ${NUMBER_FILES}" "<i>Deduplicated Size:</i> ${CREATE_SIZE}" "<i>Total Size:</i> ${CREATE_SIZE_TOTAL}" " " "<strong>Borg Prune Status: #${PRUNE_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSp_ELAPSE}d ${TIMEp_ELAPSE}" "<i>Reclaimed Space:</i> ${PRUNE_SIZE}" "<i>Total Size:</i> ${PRUNE_SIZE_TOTAL}" " " "<strong>Borg Check Status: #${CHECK_STATUS}</strong>" "<i>Elapsed Time:</i> ${DAYSk_ELAPSE}d ${TIMEk_ELAPSE}" " " "<strong>Borg Compact Status: #${COMPACT_STATUS}</strong>" "<i>Compaction freed about: ${COMPACT_SIZE}</i>" "<i>Elapsed Time:</i> ${DAYSt_ELAPSE}d ${TIMEt_ELAPSE}" > /dev/null 2>&1
                     [ $ENABLE_MESSAGE == true ] && TelegramSendFile "#BORG #${REPO}" "Log File for Task: ${I} of ${N}" BORG_log_${LOG_DATE}.log > /dev/null 2>&1
                     rm BORG_log_${LOG_DATE}.log
                 sleep ${WAIT}
@@ -420,6 +425,7 @@
 ##############################################################
 #       MODIFICATION NOTES:
 #
+#       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 #       2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
 #       2022-12-13  v1.5.0  Feature: PRUNE size in telegram notification/log
 #       2022-11-18  v1.4.0  Feature: new jq package validation / migrating to --glob-archives / improving telegram logs
