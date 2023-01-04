@@ -62,7 +62,7 @@ Example
                 },
             "BorgCompact":{
                 "Enable": true,
-                "Options": "--cleanup-commits --threshold 10"
+                "Options": "-v --cleanup-commits --threshold 10"
                 }
         },
         {
@@ -84,7 +84,7 @@ Example
                 },
             "BorgCompact":{
                 "Enable": true,
-                "Options": "--cleanup-commits --threshold 10"
+                "Options": "-v --cleanup-commits --threshold 10"
                 }
         }    
     ]
@@ -119,6 +119,7 @@ Telegram Messages:
 Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/log_01.png)
 ##  Version Story
+- 2023-01-03  v1.5.2    Feature: TOTAL size (compact) in telegram notification/log
 - 2022-12-23  v1.5.1    Feature: TOTAL size in telegram notification/log
 - 2022-12-13  v1.5.0    Feature: PRUNE size in telegram notification
 - 2022-11-18  v1.4.0    Feature: new `jq` package valitation / migrating to `--glob-archives` / improving telegram logs
