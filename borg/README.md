@@ -50,7 +50,7 @@ Example
             "BorgCreate":{
                 "Enable": true,
                 "ArchivePath": "/home/user /another/path /and/another/path",
-                "Options": "-v --stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
+                "Options": "-v --stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,6"
                 },
             "BorgPrune":{
                 "Enable": true,
@@ -103,7 +103,7 @@ Example
 | Task.BorgPassphrase | alphanumeric | Repository's password |
 | Task.Prefix | alphanumeric | Backup Name |
 | Task.BorgCreate.Enable | true / false | Enable Backup Creation for this task |
-| Task.BorgCreate.ArchivePath | Path | Full path to the folder that is going to be backed up, you can use more than one path, just separate it with spacces |
+| Task.BorgCreate.ArchivePath | Path | Full path to the folder that is going to be backed up, you can use more than one path, just separate it with spaces |
 | Task.BorgCreate.Options | Text | `borg create` options https://borgbackup.readthedocs.io/en/stable/usage/create.html |
 | Task.BorgPrune.Enable | true / false | Enable Backup Prune (automatic deletion) for this task |
 | Task.BorgPrune.Options | Text | `borg prune` Options https://borgbackup.readthedocs.io/en/stable/usage/prune.html |
