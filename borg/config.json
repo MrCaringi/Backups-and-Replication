@@ -16,8 +16,8 @@
             "Prefix": "MyBackup",     
             "BorgCreate":{
                 "Enable": true,
-                "ArchivePath": "/home/user/",
-                "Options": "--stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
+                "ArchivePath": "/home/user /another/path /and/another/path",
+                "Options": "-v --stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
