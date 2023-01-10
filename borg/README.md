@@ -17,7 +17,7 @@ wget -O borg.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replicat
 ## How to Use
 Open your terminal, then run
 ```
-bash /path/borg.sh /path/borg.json
+bash /path/borg.sh /path/config.json
 ```
 ![Terminal Output](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/terminal_01.png)
 
@@ -45,12 +45,12 @@ Example
     "Task": [
         {
             "Repository": "/data/borg-testing/test_repo",
-            "BorgPassphrase": "testingtesting", 
+            "BorgPassphrase": "testingtrepo_passwordesting", 
             "Prefix": "MyBackup",     
             "BorgCreate":{
                 "Enable": true,
-                "ArchivePath": "/home/user/",
-                "Options": "--stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,6"
+                "ArchivePath": "/home/user /another/path /and/another/path",
+                "Options": "-v --stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
@@ -66,27 +66,27 @@ Example
                 }
         },
         {
-            "Repository": "/data/borg-testing/test_repo_2",
-            "BorgPassphrase": "testingtesting", 
-            "Prefix": "MyOtherBackup",     
+            "Repository": "/other/borg-repo",
+            "BorgPassphrase": "repo_password", 
+            "Prefix": "My_Other_Backup",     
             "BorgCreate":{
                 "Enable": true,
-                "ArchivePath": "/data/Photo/",
-                "Options": "--stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,6"
+                "ArchivePath": "/data/pictures",
+                "Options": "--stats --info --list --filter=E --files-cache ctime,size --compression auto,lzma,9"
                 },
             "BorgPrune":{
                 "Enable": true,
-                "Options": "-v --stats --info --list --keep-daily=7 --keep-weekly=2 --keep-monthly=6"
+                "Options": "-v --stats --info --list --keep-last=5"
                 },
             "BorgCheck":{
                 "Enable": true,
-                "Options": "-v --verify-data --show-rc"
+                "Options": "-v --repository-only --show-rc"
                 },
             "BorgCompact":{
                 "Enable": true,
                 "Options": "-v --cleanup-commits --threshold 10"
                 }
-        }    
+        }
     ]
 }
 ```
@@ -103,7 +103,7 @@ Example
 | Task.BorgPassphrase | alphanumeric | Repository's password |
 | Task.Prefix | alphanumeric | Backup Name |
 | Task.BorgCreate.Enable | true / false | Enable Backup Creation for this task |
-| Task.BorgCreate.ArchivePath | Path | Full path to the folder that is going to be backed up |
+| Task.BorgCreate.ArchivePath | Path | Full path to the folder that is going to be backed up, you can use more than one path, just separate it with spacces |
 | Task.BorgCreate.Options | Text | `borg create` options https://borgbackup.readthedocs.io/en/stable/usage/create.html |
 | Task.BorgPrune.Enable | true / false | Enable Backup Prune (automatic deletion) for this task |
 | Task.BorgPrune.Options | Text | `borg prune` Options https://borgbackup.readthedocs.io/en/stable/usage/prune.html |
