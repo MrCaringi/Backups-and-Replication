@@ -372,6 +372,7 @@
 #
 ##	        SCRIPT MODIFICATION NOTES
 #
+#       2023-03-12  v1.8.0    Feature: new telegram message format
 #       2022-12-20  v1.7.0    Fix: jq reimplementation
 #       2022-11-21  v1.6.0    Feature: new telegram message format
 #       2022-02-15  v1.5.1    Fix: Dedupe Syntax
