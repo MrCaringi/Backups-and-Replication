@@ -21,7 +21,7 @@
 ##############################################################
 
 ##  Version vars
-    VERSION="v1.7.0"
+    VERSION="v1.8.0"
     VERSION_TEXT="Fix: jq reimplementation"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
@@ -219,7 +219,7 @@
         fi
     
     #   Notify Version
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "<i>Release Version: <code>${VERSION}</code></i>" >/dev/null 2>&1 
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "╔══════════════════════════════╗" "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "<i>Release Version: <code>${VERSION}</code></i>" >/dev/null 2>&1 
 
     while [ $i -lt $N ]
     do
@@ -358,7 +358,7 @@
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Total Elapsed time: <code>${DAYS_ELAPSE}d ${TIME_ELAPSE}</code>" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Total Elapsed time: <code>${DAYS_ELAPSE}d ${TIME_ELAPSE}</code>" "╚══════════════════════════════╝" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
