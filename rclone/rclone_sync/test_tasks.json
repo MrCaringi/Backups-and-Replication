@@ -29,23 +29,27 @@
             "To": "remote1:",
             "EnableCustomFlags": true,
             "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx,svg --max-transfer=670G --bwlimit=1G",
-            "EnableSelfHealing": true
+            "EnableSelfHealing": true,
+            "DisableTask": false
         },
         {
             "From": "remote1:",
             "To": "remote2:",
             "EnableCustomFlags": false,
-            "EnableSelfHealing": true
+            "EnableSelfHealing": true,
+            "DisableTask": false
         },
         {
             "From": "remote2:",
             "To": "remote3:",
-            "EnableCustomFlags": false
+            "EnableCustomFlags": false,
+            "DisableTask": false
         },
         {
             "From": "remote3:",
             "To": "remote4:",
-            "EnableCustomFlags": false
+            "EnableCustomFlags": false,
+            "DisableTask": true
         }     
     ]
 }
