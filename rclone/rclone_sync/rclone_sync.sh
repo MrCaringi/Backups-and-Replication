@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ##############################################################
 #
@@ -21,8 +21,8 @@
 ##############################################################
 
 ##  Version vars
-    VERSION="v1.8.0"
-    VERSION_TEXT="Fix: jq reimplementation"
+    VERSION="v1.9.0"
+    VERSION_TEXT="Feature: Folder task deactivation"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
@@ -237,17 +237,10 @@
             EnableCustomFlags=$(jq --raw-output ".folders[$i].EnableCustomFlags" $1)
             Flags=$(jq --raw-output ".folders[$i].Flags" $1)
             EnableSelfHealing=$(jq --raw-output ".folders[$i].EnableSelfHealing" $1)
-            echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
-        
-        #   Sync Size calculation for the iteration
-            #   Verifiying if the origin is a remote
-            echo ${DIR_O} | grep : > /dev/null
-            if [ $? -ne 0 ]; then
-                ORIGIN_SIZE=$(du -sh ${DIR_O} | awk '{print $1}')
-            else
-                ORIGIN_SIZE=$(rclone size ${DIR_O} | awk '{if(NR==2) print $3,$4}')
-            fi    
-            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Sync Size: ${ORIGIN_SIZE}"
+            Deactivation=$(jq --raw-output ".folders[$i].DisableTask" $1)
+
+
+        echo $(date +%Y-%m-%d_%H:%M:%S)"	Starting RCLONE from: ${DIR_O} to: ${DIR_D}"
         
 		#   For Debug purposes
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	DIR_O:"$DIR_O
@@ -258,7 +251,25 @@
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableCustomFlags="$EnableCustomFlags
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Flags="$Flags
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	EnableSelfHealing="$EnableSelfHealing
-        
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Deactivation="$Deactivation
+
+        #   If the task is DEACTIVATED
+            if [ $Deactivation == true ]; then
+                echo $(date +%Y-%m-%d_%H:%M:%S)"	#WARNING: This task is disabled"
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "#WARNING This task is disabled" "from: ${DIR_O}" "to: ${DIR_D}" >/dev/null 2>&1
+                break
+            fi
+
+        #   Sync Size calculation for the iteration
+            #   Verifiying if the origin is a remote
+            echo ${DIR_O} | grep : > /dev/null
+            if [ $? -ne 0 ]; then
+                ORIGIN_SIZE=$(du -sh ${DIR_O} | awk '{print $1}')
+            else
+                ORIGIN_SIZE=$(rclone size ${DIR_O} | awk '{if(NR==2) print $3,$4}')
+            fi    
+            [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Sync Size: ${ORIGIN_SIZE}"
+
 		#   Initializing the log file
             LOG_DATE="task_${I}_$(date +%Y%m%d-%H%M%S)"
             [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	LOG_DATE:"$LOG_DATE
@@ -372,6 +383,7 @@
 #
 ##	        SCRIPT MODIFICATION NOTES
 #
+#       2023-03-12  v1.9.0    Feature: Folder task deactivation
 #       2023-03-12  v1.8.0    Feature: new telegram message format
 #       2022-12-20  v1.7.0    Fix: jq reimplementation
 #       2022-11-21  v1.6.0    Feature: new telegram message format

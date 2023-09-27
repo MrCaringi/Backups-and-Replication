@@ -12,6 +12,7 @@ Internally it is (basically) a `rclone sync /origin/ /destination/` automation t
 - v1.1.0    Feature: `bwlimit` parameter is available in config file (refer to https://rclone.org/flags/)
 - v1.2.0    Feature: Global Flags can be used in a syncronization task
 - v1.4.0    Feature: Smart Dedupe based on `rclone sync` logs
+- v1.9.0    Feature: Folder task deactivation (`DisableTask` flag)
 
 # How to Use
 ##  In the Terminal
@@ -32,7 +33,7 @@ wget -O rclone_sync.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-R
 
 ##  How to fill the config file (rclone_sync2.json)
 Delete text afte commas (,) in order to use it:
-```
+```JSON
 {
     "config":{
         "Debug": true,
@@ -64,23 +65,27 @@ Delete text afte commas (,) in order to use it:
             "To": "remote1:",
             "EnableCustomFlags": true,
             "Flags": "--fast-list --drive-export-formats docx,xlsx,pptx,svg --max-transfer=670G --bwlimit=1G",
-            "EnableSelfHealing": true
+            "EnableSelfHealing": true,
+            "DisableTask": false
         },
         {
             "From": "remote1:",
             "To": "remote2:",
             "EnableCustomFlags": false,
-            "EnableSelfHealing": true
+            "EnableSelfHealing": true,
+            "DisableTask": false
         },
         {
             "From": "remote2:",
             "To": "remote3:",
-            "EnableCustomFlags": false
+            "EnableCustomFlags": false,
+            "DisableTask": false
         },
         {
             "From": "remote3:",
             "To": "remote4:",
-            "EnableCustomFlags": false
+            "EnableCustomFlags": false,
+            "DisableTask": true
         }     
     ]
 }
@@ -104,6 +109,8 @@ Delete text afte commas (,) in order to use it:
 | folders.EnableCustomFlags | true/false | if this parameter is equal to "**true**", then `folders.Flags`will be used as flags for `rclonce sync` command |
 | folders.Flags | text | if "**folders.EnableCustomFlags**" is enable for the task, this text will be used instead of `Config.DriveServerSide`, `Config.MaxTransfer` and `Config.BwLimit` parameters |
 | folders.EnableSelfHealing | true/false | Enable `rclone dedupe` command for remotes |
+| folders.DisableTask | true/false | if `true` then this task is skipped |
+
 
 ## Screenshots
 
@@ -115,6 +122,7 @@ Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/log_01.png)
 
 ### Changelog
+- 2023-09-26  v1.9.0    Feature: Folder task deactivation (`DisableTask` flag)
 - 2023-03-12  v1.8.0    Feature: new telegram message format
 - 2022-12-20  v1.7.0    Fix: jq reimplementation
 - 2022-11-21  v1.6.0    Feature: new telegram message format
