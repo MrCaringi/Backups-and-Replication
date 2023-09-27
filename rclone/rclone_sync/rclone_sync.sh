@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ##############################################################
 #
@@ -226,7 +226,6 @@
         #   Staring VARS
             echo "================================================"
             I=$((i+1))
-            Deactivation="false"
             echo $(date +%Y-%m-%d_%H:%M:%S)"	Task: ${I} of ${N}"
         #   Iteration time
             TIMEi_START=$(date +%s)
@@ -384,6 +383,7 @@
 #
 ##	        SCRIPT MODIFICATION NOTES
 #
+#       2023-03-12  v1.9.0    Feature: Folder task deactivation
 #       2023-03-12  v1.8.0    Feature: new telegram message format
 #       2022-12-20  v1.7.0    Fix: jq reimplementation
 #       2022-11-21  v1.6.0    Feature: new telegram message format
