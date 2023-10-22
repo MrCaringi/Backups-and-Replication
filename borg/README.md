@@ -35,7 +35,11 @@ Example
     "GeneralConfig":{
         "Debug": true,
         "Wait": 2,
-        "Check_IKWID": false
+        "Exports": [
+            { "BORG_TEST1": "VALUE_1" },
+            { "BORG_TEST2": "VALUE_2" },
+            { "BORG_CHECK_I_KNOW_WHAT_I_AM_DOING": "YES" }
+            ]
         },
     "Telegram":{
         "Enable": true,
@@ -95,7 +99,7 @@ Example
 |---------------------- | -----------| ---------------------------------|
 | GeneralConfig.Debug | true / false | Enable more verbosity in the program log |
 | GeneralConfig.Wait | number | Seconds to wait between task |
-| GeneralConfig.Check_IKWID | true / false | Enable the export of the variable `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES` https://borgbackup.readthedocs.io/en/stable/usage/general.html |
+| GeneralConfig.Exports | text | Enable the EXPORT variables which values DOES NOT CONTAINS SPACES OR SPECIAL CHARs, for instance `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES`; if you need to includes variables with specials chars (for example `BORG_RSH="ssh -i /path/to/private/key "), then modify the script at line 38 in order to include those variables. Visit https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for further info about environment variables|
 | Telegram.Enable | true / false | Enable Telegram Notifications |
 | Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
 | Telegram.APIkey | alphanumeric | Telegram Bot API Key |
@@ -119,16 +123,17 @@ Telegram Messages:
 Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/log_01.png)
 ##  Version Story
-- 2023-01-03  v1.5.2    Feature: TOTAL size (compact) in telegram notification/log
-- 2022-12-23  v1.5.1    Feature: TOTAL size in telegram notification/log
-- 2022-12-13  v1.5.0    Feature: PRUNE size in telegram notification
-- 2022-11-18  v1.4.0    Feature: new `jq` package valitation / migrating to `--glob-archives` / improving telegram logs
-- 2022-03-23  v1.3.0    Feature: new `Compact` command for borg version 1.2+
-- 2021-09-15  v1.2.1    Bug: Number of Files reset
-- 2021-09-10  v1.2.0    Feature: Number of Files
-- 2021-08-24  v1.1.1    Feature: Fewer Telegram Messages
-- 2021-08-20  v1.0.3    Feature: All-in-One code refactor
-- 2021-08-07  v0.4    Enable "--prefix PREFIX" for Pruning
-- 2021-08-06  v0.3    Disable PRUNE Option
-- 2020-04-25  Uploaded a GitHub version
-- 2020-04-24  First version
+- 2023-10-20    v1.5.3  Feature: Flexible EXPORT of Variables
+- 2023-01-03    v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
+- 2022-12-23    v1.5.1  Feature: TOTAL size in telegram notification/log
+- 2022-12-13    v1.5.0  Feature: PRUNE size in telegram notification
+- 2022-11-18    v1.4.0  Feature: new `jq` package valitation / migrating to `--glob-archives` / improving telegram logs
+- 2022-03-23    v1.3.0  Feature: new `Compact` command for borg version 1.2+
+- 2021-09-15    v1.2.1  Bug: Number of Files reset
+- 2021-09-10    v1.2.0  Feature: Number of Files
+- 2021-08-24    v1.1.1  Feature: Fewer Telegram Messages
+- 2021-08-20    v1.0.3  Feature: All-in-One code refactor
+- 2021-08-07    v0.4    Enable "--prefix PREFIX" for Pruning
+- 2021-08-06    v0.3    Disable PRUNE Option
+- 2020-04-25    Uploaded a GitHub version
+- 2020-04-24    First version
