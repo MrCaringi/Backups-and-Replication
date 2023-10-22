@@ -25,18 +25,20 @@
 #
 #       YOUR PERSONAL EXPORTS FOR ENVIRONMENT-VARIABLES GOES HERE !!!
 #
-#   Use the section of the script to include any export of environment-variables you need
+#   Use this section of the script to include any export of environment-variables you need.
 #   Specially when it includes spaces and/or special character
-#   Available 
-#   https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables
-
-#   for instance
+#   
+#   For instance:
 #   
 #   export BORG_LOGGING_CONF="/misc/logging.conf"
 #   export BORG_RSH="ssh -i /path/to/private/key "
 
     export BORG_TEST_VARIABLE="Jesus loves you!"
 
+#
+#   More info about environment-variables:
+#   https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables
+#
 ###############################################################
 ###############################################################
 
