@@ -20,9 +20,29 @@
 #
 ##############################################################
 
+##############################################################
+##############################################################
+#
+#       YOUR PERSONAL EXPORTS FOR ENVIRONMENT-VARIABLES GOES HERE !!!
+#
+#   Use the section of the script to include any export of environment-variables you need
+#   Specially when it includes spaces and/or special character
+#   Available 
+#   https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables
+
+#   for instance
+#   
+#   export BORG_LOGGING_CONF="/misc/logging.conf"
+#   export BORG_RSH="ssh -i /path/to/private/key "
+
+    export BORG_TEST_VARIABLE="Jesus loves you!"
+
+###############################################################
+###############################################################
+
 #   Current Version
-    VERSION="v1.5.2"
-##      In First place: verify Input and "jq" package
+    VERSION="v1.5.3"
+##      In First place: verify Input and packages precense
         #   Input Parameter
         if [ $# -eq 0 ]
             then
@@ -31,20 +51,29 @@
             else
                 echo $(date +%Y%m%d-%H%M%S)"	INFO: Argument found: ${1}"
         fi
-        #   Package Exist
-        which jq &> /dev/null
-        if [ $? -eq 0 ] ; then
-                echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
-            else
-                echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package jq is not present!"
-                exit 1
-        fi
+        #   Packages Validation
+            # jq
+            which jq &> /dev/null
+            if [ $? -eq 0 ] ; then
+                    echo $(date +%Y%m%d-%H%M%S)"	INFO: Package jq is present"
+                else
+                    echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package jq is not present!"
+                    exit 1
+            fi
+
+            # borg
+            which borg &> /dev/null
+            if [ $? -eq 0 ] ; then
+                    echo $(date +%Y%m%d-%H%M%S)"	INFO: Package borg is present"
+                else
+                    echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package borg is not present!"
+                    exit 1
+            fi
 
 ##      Getting the Main Configuration
     #   General Config
     DEBUG=$(cat $1 | jq --raw-output '.GeneralConfig.Debug')
     WAIT=$(cat $1 | jq --raw-output '.GeneralConfig.Wait')
-    Check_IKWID=$(cat $1 | jq --raw-output '.GeneralConfig.Check_IKWID')
     
     #   Telegram Config
     ENABLE_MESSAGE=`cat $1 | jq --raw-output '.Telegram.Enable'`
@@ -82,6 +111,7 @@
         return $?
     }
 
+
 ##   Start
     echo "################################################"
     echo "#                                              #"
@@ -99,7 +129,6 @@
 	#   For Debug purposes
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	DEBUG: "$DEBUG
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	WAIT: "$WAIT
-        [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Check_IKWID: "$Check_IKWID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	ENABLE_MESSAGE: "$ENABLE_MESSAGE
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CHAT_ID: "$CHAT_ID
         [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	API_KEY: "$API_KEY
@@ -152,6 +181,35 @@
                     export BORG_REPO
                 # Setting this, so you won't be asked for your repository passphrase:
                     export BORG_PASSPHRASE
+                
+                #   JSON Input Variables
+                    k=0
+                #   Validate if there is variables to be EXPORTed
+                    Nexport=`jq '.GeneralConfig.Exports | length ' $1`
+                    echo $(date +%Y%m%d-%H%M%S)"	EXPORT Variables Qty: "$Nexport
+
+                    if [ $Nexport -lt 1 ]; then
+                        #   No export
+                        echo $(date +%Y%m%d-%H%M%S)"	INFO: No EXPORT VARIABLES found in config file: " $1
+                    else
+                        # at least 1 export
+                        echo $(date +%Y%m%d-%H%M%S)"	INFO: Exporting $Nexport variables"
+                        echo "------------------------------------------------"
+                        while [ $k -lt $Nexport ]
+                            do
+                                # echo $(date +%Y%m%d-%H%M%S)"	k counter: "$k
+                                VARIABLE=`jq -r ".GeneralConfig.Exports[$k] | keys[]" $1`  
+                                VALUE=`jq -r ".GeneralConfig.Exports[$k].[]" $1`
+                                echo $(date +%Y%m%d-%H%M%S)"	running EXPORT: $VARIABLE=$VALUE"
+                                
+                                export ${VARIABLE}=${VALUE}
+                                
+                                k=$(($k + 1))
+                            done
+                            # export -p | grep -i BORG_
+                        echo "------------------------------------------------"   
+                    fi
+
                 # Setting this,  automatic “answerers” for For “This is a potentially dangerous function…” (check –repair)
                     [ $Check_IKWID == true ] && BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES && export BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
 
@@ -159,7 +217,6 @@
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO: "$BORG_REPO
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_PASSPHRASE: "$BORG_PASSPHRASE
-                [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_CHECK_I_KNOW_WHAT_I_AM_DOING: "$BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	PREFIX: "$PREFIX
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ENABLE: "$CREATE_ENABLE
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	CREATE_ARCHIVE: "$CREATE_ARCHIVE
@@ -424,7 +481,7 @@
 
 ##############################################################
 #       MODIFICATION NOTES:
-#
+#       2023-10-20  v1.5.3  Feature: Flexible EXPORT of Variables
 #       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 #       2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
 #       2022-12-13  v1.5.0  Feature: PRUNE size in telegram notification/log
