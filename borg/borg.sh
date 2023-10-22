@@ -210,9 +210,6 @@
                         echo "------------------------------------------------"   
                     fi
 
-                # Setting this,  automatic “answerers” for For “This is a potentially dangerous function…” (check –repair)
-                    [ $Check_IKWID == true ] && BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES && export BORG_CHECK_I_KNOW_WHAT_I_AM_DOING
-
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO: "$BORG_REPO
