@@ -99,7 +99,7 @@ Example
 |---------------------- | -----------| ---------------------------------|
 | GeneralConfig.Debug | true / false | Enable more verbosity in the program log |
 | GeneralConfig.Wait | number | Seconds to wait between task |
-| GeneralConfig.Exports | text | Enable the EXPORT variables which values DOES NOT CONTAINS SPACES OR SPECIAL CHARs, for instance `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES`; if you need to includes variables with specials chars (for example `BORG_RSH="ssh -i /path/to/private/key "`, modify the script at line 38 in order to include those variables). visit https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for further info about environment variables|
+| GeneralConfig.Exports | text | Enable the EXPORT variables which values DOES NOT CONTAINS SPACES OR SPECIAL CHARs, for instance `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES`; if you need to includes variables with specials chars (for example `BORG_RSH="ssh -i /path/to/private/key "), then modify the script at line 38 in order to include those variables. Visit https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for further info about environment variables|
 | Telegram.Enable | true / false | Enable Telegram Notifications |
 | Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
 | Telegram.APIkey | alphanumeric | Telegram Bot API Key |
