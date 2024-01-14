@@ -20,28 +20,8 @@
 #
 ##############################################################
 
-##############################################################
-##############################################################
-#
-#       YOUR PERSONAL EXPORTS FOR ENVIRONMENT-VARIABLES GOES HERE !!!
-#
-#   Use the section of the script to include any export of environment-variables you need
-#   Specially when it includes spaces and/or special character
-#   Available 
-#   https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables
-
-#   for instance
-#   
-#   export BORG_LOGGING_CONF="/misc/logging.conf"
-#   export BORG_RSH="ssh -i /path/to/private/key "
-
-    export BORG_TEST_VARIABLE="Jesus loves you!"
-
-###############################################################
-###############################################################
-
 #   Current Version
-    VERSION="v1.5.3"
+    VERSION="v1.6.0"
 ##      In First place: verify Input and packages precense
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -202,14 +182,13 @@
                                 VALUE=`jq -r ".GeneralConfig.Exports[$k].[]" $1`
                                 echo $(date +%Y%m%d-%H%M%S)"	running EXPORT: $VARIABLE=$VALUE"
                                 
-                                export ${VARIABLE}=${VALUE}
+                                export "${VARIABLE}"="${VALUE}"
                                 
                                 k=$(($k + 1))
                             done
                             # export -p | grep -i BORG_
                         echo "------------------------------------------------"   
                     fi
-
             #   For Debug purposes
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	Printing Current Configuration"
                 [ $DEBUG == true ] && echo $(date +%Y%m%d-%H%M%S)"	BORG_REPO: "$BORG_REPO
@@ -478,7 +457,7 @@
 
 ##############################################################
 #       MODIFICATION NOTES:
-#       2023-10-20  v1.5.3  Feature: Flexible EXPORT of Variables
+#       2023-10-29  v1.6.0  Feature: Dinamic EXPORT of Variables
 #       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 #       2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
 #       2022-12-13  v1.5.0  Feature: PRUNE size in telegram notification/log
