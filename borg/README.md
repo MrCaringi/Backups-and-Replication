@@ -9,14 +9,14 @@ Bash Script for Borg Backup, Prune, Compact and Check
 - `borg check`      https://borgbackup.readthedocs.io/en/stable/usage/check.html
 
 ## How to update the script
-```
+``` Terminal
 cd /path/to/the/script/location
 wget -O borg.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/borg/borg.sh && chmod +x borg.sh
 ```
 
 ## How to Use
 Open your terminal, then run
-```
+``` Terminal
 bash /path/borg.sh /path/config.json
 ```
 ![Terminal Output](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/terminal_01.png)
@@ -29,16 +29,16 @@ bash /path/borg.sh /path/config.json
 - `jq`    Package for json data parsing
 
 ##  How to fill the config file (.json)
-Example
-```
+Example:
+``` JSON
 {
     "GeneralConfig":{
         "Debug": true,
         "Wait": 2,
         "Exports": [
-            { "BORG_TEST1": "VALUE_1" },
-            { "BORG_TEST2": "VALUE_2" },
-            { "BORG_CHECK_I_KNOW_WHAT_I_AM_DOING": "YES" }
+            { "BORG_CHECK_I_KNOW_WHAT_I_AM_DOING": "YES" },
+            { "BORG_TEST_LOGGING_CONF": "/misc/logging.conf" },
+            { "BORG_TEST_RSH": "ssh -i /path/to/private/key " }
             ]
         },
     "Telegram":{
@@ -99,7 +99,7 @@ Example
 |---------------------- | -----------| ---------------------------------|
 | GeneralConfig.Debug | true / false | Enable more verbosity in the program log |
 | GeneralConfig.Wait | number | Seconds to wait between task |
-| GeneralConfig.Exports | text | Enable the EXPORT variables which values DOES NOT CONTAINS SPACES OR SPECIAL CHARs, for instance `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES`; if you need to includes variables with specials chars (for example `BORG_RSH="ssh -i /path/to/private/key "), then modify the script at line 38 in order to include those variables. Visit https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for further info about environment variables|
+| GeneralConfig.Exports | text | Enable the EXPORT variables, for instance `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES` or `BORG_RSH="ssh -i /path/to/private/key "`. Visit https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for further info about available environment variables|
 | Telegram.Enable | true / false | Enable Telegram Notifications |
 | Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
 | Telegram.APIkey | alphanumeric | Telegram Bot API Key |
@@ -123,7 +123,7 @@ Telegram Messages:
 Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/log_01.png)
 ##  Version Story
-- 2023-10-20    v1.5.3  Feature: Flexible EXPORT of Variables
+- 2023-10-29    v1.6.0  Feature: Dinamic EXPORT of Variables
 - 2023-01-03    v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 - 2022-12-23    v1.5.1  Feature: TOTAL size in telegram notification/log
 - 2022-12-13    v1.5.0  Feature: PRUNE size in telegram notification
