@@ -123,6 +123,7 @@ Telegram Messages:
 Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/log_01.png)
 ##  Version Story
+- 2023-10-29    v1.7.0  Feature: Feature: Adding Emojis to Telegram messages (✅,⚠️,🔴 and 🔘)
 - 2023-10-29    v1.6.0  Feature: Dinamic EXPORT of Variables
 - 2023-01-03    v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 - 2022-12-23    v1.5.1  Feature: TOTAL size in telegram notification/log
@@ -132,8 +133,8 @@ Telegram Log:
 - 2021-09-15    v1.2.1  Bug: Number of Files reset
 - 2021-09-10    v1.2.0  Feature: Number of Files
 - 2021-08-24    v1.1.1  Feature: Fewer Telegram Messages
-- 2021-08-20    v1.0.3  Feature: All-in-One code refactor
+- 2021-08-20    v1.0.3  Refactor: All-in-One code
 - 2021-08-07    v0.4    Enable "--prefix PREFIX" for Pruning
 - 2021-08-06    v0.3    Disable PRUNE Option
-- 2020-04-25    Uploaded a GitHub version
+- 2020-04-25    Uploaded to GitHub
 - 2020-04-24    First version
