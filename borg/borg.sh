@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
-
 ##############################################################
 #
 #           BORG-BACKUP SCRIPT
@@ -20,8 +18,9 @@
 #
 ##############################################################
 
-#   Current Version
-    VERSION="v1.6.0"
+##   Current Version
+    VERSION="v1.7.0"
+
 ##      In First place: verify Input and packages precense
         #   Input Parameter
         if [ $# -eq 0 ]
@@ -49,6 +48,11 @@
                     echo $(date +%Y%m%d-%H%M%S)"	ERROR: Package borg is not present!"
                     exit 1
             fi
+##      Setting Emojis
+    SYMBOL_DISABLE="🔘"
+    SYMBOL_SUCCESS="✅"
+    SYMBOL_WARNING="⚠️"
+    SYMBOL_ERROR="🔴"
 
 ##      Getting the Main Configuration
     #   General Config
@@ -152,10 +156,10 @@
                 PRUNE_SIZE=""
                 PRUNE_SIZE_TOTAL=""
                 COMPACT_SIZE=""
-                CREATE_STATUS="DISABLED"
-                PRUNE_STATUS="DISABLED"
-                CHECK_STATUS="DISABLED"
-                COMPACT_STATUS="DISABLED"
+                CREATE_STATUS="DISABLED $SYMBOL_DISABLE"
+                PRUNE_STATUS="DISABLED $SYMBOL_DISABLE"
+                CHECK_STATUS="DISABLED $SYMBOL_DISABLE"
+                COMPACT_STATUS="DISABLED $SYMBOL_DISABLE"
                 FULLREP="${BORG_REPO}::${PREFIX}_$(date +"%Y%m%d-%H%M%S")"
                 # Setting this, so the repo does not need to be given on the command line:
                     export BORG_REPO
@@ -256,14 +260,14 @@
                     # Borg Create: Use highest exit code to build the message
                         if [ ${borg_create_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished successfully"
-                            CREATE_STATUS="SUCCESS"
-                            [ $NUMBER_FILES -eq 0 ] && CREATE_STATUS="WARNING" NUMBER_FILES="#NONE!" PRUNE_ENABLE="false" && echo $(date +%Y%m%d-%H%M%S)"	Disabling BORG PRUNE!"
+                            CREATE_STATUS="SUCCESS $SYMBOL_SUCCESS"
+                            [ $NUMBER_FILES -eq 0 ] && CREATE_STATUS="WARNING $SYMBOL_WARNING" NUMBER_FILES="#NONE!" PRUNE_ENABLE="false" && echo $(date +%Y%m%d-%H%M%S)"	Disabling BORG PRUNE!"
                         elif [ ${borg_create_exit} -eq 1 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished with warnings"
-                            CREATE_STATUS="WARNING"
+                            CREATE_STATUS="WARNING $SYMBOL_WARNING"
                         else
                             echo $(date +%Y%m%d-%H%M%S)" Backup finished with Error"
-                            CREATE_STATUS="ERROR"
+                            CREATE_STATUS="ERROR $SYMBOL_ERROR"
                         fi
 
                 #   No Backup Enabled
@@ -312,13 +316,13 @@
                     # Use highest exit code to build the message
                         if [ ${borg_prune_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Prune finished successfully"
-                            PRUNE_STATUS="SUCCESS"
+                            PRUNE_STATUS="SUCCESS $SYMBOL_SUCCESS"
                         elif [ ${borg_prune_exit} -eq 1 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Prune finished with warnings"
-                            PRUNE_STATUS="WARNINGS"
+                            PRUNE_STATUS="WARNING $SYMBOL_WARNING"
                         else
                             echo $(date +%Y%m%d-%H%M%S)" Prune finished with Error"
-                            PRUNE_STATUS="ERROR"
+                            PRUNE_STATUS="ERROR $SYMBOL_ERROR"
                         fi
                 
                 #   No Prune Enabled
@@ -359,13 +363,13 @@
                     # Use highest exit code to build the message
                         if [ ${borg_check_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Check finished successfully"
-                            CHECK_STATUS="SUCCESS"
+                            CHECK_STATUS="SUCCESS $SYMBOL_SUCCESS"
                         elif [ ${borg_check_exit} -eq 1 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Check finished with warnings"
-                            CHECK_STATUS="WARNINGS"
+                            CHECK_STATUS="WARNING $SYMBOL_WARNING"
                         else
                             echo $(date +%Y%m%d-%H%M%S)" Check finished with Error"
-                            CHECK_STATUS="ERROR"
+                            CHECK_STATUS="ERROR $SYMBOL_ERROR"
                         fi
 
                 #   No Check Enabled
@@ -410,13 +414,13 @@
                     # Use highest exit code to build the message
                         if [ ${borg_compact_exit} -eq 0 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Compact finished successfully"
-                            COMPACT_STATUS="SUCCESS"
+                            COMPACT_STATUS="SUCCESS $SYMBOL_SUCCESS"
                         elif [ ${borg_compact_exit} -eq 1 ]; then
                             echo $(date +%Y%m%d-%H%M%S)" Compact finished with warnings"
-                            COMPACT_STATUS="WARNINGS"
+                            COMPACT_STATUS="WARNING $SYMBOL_WARNING"
                         else
                             echo $(date +%Y%m%d-%H%M%S)" Compact finished with Error"
-                            COMPACT_STATUS="ERROR"
+                            COMPACT_STATUS="ERROR  $SYMBOL_ERROR"
                         fi
 
                 #   No Compact Enabled
@@ -457,6 +461,7 @@
 
 ##############################################################
 #       MODIFICATION NOTES:
+#       2024-01-14  v1.7.0  Feature: Adding Emojis to Telegram messages
 #       2023-10-29  v1.6.0  Feature: Dinamic EXPORT of Variables
 #       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
 #       2022-12-23  v1.5.1  Feature: TOTAL size in telegram notification/log
