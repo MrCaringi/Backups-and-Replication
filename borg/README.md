@@ -11,6 +11,8 @@ Bash Script for Borg Backup, Prune, Compact and Check
 ## How to update the script
 ``` Terminal
 cd /path/to/the/script/location
+```
+``` Terminal
 wget -O borg.sh https://raw.githubusercontent.com/MrCaringi/Backups-and-Replication/master/borg/borg.sh && chmod +x borg.sh
 ```
 
