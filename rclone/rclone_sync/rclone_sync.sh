@@ -21,7 +21,7 @@
 ##############################################################
 
 ##  Version vars
-    VERSION="v1.9.0"
+    VERSION="v1.10.0"
     VERSION_TEXT="Feature: Folder task deactivation"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
@@ -59,6 +59,11 @@
 
     #   Self-Healing Config
     DedupeFlags=$(jq --raw-output '.selfHealingFeatures.DedupeFlags' $1)
+
+    #   Emoji
+    ICON_OK="✅"
+    ICON_WARNING="⚠️"
+    ICON_ERROR="⛔"
 
 
 ##  Telegram Notification Functions
@@ -204,7 +209,7 @@
 
         if [ -f ${INSTANCE_FILE}  ];then
             echo $(date +%Y-%m-%d_%H:%M:%S)"    ERROR: An another instance of this script is already running, if it not right, please remove the file $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Total Task: ${N}" " " "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_WARNING}" "Batch: #$BATCH" "Total Task: ${N}" " " "#ERROR: there is another instance of this script is already running" "please remove the file $INSTANCE_FILE" >/dev/null 2>&1 
             exit 1
             else
                 echo $(date +%Y-%m-%d_%H:%M:%S)"     INFO: NO another instance is running. No $INSTANCE_FILE file was found."
@@ -214,12 +219,12 @@
         touch $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not create $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" " " "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_ERROR}" "Batch: #$BATCH" " " "#ERROR could not create" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
     
     #   Notify Version
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "╔══════════════════════════════╗" "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "<i>Release Version: <code>${VERSION}</code></i>" >/dev/null 2>&1 
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "╔═══════════════╗" "#RCLONE_Replica" "#Starting" "Batch: #$BATCH" "Total Task: ${N}" "<i>Release Version: <code>${VERSION}</code></i>" >/dev/null 2>&1 
 
     while [ $i -lt $N ]
     do
@@ -256,7 +261,7 @@
         #   If the task is DEACTIVATED
             if [ $Deactivation == true ]; then
                 echo $(date +%Y-%m-%d_%H:%M:%S)"	#WARNING: This task is disabled"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "#WARNING This task is disabled" "from: ${DIR_O}" "to: ${DIR_D}" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_WARNING}" "Task: ${I} of ${N}" " " "#WARNING This task is disabled" "from: ${DIR_O}" "to: ${DIR_D}" >/dev/null 2>&1
                 break
             fi
 
@@ -276,7 +281,7 @@
             touch log_${LOG_DATE}.log
             if [ $? -ne 0 ]; then
                 echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not create log file: log_${LOG_DATE}.log"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR: could not create log file: log_${LOG_DATE}.log" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_ERROR}" "#ERROR: could not create log file: log_${LOG_DATE}.log" >/dev/null 2>&1
             fi
 
 		##	RCLONE Command
@@ -287,7 +292,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "#ERROR during Syncing" "from: ${DIR_O}" "to: ${DIR_D}" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_ERROR}" "Task: ${I} of ${N}" " " "#ERROR during Syncing" "from: ${DIR_O}" "to: ${DIR_D}" >/dev/null 2>&1
                     fi
                 else
                     #   No Custom Flags for the task
@@ -296,7 +301,7 @@
                     #	If rclone failed/warned notify
                     if [ $? -ne 0 ]; then
                         echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR RCLONE from: ${DIR_O} to: ${DIR_D}"
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "#ERROR during Syncing" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_ERROR}" "Task: ${I} of ${N}" " " "#ERROR during Syncing" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" >/dev/null 2>&1
                     fi
             fi
         
@@ -309,7 +314,7 @@
                         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	There is duplicated files in Source"
                         touch dedupe_o_log_${LOG_DATE}.log
                         rclone dedupe ${DedupeFlags} ${DIR_O} --log-file=dedupe_o_log_${LOG_DATE}.log
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_o_log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_O}"  >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_o_log_${LOG_DATE}.log "#RCLONE_Replica ${ICON_WARNING}" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_O}"  >/dev/null 2>&1
                         rm dedupe_o_log_${LOG_DATE}.log
                     fi
 
@@ -319,7 +324,7 @@
                         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	There is duplicated files in Destination"
                         touch dedupe_d_log_${LOG_DATE}.log
                         rclone dedupe ${DedupeFlags} ${DIR_D} --log-file=dedupe_d_log_${LOG_DATE}.log
-                        [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_d_log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_D}"  >/dev/null 2>&1
+                        [ $ENABLE_MESSAGE == true ] && TelegramSendFile dedupe_d_log_${LOG_DATE}.log "#RCLONE_Replica ${ICON_WARNING}" " " "Task: ${I} of ${N}" "Dedupe Log for ${DIR_D}"  >/dev/null 2>&1
                         rm dedupe_d_log_${LOG_DATE}.log
                     fi
             fi
@@ -338,10 +343,10 @@
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendFile log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" " " "From: ${DIR_O}" "Sync Size: ${ORIGIN_SIZE}" "To: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"  >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendFile log_${LOG_DATE}.log "#RCLONE_Replica ${ICON_OK}" " " "Task: ${I} of ${N}" " " "From: ${DIR_O}" "Sync Size: ${ORIGIN_SIZE}" "To: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"  >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Log has no info, sending message"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Task: ${I} of ${N}" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" " " "Elapsed time: <code>${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}</code>" >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_OK}" "Task: ${I} of ${N}" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" " " "Elapsed time: <code>${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}</code>" >/dev/null 2>&1
             fi
             
         #   Flushing & Deleting the file
@@ -360,7 +365,7 @@
         rm $INSTANCE_FILE
         if [ $? -ne 0 ]; then
             echo $(date +%Y-%m-%d_%H:%M:%S)"	ERROR: could not remove $INSTANCE_FILE"
-            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
+            [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_ERROR}" "#ERROR could not remove" "$INSTANCE_FILE file" >/dev/null 2>&1
             exit 1
         fi
     #   Elapsed time calculation for the Main Program
@@ -369,7 +374,7 @@
         DATE_END=$(date +%F)
         DAYS_ELAPSE=$(( ($(date -d $DATE_END +%s) - $(date -d $DATE_START +%s) )/(60*60*24) ))
         [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	General Elapsed time: ${DAYS_ELAPSE}d ${TIME_ELAPSE}"
-        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Total Elapsed time: <code>${DAYS_ELAPSE}d ${TIME_ELAPSE}</code>" "╚══════════════════════════════╝" >/dev/null 2>&1
+        [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica" "Batch: #$BATCH" "Status: #Finished" "Total Elapsed time: <code>${DAYS_ELAPSE}d ${TIME_ELAPSE}</code>" "╚═══════════════╝" >/dev/null 2>&1
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
@@ -383,6 +388,7 @@
 #
 ##	        SCRIPT MODIFICATION NOTES
 #
+#       2024-10-11  v1.10.0   Feature: Emoji in Telegram messages
 #       2023-03-12  v1.9.0    Feature: Folder task deactivation
 #       2023-03-12  v1.8.0    Feature: new telegram message format
 #       2022-12-20  v1.7.0    Fix: jq reimplementation
