@@ -122,6 +122,7 @@ Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/log_01.png)
 
 ### Changelog
+- 2024-10-11  v1.10.0   Feature: Emoji in Telegram messages
 - 2023-09-26  v1.9.0    Feature: Folder task deactivation (`DisableTask` flag)
 - 2023-03-12  v1.8.0    Feature: new telegram message format
 - 2022-12-20  v1.7.0    Fix: jq reimplementation
