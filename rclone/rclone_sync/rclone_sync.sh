@@ -343,7 +343,7 @@
 
             if [ $lenght -gt 0 ]; then
                 [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Log has info"
-                [ $ENABLE_MESSAGE == true ] && TelegramSendFile log_${LOG_DATE}.log "#RCLONE_Replica ${ICON_OK}" " " "Task: ${I} of ${N}" " " "From: ${DIR_O}" "Sync Size: ${ORIGIN_SIZE}" "To: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"  >/dev/null 2>&1
+                [ $ENABLE_MESSAGE == true ] && TelegramSendFile log_${LOG_DATE}.log "#RCLONE_Replica" " " "Task: ${I} of ${N}" " " "From: ${DIR_O}" "Sync Size: ${ORIGIN_SIZE}" "To: ${DIR_D}" " " "Elapsed time: ${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}"  >/dev/null 2>&1
             else
                 [ $DEBUG == true ] && echo $(date +%Y-%m-%d_%H:%M:%S)"	Log has no info, sending message"
                 [ $ENABLE_MESSAGE == true ] && TelegramSendMessage "#RCLONE_Replica ${ICON_OK}" "Task: ${I} of ${N}" " " "From: <code>${DIR_O}</code>" "Sync Size: <code>${ORIGIN_SIZE}</code>" "To: <code>${DIR_D}</code>" " " "Elapsed time: <code>${DAYSi_ELAPSE}d ${TIMEi_ELAPSE}</code>" >/dev/null 2>&1
