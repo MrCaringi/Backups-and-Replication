@@ -9,17 +9,17 @@
     "containers": [
         {
             "name": "container1",
+            "maxBackups": 5,
             "volumes": [
                 "/path/to/volume1",
-                "/path/to/volume2",
-                "/path/to/volume3"
+                "/path/to/volume2"
             ]
         },
         {
             "name": "container2",
+            "maxBackups": 3,
             "volumes": [
-                "/path/to/volume1",
-                "/path/to/volume2"
+                "/path/to/volume1"
             ]
         }
     ]

@@ -59,11 +59,37 @@ check_container() {
     return 0
 }
 
+# Función para rotar backups
+rotate_backups() {
+    local CONTAINER="$1"
+    local VOLUME_NAME="$2"
+    local BACKUP_PATH="$3"
+    local MAX_BACKUPS="$4"
+    
+    log "Iniciando rotación de backups para $CONTAINER - $VOLUME_NAME (máximo: $MAX_BACKUPS)"
+    
+    # Listar todos los backups existentes para este contenedor y volumen
+    local BACKUP_COUNT=$(ls -1 "${BACKUP_PATH}/${CONTAINER}_${VOLUME_NAME}_"*.tar.gz 2>/dev/null | wc -l)
+    
+    if [ "$BACKUP_COUNT" -ge "$MAX_BACKUPS" ]; then
+        # Obtener los backups más antiguos que exceden el límite
+        local EXCESS=$((BACKUP_COUNT - MAX_BACKUPS + 1))
+        local OLD_BACKUPS=$(ls -1t "${BACKUP_PATH}/${CONTAINER}_${VOLUME_NAME}_"*.tar.gz | tail -n "$EXCESS")
+        
+        log "Eliminando $EXCESS backup(s) antiguo(s)"
+        echo "$OLD_BACKUPS" | while read -r backup; do
+            log "Eliminando backup antiguo: $(basename "$backup")"
+            rm -f "$backup"
+        done
+    fi
+}
+
 # Función para realizar backup de un volumen específico
 backup_volume() {
     local CONTAINER="$1"
     local VOLUME_PATH="$2"
     local BACKUP_PATH="$3"
+    local MAX_BACKUPS="$4"
     local VOLUME_NAME=$(basename "$VOLUME_PATH")
     local BACKUP_NAME="${CONTAINER}_${VOLUME_NAME}_${TIMESTAMP}.tar.gz"
     
@@ -72,13 +98,16 @@ backup_volume() {
     if [ ! -d "$VOLUME_PATH" ]; then
         log "ERROR: El directorio del volumen no existe: $VOLUME_PATH"
         return 1
-    }
+    fi
+    
+    # Rotar backups antes de crear uno nuevo
+    rotate_backups "$CONTAINER" "$VOLUME_NAME" "$BACKUP_PATH" "$MAX_BACKUPS"
     
     # Crear backup del volumen
     if ! tar czf "${BACKUP_PATH}/${BACKUP_NAME}" -C "$(dirname "$VOLUME_PATH")" "$VOLUME_NAME" >> "$LOG_FILE" 2>&1; then
         log "ERROR: No se pudo crear el backup del volumen $VOLUME_PATH"
         return 1
-    }
+    fi
     
     log "Backup del volumen completado: $BACKUP_NAME"
     return 0
@@ -89,6 +118,7 @@ backup_container() {
     local CONTAINER="$1"
     local VOLUMES="$2"
     local BACKUP_PATH="$3"
+    local MAX_BACKUPS="$4"
     local BACKUP_FAILED=0
     
     log "Iniciando backup del contenedor: $CONTAINER"
@@ -97,7 +127,7 @@ backup_container() {
     if ! check_container "$CONTAINER"; then
         ERROR_COUNT=$((ERROR_COUNT + 1))
         return 1
-    }
+    fi
     
     # Detener contenedor
     log "Deteniendo contenedor $CONTAINER..."
@@ -110,7 +140,7 @@ backup_container() {
     # Realizar backup de cada volumen
     echo "$VOLUMES" | jq -c '.[]' | while read -r volume; do
         VOLUME_PATH=$(echo "$volume" | jq -r '.')
-        if ! backup_volume "$CONTAINER" "$VOLUME_PATH" "$BACKUP_PATH"; then
+        if ! backup_volume "$CONTAINER" "$VOLUME_PATH" "$BACKUP_PATH" "$MAX_BACKUPS"; then
             BACKUP_FAILED=1
             ERROR_COUNT=$((ERROR_COUNT + 1))
         fi
@@ -151,8 +181,9 @@ mkdir -p "$BACKUP_DEST"
 jq -c '.containers[]' "$CONFIG_FILE" 2>/dev/null | while read -r container; do
     CONTAINER_NAME=$(echo "$container" | jq -r '.name')
     VOLUMES=$(echo "$container" | jq '.volumes')
+    MAX_BACKUPS=$(echo "$container" | jq -r '.maxBackups // "5"')  # Por defecto 5 si no se especifica
     
-    backup_container "$CONTAINER_NAME" "$VOLUMES" "$BACKUP_DEST"
+    backup_container "$CONTAINER_NAME" "$VOLUMES" "$BACKUP_DEST" "$MAX_BACKUPS"
 done
 
 # Esperar a que terminen todos los procesos en segundo plano
