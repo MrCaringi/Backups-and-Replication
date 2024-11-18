@@ -32,7 +32,7 @@ send_telegram_message() {
     --data parse_mode=HTML \
     --data chat_id="${CHAT_ID}" \
     --data text="<b>${HEADER}</b>%0A<i>from <b>#$(hostname)</b></i>%0A%0A${MESSAGE}" \
-    "https://api.telegram.org/bot${API_KEY}/sendMessage"
+    "https://api.telegram.org/bot${API_KEY}/sendMessage" >/dev/null 2>&1 
 }
 
 # Función para enviar archivo por Telegram
@@ -46,7 +46,7 @@ send_telegram_file() {
     "chat_id=${CHAT_ID}" \
     -F document=@"${FILE}" \
     -F caption="${HEADER}"$'\n'"        from: #$(hostname)" \
-    https://api.telegram.org/bot${API_KEY}/sendDocument
+    https://api.telegram.org/bot${API_KEY}/sendDocument >/dev/null 2>&1 
 }
 
 # Función para verificar si el contenedor existe
@@ -108,8 +108,11 @@ backup_volume() {
         log "ERROR: No se pudo crear el backup del volumen $VOLUME_PATH"
         return 1
     fi
+
+    # Calcular el tamaño del archivo de backup
+    local BACKUP_SIZE=$(du -sh "${BACKUP_PATH}/${BACKUP_NAME}" | awk '{print $1}')
+    log "Backup del volumen completado: $BACKUP_NAME (Tamaño: $BACKUP_SIZE)"
     
-    log "Backup del volumen completado: $BACKUP_NAME"
     return 0
 }
 
@@ -120,6 +123,10 @@ backup_container() {
     local BACKUP_PATH="$3"
     local MAX_BACKUPS="$4"
     local BACKUP_FAILED=0
+    local CONTAINER_BACKUP_PATH="${BACKUP_PATH}/${CONTAINER}"
+
+    # Crear subcarpeta para el contenedor
+    mkdir -p "$CONTAINER_BACKUP_PATH"
     
     log "Iniciando backup del contenedor: $CONTAINER"
     
@@ -130,9 +137,9 @@ backup_container() {
     fi
     
     # Detener contenedor
-    log "Deteniendo contenedor $CONTAINER..."
-    if ! docker stop "$CONTAINER" >> "$LOG_FILE" 2>&1; then
-        log "ERROR: No se pudo detener el contenedor $CONTAINER"
+    log "Pausando contenedor $CONTAINER..."
+    if ! docker pause "$CONTAINER" >> "$LOG_FILE" 2>&1; then
+        log "ERROR: No se pudo pausar el contenedor $CONTAINER"
         ERROR_COUNT=$((ERROR_COUNT + 1))
         return 1
     fi
@@ -140,7 +147,7 @@ backup_container() {
     # Realizar backup de cada volumen
     echo "$VOLUMES" | jq -c '.[]' | while read -r volume; do
         VOLUME_PATH=$(echo "$volume" | jq -r '.')
-        if ! backup_volume "$CONTAINER" "$VOLUME_PATH" "$BACKUP_PATH" "$MAX_BACKUPS"; then
+        if ! backup_volume "$CONTAINER" "$VOLUME_PATH" "$CONTAINER_BACKUP_PATH" "$MAX_BACKUPS"; then
             BACKUP_FAILED=1
             ERROR_COUNT=$((ERROR_COUNT + 1))
         fi
@@ -148,17 +155,21 @@ backup_container() {
     
     # Iniciar contenedor
     log "Iniciando contenedor $CONTAINER..."
-    if ! docker start "$CONTAINER" >> "$LOG_FILE" 2>&1; then
-        log "ERROR: No se pudo iniciar el contenedor $CONTAINER"
+    if ! docker unpause "$CONTAINER" >> "$LOG_FILE" 2>&1; then
+        log "ERROR: No se pudo des-pausar el contenedor $CONTAINER"
         ERROR_COUNT=$((ERROR_COUNT + 1))
         return 1
     fi
     
+    # Calcular tamaño de la carpeta de backup del contenedor
+    local TOTAL_BACKUP_SIZE=$(du -sh "$CONTAINER_BACKUP_PATH" | awk '{print $1}')
+    log "Backup completado para $CONTAINER. Tamaño total: $TOTAL_BACKUP_SIZE"
+    
     if [ $BACKUP_FAILED -eq 0 ]; then
-        log "Backup completado exitosamente para todos los volúmenes de $CONTAINER"
+        log "Backup completado exitosamente para todos los volúmenes de $CONTAINER"; log "---   ---   ---   ---   ---   ---   ---"
         return 0
     else
-        log "ADVERTENCIA: Algunos volúmenes de $CONTAINER no se pudieron respaldar"
+        log "ADVERTENCIA: Algunos volúmenes de $CONTAINER no se pudieron respaldar"; log "---   ---   ---   ---   ---   ---   ---"
         return 1
     fi
 }
