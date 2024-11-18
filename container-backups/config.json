@@ -1,0 +1,26 @@
+{
+    "config": {
+        "BackupDestination": "/path/to/backup/destination"
+    },
+    "telegram": {
+        "ChatID": "your-chat-id",
+        "APIkey": "your-api-key"
+    },
+    "containers": [
+        {
+            "name": "container1",
+            "maxBackups": 5,
+            "volumes": [
+                "/path/to/volume1",
+                "/path/to/volume2"
+            ]
+        },
+        {
+            "name": "container2",
+            "maxBackups": 3,
+            "volumes": [
+                "/path/to/volume1"
+            ]
+        }
+    ]
+}
