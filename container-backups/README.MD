@@ -77,8 +77,9 @@ Example of folder structure created by this script:
 ![folder structure](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/terminal-folder-structure.jpg)
 
 Example of logs:
-![Logs](https://github.com/MrCaringi/assets/blob/main/images/container-backups/logs-01.png)
-![Logs](https://github.com/MrCaringi/assets/blob/main/images/container-backups/logs-02.png)
+![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-01.png)
+
+![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-02.png)
 
 # Changelog
 - 2024-11-18  v1.0   First version
