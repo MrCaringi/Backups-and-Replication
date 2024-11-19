@@ -28,9 +28,14 @@ Where:
 
 ## Cron Job example
 You can use `crontab` to schedule this script, an example:
+Recomendation: use contrab's `root` in order to prevent preission issues:
+```shell
+sudo crontab -e
+```
+Then add this line (adju
 ```shell
 #       container-backups
-5 0 * * 1  /home/ubuntu/scripts/z_scripts/container-backups/container-backups.sh /home/ubuntu/scripts/z_scripts/container-backups/conf_weekly.json > /home/ubuntu/scripts/z_scripts/container-backups/conf_weekly.log 2>&1
+5 0 * * 1  /folder/location-of-script/container-backups/container-backups.sh /folder/location-of-script/container-backups/conf_weekly.json > /folder/location-of-script/container-backups/conf_weekly.log 2>&1
 ```
 
 ##  How to populate the config file (config.json)
