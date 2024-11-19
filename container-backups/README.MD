@@ -32,7 +32,7 @@ Recomendation: use contrab's `root` in order to prevent preission issues:
 ```shell
 sudo crontab -e
 ```
-Then add this line (adju
+Then add this line (adjust folder paths)
 ```shell
 #       container-backups
 5 0 * * 1  /folder/location-of-script/container-backups/container-backups.sh /folder/location-of-script/container-backups/conf_weekly.json > /folder/location-of-script/container-backups/conf_weekly.log 2>&1
