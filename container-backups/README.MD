@@ -27,8 +27,8 @@ Where:
 ![Terminal Output](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/terminal.png)
 
 ## Cron Job example
-You can use `crontab` to schedule this script, an example:
-Recomendation: use contrab's `root` in order to prevent preission issues:
+You can use `crontab` to schedule this script,
+- Recomendation: use contrab's `root` in order to prevent permission issues:
 ```shell
 sudo crontab -e
 ```
