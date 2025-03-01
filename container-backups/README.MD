@@ -6,7 +6,7 @@ This is a (very simple) Bash script for generating backups of containers volumes
 - Can send Telegram Notifications (messages and log files)
 - This scripts **PAUSES** the containers before the backups
 - This script uses `tar` binaries to generate and compress the backups
-- Several containers and folders are supported
+- Several containers with several folders (bind volumes) are supported
 - `maxBackups` variable can be configured for every container
 
 

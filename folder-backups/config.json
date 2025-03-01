@@ -1,0 +1,27 @@
+{
+    "config": {
+        "BackupDestination": "/path/to/backup/destination",
+        "LogDestination": "/path/to/logs"
+    },
+    "telegram": {
+        "ChatID": "your-chat-id",
+        "APIkey": "your-api-key"
+    },
+    "folders": [
+        {
+            "name": "personal_docs",
+            "maxBackups": 5,
+            "paths": [
+                "/home/user/Documents",
+                "/home/user/Pictures"
+            ]
+        },
+        {
+            "name": "projects",
+            "maxBackups": 3,
+            "paths": [
+                "/home/user/Projects"
+            ]
+        }
+    ]
+}
