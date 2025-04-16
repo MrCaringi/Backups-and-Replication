@@ -63,6 +63,7 @@
     ENABLE_MESSAGE=`cat $1 | jq --raw-output '.Telegram.Enable'`
     CHAT_ID=`cat $1 | jq --raw-output '.Telegram.ChatID'`
     API_KEY=`cat $1 | jq --raw-output '.Telegram.APIkey'`
+    THREAD_ID=`cat $1 | jq --raw-output '.Telegram.ThreadId'`
 
 ##  Functions
     function TelegramSendMessage(){
@@ -72,6 +73,7 @@
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
+        --data message_thread_id=${THREAD_ID} \
         --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${2}%0A${3}%0A${4}%0A${5}%0A${6}%0A${7}%0A${8}%0A${9}%0A${10}%0A${11}%0A${12}%0A${13}%0A${14}%0A${15}%0A${16}%0A${17}%0A${18}%0A${19}%0A${20}%0A${21}%0A${22}%0A${23}%0A${24}%0A${25}%0A${26}%0A${27}%0A${28}%0A${29}%0A${30}%0A${31}%0A${32}%0A${33}%0A${34}%0A${35}%0A${36}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
@@ -85,6 +87,7 @@
 
         curl -v -4 -F \
         "chat_id=${CHAT_ID}" \
+        "message_thread_id=${THREAD_ID}" \
         -F document=@${FILE} \
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument

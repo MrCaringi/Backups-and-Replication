@@ -46,6 +46,7 @@ Example:
     "Telegram":{
         "Enable": true,
         "ChatID": "-123",
+        "ThreadId": "99",
         "APIkey": "123:ABC"
         },
     "Task": [
@@ -104,6 +105,7 @@ Example:
 | GeneralConfig.Exports | text | Enable the EXPORT variables, for instance `BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=YES` or `BORG_RSH="ssh -i /path/to/private/key "`. Visit https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for further info about available environment variables|
 | Telegram.Enable | true / false | Enable Telegram Notifications |
 | Telegram.ChatID | number | Enable Telegram Notifications (you can get this when you add the bot @getmyid_bot to your chat/group) |
+| Telegram.ThreadId | number | _Topic_ ID in your group (you can get this when you add the bot @getmyid_bot to your chat/group) |
 | Telegram.APIkey | alphanumeric | Telegram Bot API Key |
 | Task.Repository | Path | Full path to Repository |
 | Task.BorgPassphrase | alphanumeric | Repository's password |
@@ -125,6 +127,7 @@ Telegram Messages:
 Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/borg/log_01.png)
 ##  Version Story
+- 2025-04-16    v1.8.0  Feature: Support API Telegram `message_thread_id` to send messages to _Topics_
 - 2023-10-29    v1.7.0  Feature: Feature: Adding Emojis to Telegram messages (✅,⚠️,🔴 and 🔘)
 - 2023-10-29    v1.6.0  Feature: Dinamic EXPORT of Variables
 - 2023-01-03    v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
