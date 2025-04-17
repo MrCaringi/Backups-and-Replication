@@ -9,6 +9,7 @@
     "Telegram":{
         "Enable": true,
         "ChatID": "-123",
+        "ThreadId": "99",
         "APIkey": "123:ABC"
         },
     "Task": [
