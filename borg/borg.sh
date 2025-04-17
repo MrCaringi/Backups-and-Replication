@@ -19,7 +19,7 @@
 ##############################################################
 
 ##   Current Version
-    VERSION="v1.7.0"
+    VERSION="v1.8.0"
 
 ##      In First place: verify Input and packages precense
         #   Input Parameter
@@ -85,12 +85,11 @@
         FILE=${3}
         HOSTNAME=`hostname`
 
-        curl -v -4 -F \
-        "chat_id=${CHAT_ID}" \
-        "message_thread_id=${THREAD_ID}" \
-        -F document=@${FILE} \
+        curl -v -4 -F "chat_id=${CHAT_ID}" \
+        -F "message_thread_id=${THREAD_ID}" \
+        -F "document=@${FILE}" \
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}" \
-        https://api.telegram.org/bot${API_KEY}/sendDocument
+        "https://api.telegram.org/bot${API_KEY}/sendDocument"
     }
 
     function package_exists(){
@@ -464,6 +463,7 @@
 
 ##############################################################
 #       MODIFICATION NOTES:
+#       2025-04-16  v1.8.0  Feature: API Telegram message_thread_id support
 #       2024-01-14  v1.7.0  Feature: Adding Emojis to Telegram messages
 #       2023-10-29  v1.6.0  Feature: Dinamic EXPORT of Variables
 #       2023-01-03  v1.5.2  Feature: TOTAL size (compact) in telegram notification/log
