@@ -21,8 +21,8 @@
 ##############################################################
 
 ##  Version vars
-    VERSION="v1.10.0"
-    VERSION_TEXT="Feature: Folder task deactivation"
+    VERSION="v1.11.0"
+    VERSION_TEXT="Feature: Thread ID in Telegram messages"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
@@ -55,6 +55,7 @@
     #   Telegram Config
     ENABLE_MESSAGE=$(jq --raw-output '.telegram.Enable' $1)
     CHAT_ID=$(jq --raw-output '.telegram.ChatID' $1)
+    THREAD_ID=$(jq --raw-output '.telegram.ThreadId' $1)  # Added THREAD_ID
     API_KEY=$(jq --raw-output '.telegram.APIkey' $1)
 
     #   Self-Healing Config
@@ -84,6 +85,7 @@
         curl -s \
         --data parse_mode=HTML \
         --data chat_id=${CHAT_ID} \
+        --data message_thread_id=${THREAD_ID} \
         --data text="<b>${HEADER}</b>%0A      <i>from <b>#`hostname`</b></i>%0A%0A${LINE1}%0A${LINE2}%0A${LINE3}%0A${LINE4}%0A${LINE5}%0A${LINE6}%0A${LINE7}%0A${LINE8}%0A${LINE9}%0A${LINE10}" \
         "https://api.telegram.org/bot${API_KEY}/sendMessage"
     }
@@ -105,6 +107,7 @@
 
         curl -v -4 -F \
         "chat_id=${CHAT_ID}" \
+        -F "message_thread_id=${THREAD_ID}" \
         -F document=@${FILE} \
         -F caption="${HEADER}"$'\n'"        from: #${HOSTNAME}"$'\n'"${LINE1}"$'\n'"${LINE2}"$'\n'"${LINE3}"$'\n'"${LINE4}"$'\n'"${LINE5}"$'\n'"${LINE6}"$'\n'"${LINE7}"$'\n'"${LINE8}"$'\n'"${LINE9}" \
         https://api.telegram.org/bot${API_KEY}/sendDocument
@@ -388,6 +391,7 @@
 #
 ##	        SCRIPT MODIFICATION NOTES
 #
+#       2025-05-13  v1.11.0   Feature: Thread ID in Telegram messages
 #       2024-10-11  v1.10.0   Feature: Emoji in Telegram messages
 #       2023-03-12  v1.9.0    Feature: Folder task deactivation
 #       2023-03-12  v1.8.0    Feature: new telegram message format

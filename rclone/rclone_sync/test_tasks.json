@@ -10,6 +10,7 @@
     "telegram":{
         "Enable": true,
         "ChatID": "-123456789",
+        "ThreadId": "99",
         "APIkey": "123:ABCDE"
         },
     "selfHealingFeatures":{
