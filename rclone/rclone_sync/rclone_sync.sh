@@ -21,8 +21,8 @@
 ##############################################################
 
 ##  Version vars
-    VERSION="v1.10.0"
-    VERSION_TEXT="Feature: Folder task deactivation"
+    VERSION="v1.11.0"
+    VERSION_TEXT="Feature: Thread ID in Telegram messages"
     echo $(date +%Y-%m-%d_%H:%M:%S)"	$VERSION      $VERSION_TEXT"
     
 ##      In First place: verify Input and "jq" package
@@ -391,6 +391,7 @@
 #
 ##	        SCRIPT MODIFICATION NOTES
 #
+#       2025-05-13  v1.11.0   Feature: Thread ID in Telegram messages
 #       2024-10-11  v1.10.0   Feature: Emoji in Telegram messages
 #       2023-03-12  v1.9.0    Feature: Folder task deactivation
 #       2023-03-12  v1.8.0    Feature: new telegram message format

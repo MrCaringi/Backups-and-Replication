@@ -13,6 +13,7 @@ Internally it is (basically) a `rclone sync /origin/ /destination/` automation t
 - v1.2.0    Feature: Global Flags can be used in a syncronization task
 - v1.4.0    Feature: Smart Dedupe based on `rclone sync` logs
 - v1.9.0    Feature: Folder task deactivation (`DisableTask` flag)
+- v1.11.0   Feature: ThreadID 
 
 # How to Use
 ##  In the Terminal
@@ -46,6 +47,7 @@ Delete text afte commas (,) in order to use it:
     "telegram":{
         "Enable": true,
         "ChatID": "-123456789",
+        "ThreadId": "123"
         "APIkey": "123:ABCDE"
         },
     "selfHealingFeatures":{
@@ -98,6 +100,7 @@ Delete text afte commas (,) in order to use it:
 | Config.DriveServerSide | true/false | Enable rclone flag  `--drive-server-side-across-configs` Allow server-side operations to work across different |
 | Config.MaxTransfer | Number + Suffix | Enable rclone flag `--max-transfer`. Maximum size of data to transfer. |
 | Config.BwLimit | Number + Suffix | Bandwidth limit in KiByte/s, or use suffix B|K|M|G|T|P or a full timetable |
+| Config.ThreadId | Number | Unique identifier for the Telegram Message thread Id |
 | telegram.Enable | true/false | Enable Telegram Notifications |
 | telegram.ChatID | Number | Number that identify Telegram Chat/Group (you can get this when you add the bot `@getmyid_bot` to your chat/group) |
 | telegram.APIkey | Text | Telegram Bot API Key |
@@ -122,6 +125,7 @@ Telegram Log:
 ![Telegram Log](https://github.com/MrCaringi/assets/blob/main/images/scripts/rclone/log_01.png)
 
 ### Changelog
+- 2025-05-13  v1.11.0   Feature: ThreadID support for Telegram message
 - 2024-10-11  v1.10.0   Feature: Emoji in Telegram messages
 - 2023-09-26  v1.9.0    Feature: Folder task deactivation (`DisableTask` flag)
 - 2023-03-12  v1.8.0    Feature: new telegram message format
