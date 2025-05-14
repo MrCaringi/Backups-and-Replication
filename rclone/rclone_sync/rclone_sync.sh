@@ -178,7 +178,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       STARTING RCLONE REPLICATION            #"
-    echo "#                 ${VERSION}                       #"
+    echo "                 ${VERSION}                      "
     echo "#                                              #"
     echo "################################################"
     #   General Start time
@@ -381,7 +381,7 @@
     echo "################################################"
     echo "#                                              #"
     echo "#       FINISHED RCLONE REPLICATION            #"
-    echo "#                 ${VERSION}                       #"
+    echo "                 ${VERSION}                      "
     echo "#                                              #"
     echo "################################################"
 
