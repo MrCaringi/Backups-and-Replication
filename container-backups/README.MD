@@ -92,8 +92,7 @@ Example of folder structure created by this script:
 ![folder structure](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/terminal-folder-structure.jpg)
 
 Example of logs:  
-![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-01.png)  
-![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-02.png)
+![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-01.png)
 
 # Changelog
 - 2025-05-31  v1.1  Added Telegram thread support, compose file backup, improved error reporting
