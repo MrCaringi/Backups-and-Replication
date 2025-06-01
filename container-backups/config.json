@@ -4,11 +4,13 @@
     },
     "telegram": {
         "ChatID": "your-chat-id",
-        "APIkey": "your-api-key"
+        "APIkey": "your-api-key",
+        "MessageThreadID": "123"
     },
     "containers": [
         {
             "name": "container1",
+            "composeFile": "/path/to/compose.yml",
             "maxBackups": 5,
             "volumes": [
                 "/path/to/volume1",

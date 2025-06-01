@@ -12,8 +12,9 @@ if [ $# -ne 1 ]; then
 fi
 
 CONFIG_FILE="$1"
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-LOG_FILE="/tmp/container_backup_${TIMESTAMP}.log"
+HOSTNAME_SHORT=$(hostname | cut -d. -f1)
+TIMESTAMP=$(date +%y%m%d-%H%M)
+LOG_FILE="/tmp/${HOSTNAME_SHORT}_${TIMESTAMP}.log"
 ERROR_COUNT=0
 
 # Function to write to log
@@ -27,12 +28,19 @@ send_telegram_message() {
     local MESSAGE="$2"
     local CHAT_ID=$(jq -r '.telegram.ChatID' "$CONFIG_FILE")
     local API_KEY=$(jq -r '.telegram.APIkey' "$CONFIG_FILE")
-    
-    curl -s \
-    --data parse_mode=HTML \
-    --data chat_id="${CHAT_ID}" \
-    --data text="<b>${HEADER}</b>%0A<i>from <b>#$(hostname)</b></i>%0A%0A${MESSAGE}" \
-    "https://api.telegram.org/bot${API_KEY}/sendMessage" >/dev/null 2>&1 
+    local THREAD_ID=$(jq -r '.telegram.MessageThreadID // empty' "$CONFIG_FILE")
+
+    local CURL_ARGS=(
+        --data parse_mode=HTML
+        --data chat_id="${CHAT_ID}"
+        --data text="<b>${HEADER}</b>%0A<i>from <b>#$(hostname)</b></i>%0A%0A${MESSAGE}"
+    )
+    if [ -n "$THREAD_ID" ]; then
+        CURL_ARGS+=(--data message_thread_id="${THREAD_ID}")
+    fi
+
+    curl -s "${CURL_ARGS[@]}" \
+        "https://api.telegram.org/bot${API_KEY}/sendMessage" >/dev/null 2>&1
 }
 
 # Function to send file via Telegram
@@ -41,12 +49,19 @@ send_telegram_file() {
     local HEADER="$2"
     local CHAT_ID=$(jq -r '.telegram.ChatID' "$CONFIG_FILE")
     local API_KEY=$(jq -r '.telegram.APIkey' "$CONFIG_FILE")
-    
-    curl -s -F \
-    "chat_id=${CHAT_ID}" \
-    -F document=@"${FILE}" \
-    -F caption="${HEADER}"$'\n'"        from: #$(hostname)" \
-    https://api.telegram.org/bot${API_KEY}/sendDocument >/dev/null 2>&1 
+    local THREAD_ID=$(jq -r '.telegram.MessageThreadID // empty' "$CONFIG_FILE")
+
+    local CURL_ARGS=(
+        -F "chat_id=${CHAT_ID}"
+        -F document=@"${FILE}"
+        -F caption="${HEADER}"$'\n'"        from: #$(hostname)"
+    )
+    if [ -n "$THREAD_ID" ]; then
+        CURL_ARGS+=(-F "message_thread_id=${THREAD_ID}")
+    fi
+
+    curl -s "${CURL_ARGS[@]}" \
+        "https://api.telegram.org/bot${API_KEY}/sendDocument" >/dev/null 2>&1
 }
 
 # Function to check if container exists
@@ -60,7 +75,7 @@ check_container() {
     return 0
 }
 
-# Function to rotate backups
+# Function to rotate backups for volumes
 rotate_backups() {
     local CONTAINER="$1"
     local VOLUME_NAME="$2"
@@ -69,11 +84,9 @@ rotate_backups() {
     
     log "Starting backup rotation for $CONTAINER - $VOLUME_NAME (max: $MAX_BACKUPS)"
     
-    # List all existing backups for this container and volume
     local BACKUP_COUNT=$(ls -1 "${BACKUP_PATH}/${CONTAINER}_${VOLUME_NAME}_"*.tar.gz 2>/dev/null | wc -l)
     
     if [ "$BACKUP_COUNT" -ge "$MAX_BACKUPS" ]; then
-        # Get the oldest backups exceeding the limit
         local EXCESS=$((BACKUP_COUNT - MAX_BACKUPS + 1))
         local OLD_BACKUPS=$(ls -1t "${BACKUP_PATH}/${CONTAINER}_${VOLUME_NAME}_"*.tar.gz | tail -n "$EXCESS")
         
@@ -81,6 +94,23 @@ rotate_backups() {
         echo "$OLD_BACKUPS" | while read -r backup; do
             log "Deleting old backup: $(basename "$backup")"
             rm -f "$backup"
+        done
+    fi
+}
+
+# Function to rotate compose backups
+rotate_compose_backups() {
+    local BACKUP_PATH="$1"
+    local MAX_BACKUPS="$2"
+    local COMPOSE_BACKUPS
+    COMPOSE_BACKUPS=($(ls -1t "$BACKUP_PATH"/compose_*.yml 2>/dev/null))
+    local BACKUP_COUNT=${#COMPOSE_BACKUPS[@]}
+
+    if [ "$BACKUP_COUNT" -gt "$MAX_BACKUPS" ]; then
+        local EXCESS=$((BACKUP_COUNT - MAX_BACKUPS))
+        for ((i=BACKUP_COUNT-1; i>=MAX_BACKUPS; i--)); do
+            log "Deleting old compose backup: $(basename "${COMPOSE_BACKUPS[$i]}")"
+            rm -f "${COMPOSE_BACKUPS[$i]}"
         done
     fi
 }
@@ -123,6 +153,7 @@ backup_container() {
     local VOLUMES="$2"
     local BACKUP_PATH="$3"
     local MAX_BACKUPS="$4"
+    local container="$5"
     local BACKUP_FAILED=0
     local CONTAINER_BACKUP_PATH="${BACKUP_PATH}/${CONTAINER}"
 
@@ -134,6 +165,8 @@ backup_container() {
     # Check if container exists
     if ! check_container "$CONTAINER"; then
         ERROR_COUNT=$((ERROR_COUNT + 1))
+        log "Backup failed for $CONTAINER: container does not exist"
+        log "---   ---   ---   ---   ---   ---   ---"
         return 1
     fi
     
@@ -142,12 +175,14 @@ backup_container() {
     if ! docker pause "$CONTAINER" >> "$LOG_FILE" 2>&1; then
         log "ERROR: Could not pause container $CONTAINER"
         ERROR_COUNT=$((ERROR_COUNT + 1))
+        log "Backup failed for $CONTAINER: could not pause"
+        log "---   ---   ---   ---   ---   ---   ---"
         return 1
     fi
     
-    # Backup each volume
-    echo "$VOLUMES" | jq -c '.[]' | while read -r volume; do
-        VOLUME_PATH=$(echo "$volume" | jq -r '.')
+    # Backup each volume (use for loop to preserve variable scope)
+    local VOLUME_PATH
+    for VOLUME_PATH in $(echo "$VOLUMES" | jq -r '.[]'); do
         if ! backup_volume "$CONTAINER" "$VOLUME_PATH" "$CONTAINER_BACKUP_PATH" "$MAX_BACKUPS"; then
             BACKUP_FAILED=1
             ERROR_COUNT=$((ERROR_COUNT + 1))
@@ -159,7 +194,17 @@ backup_container() {
     if ! docker unpause "$CONTAINER" >> "$LOG_FILE" 2>&1; then
         log "ERROR: Could not unpause container $CONTAINER"
         ERROR_COUNT=$((ERROR_COUNT + 1))
+        log "Backup failed for $CONTAINER: could not unpause"
+        log "---   ---   ---   ---   ---   ---   ---"
         return 1
+    fi
+    
+    # Backup compose file if specified
+    local COMPOSE_FILE=$(echo "$container" | jq -r '.composeFile // empty')
+    if [ -n "$COMPOSE_FILE" ] && [ -f "$COMPOSE_FILE" ]; then
+        cp "$COMPOSE_FILE" "$CONTAINER_BACKUP_PATH/compose_${TIMESTAMP}.yml"
+        log "Compose file $COMPOSE_FILE backed up as compose_${TIMESTAMP}.yml"
+        rotate_compose_backups "$CONTAINER_BACKUP_PATH" "$MAX_BACKUPS"
     fi
     
     # Calculate total backup folder size for the container
@@ -167,12 +212,12 @@ backup_container() {
     log "Backup completed for $CONTAINER. Total size: $TOTAL_BACKUP_SIZE"
     
     if [ $BACKUP_FAILED -eq 0 ]; then
-        log "Backup successfully completed for all volumes of $CONTAINER"; log "---   ---   ---   ---   ---   ---   ---"
-        return 0
+        log "Backup successfully completed for all volumes of $CONTAINER"
     else
-        log "WARNING: Some volumes of $CONTAINER could not be backed up"; log "---   ---   ---   ---   ---   ---   ---"
-        return 1
+        log "WARNING: Some volumes of $CONTAINER could not be backed up"
     fi
+    log "---   ---   ---   ---   ---   ---   ---"
+    return $BACKUP_FAILED
 }
 
 # Validate config file
@@ -195,7 +240,7 @@ for container in $CONTAINERS_JSON; do
     CONTAINER_NAME=$(echo "$container" | jq -r '.name')
     VOLUMES=$(echo "$container" | jq '.volumes')
     MAX_BACKUPS=$(echo "$container" | jq -r '.maxBackups // "5"')
-    backup_container "$CONTAINER_NAME" "$VOLUMES" "$BACKUP_DEST" "$MAX_BACKUPS"
+    backup_container "$CONTAINER_NAME" "$VOLUMES" "$BACKUP_DEST" "$MAX_BACKUPS" "$container"
 done
 unset IFS
 
@@ -213,6 +258,10 @@ fi
 
 HEADER="Backup Status $STATUS_ICON"
 send_telegram_message "$HEADER" "$STATUS_MSG"
+
+# Add error count to the end of the log file before sending
+echo "Total errors: $ERROR_COUNT" >> "$LOG_FILE"
+
 send_telegram_file "$LOG_FILE" "Backup Log $STATUS_ICON"
 
 log "Process finished with $ERROR_COUNT error(s)"
