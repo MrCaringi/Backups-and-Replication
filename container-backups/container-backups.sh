@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPT_VERSION="v1.1.2"
+
 # Emoji definitions for status
 ICON_OK="✅"
 ICON_WARNING="⚠️"
@@ -16,6 +18,12 @@ HOSTNAME_SHORT=$(hostname | cut -d. -f1)
 TIMESTAMP=$(date +%y%m%d-%H%M)
 LOG_FILE="/tmp/${HOSTNAME_SHORT}_${TIMESTAMP}.log"
 ERROR_COUNT=0
+
+# Write script version as the first line of the log
+echo "Container Backup Script version: $SCRIPT_VERSION"
+echo "Container Backup Script version: $SCRIPT_VERSION" > "$LOG_FILE"
+echo "---   ---   ---   ---   ---   ---   ---"
+echo "---   ---   ---   ---   ---   ---   ---" >> "$LOG_FILE"
 
 # Function to write to log
 log() {
