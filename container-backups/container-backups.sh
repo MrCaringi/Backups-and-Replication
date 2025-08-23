@@ -160,6 +160,10 @@ for stack in $STACKS; do
         ERROR_COUNT=$((ERROR_COUNT+1))
         continue
     fi
+
+    echo "---   ---   ---   ---   ---   ---   ---"
+    echo "---   ---   ---   ---   ---   ---   ---" >> "$LOG_FILE"
+
 done
 
 # Send final notification
