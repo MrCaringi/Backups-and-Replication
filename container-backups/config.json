@@ -7,21 +7,29 @@
         "APIkey": "your-api-key",
         "MessageThreadID": "123"
     },
-    "containers": [
+    "stacks": [
         {
-            "name": "container1",
+            "name": "stack1",
             "composeFile": "/path/to/compose.yml",
-            "maxBackups": 5,
             "volumes": [
-                "/path/to/volume1",
-                "/path/to/volume2"
+                {
+                    "path": "/path/to/volume1",
+                    "maxBackups": 5
+                },
+                {
+                    "path": "/path/to/volume2",
+                    "maxBackups": 3
+                }
             ]
         },
         {
-            "name": "container2",
-            "maxBackups": 3,
+            "name": "stack2",
+            "composeFile": "/path/to/compose2.yml",
             "volumes": [
-                "/path/to/volume1"
+                {
+                    "path": "/path/to/volume3",
+                    "maxBackups": 7
+                }
             ]
         }
     ]
