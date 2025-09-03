@@ -156,9 +156,8 @@ for stack in $STACKS; do
     done
 
     # Log total size for the stack
-    local stack_backup_path="$BACKUP_DEST/$STACK_NAME"
+    stack_backup_path="$BACKUP_DEST/$STACK_NAME"
     if [ -d "$stack_backup_path" ]; then
-        local total_stack_size
         total_stack_size=$(du -sh "$stack_backup_path" | awk '{print $1}')
         log "$ICON_OK Total backup size for stack '$STACK_NAME': $total_stack_size"
     fi
