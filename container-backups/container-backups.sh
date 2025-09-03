@@ -6,6 +6,7 @@ SCRIPT_VERSION="v2.1.0"
 ICON_OK="✅"
 ICON_WARNING="⚠️"
 ICON_ERROR="⛔"
+ICON_WAIT="⏳"
 
 # Check arguments
 if [ $# -ne 1 ]; then
@@ -186,7 +187,7 @@ for stack in $STACKS; do
         PRE_BACKUP_SLEEP=$(echo "$volume" | jq -r '.preBackupSleep // empty')
 
         if [ -n "$PRE_BACKUP_SLEEP" ]; then
-            log "$ICON_WARNING Sleeping $PRE_BACKUP_SLEEP seconds before backing up $VOLUME_PATH (preBackupSleep set)"
+            log "$ICON_WAIT Waiting $PRE_BACKUP_SLEEP seconds before backing up $VOLUME_PATH (preBackupSleep set)"
             sleep "$PRE_BACKUP_SLEEP"
         fi
 
