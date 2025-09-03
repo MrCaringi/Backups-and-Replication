@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="v2.0.0"
+SCRIPT_VERSION="v2.1.0"
 
 # Emoji definitions for status
 ICON_OK="✅"
@@ -104,7 +104,9 @@ backup_and_compress_volume() {
     mkdir -p "$backup_path"
     log "$ICON_OK Backing up $volume_path to $backup_file"
     if tar czf "$backup_file" -C "$volume_path" . >> "$LOG_FILE" 2>&1; then
-        log "$ICON_OK Backup successful: $backup_file"
+        local backup_size
+        backup_size=$(du -sh "$backup_file" | awk '{print $1}')
+        log "$ICON_OK Backup successful: $backup_file (Size: $backup_size)"
         rotate_backups "$backup_path" "$max_backups"
     else
         log "$ICON_ERROR Backup failed for $volume_path"
@@ -153,12 +155,12 @@ for stack in $STACKS; do
         backup_and_compress_volume "$STACK_NAME" "$VOLUME_PATH" "$MAX_BACKUPS" "$TIMESTAMP"
     done
 
-    log "$ICON_WARNING Starting stack '$STACK_NAME' with compose file $COMPOSE_FILE"
-    if ! docker compose -f "$COMPOSE_FILE" up -d >> "$LOG_FILE" 2>&1; then
-        log "$ICON_ERROR Failed to start stack '$STACK_NAME' after backup."
-        send_telegram_message "Failed to start stack '$STACK_NAME' after backup."
-        ERROR_COUNT=$((ERROR_COUNT+1))
-        continue
+    # Log total size for the stack
+    local stack_backup_path="$BACKUP_DEST/$STACK_NAME"
+    if [ -d "$stack_backup_path" ]; then
+        local total_stack_size
+        total_stack_size=$(du -sh "$stack_backup_path" | awk '{print $1}')
+        log "$ICON_OK Total backup size for stack '$STACK_NAME': $total_stack_size"
     fi
 
     echo "---   ---   ---   ---   ---   ---   ---"
