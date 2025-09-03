@@ -14,7 +14,8 @@
             "volumes": [
                 {
                     "path": "/path/to/volume1",
-                    "maxBackups": 5
+                    "maxBackups": 5,
+                    "preBackupSleep": 10
                 },
                 {
                     "path": "/path/to/volume2",
