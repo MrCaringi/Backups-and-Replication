@@ -48,6 +48,8 @@ I needed a way to backup my Docker volumes in a safe way, and with minimal downt
   ```
 - If an error occurs (e.g., cannot stop/start stack, backup fails), a warning is sent.
 
+![telegram notification](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/telegram-messages.jpg)
+
 ## config.json format
 
 ```json
