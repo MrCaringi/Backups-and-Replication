@@ -208,6 +208,13 @@ for stack in $STACKS; do
     echo "---   ---   ---   ---   ---   ---   ---"
     echo "---   ---   ---   ---   ---   ---   ---" >> "$LOG_FILE"
 
+    log "$ICON_WARNING Starting stack '$STACK_NAME' with compose file $COMPOSE_FILE"
+    if ! docker compose -f "$COMPOSE_FILE" up -d >> "$LOG_FILE" 2>&1; then
+        log "$ICON_ERROR Failed to start stack '$STACK_NAME' after backup."
+        send_telegram_message "Failed to start stack '$STACK_NAME' after backup."
+        ERROR_COUNT=$((ERROR_COUNT+1))
+        continue
+    fi
 done
 
 # Send final notification
