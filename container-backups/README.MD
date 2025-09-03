@@ -132,6 +132,13 @@ Then add this line (adjust folder paths):
 | stacks.volumes.maxBackups        | Number       | Number of backups to keep (older backups will be deleted when this limit is reached)          |
 | stacks.volumes.preBackupSleep    | Number (sec) | *(Optional)* Seconds to wait before backing up this volume (useful for DB/app flushes)        |
 
+# Screenshots
+Example of folder structure created by this script:  
+![folder structure](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/terminal-folder-structure.jpg)
+
+Example of logs:  
+![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-01.png)
+
 # Changelog
 - 2025-09-02  v2.1.0  Now backs up the entire compose folder, logs backup sizes, rotates compose folder backups using the first volume's maxBackups, and supports per-volume delay before backup (`preBackupSleep`). Improved Telegram notifications and warnings about downtime.
 - 2025-08-22  v2.0.0  Now compresses backups as `.tar.gz` archives, backup logic by stack/compose, improved error handling
