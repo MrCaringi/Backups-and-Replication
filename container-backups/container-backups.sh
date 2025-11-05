@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="v2.1.0"
+SCRIPT_VERSION="v2.2"
 
 # Emoji definitions for status
 ICON_OK="✅"

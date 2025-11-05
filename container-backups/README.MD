@@ -1,7 +1,7 @@
 ## The Idea behind this Script
 I needed a way to backup my Docker volumes in a safe way, and with minimal downtime.
 
-# CONTAINER BACKUP Script v2.1.0
+# CONTAINER BACKUP Script v2.1.2
 
 ## Main Features
 - Backs up Docker volumes **by stack/compose** (not by individual container)
@@ -161,6 +161,7 @@ Example of logs:
 ![Logs](https://github.com/MrCaringi/assets/blob/main/images/scripts/container-backups/logs-01.png)
 
 # Changelog
+- 2025-11-05  v2.2.2  Recovery instructions
 - 2025-09-02  v2.1.0  Now backs up the entire compose folder, logs backup sizes, rotates compose folder backups using the first volume's maxBackups, and supports per-volume delay before backup (`preBackupSleep`). Improved Telegram notifications and warnings about downtime.
 - 2025-08-22  v2.0.0  Now compresses backups as `.tar.gz` archives, backup logic by stack/compose, improved error handling
 - 2025-05-31  v1.1    Added Telegram thread support, compose file backup, improved error reporting
