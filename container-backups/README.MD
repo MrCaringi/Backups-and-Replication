@@ -88,11 +88,7 @@ I needed a way to backup my Docker volumes in a safe way, and with minimal downt
 - `jq`
 - `tar`
 
-## Usage
-
-```sh
-./container-backups.sh /path/to/config.json
-```
+# How to use
 
 ## How to update/download the script
 ```shell
@@ -120,7 +116,7 @@ Then add this line (adjust folder paths):
 # container-backups
 5 0 * * 1  /folder/location-of-script/container-backups/container-backups.sh /folder/location-of-script/container-backups/config.json > /folder/location-of-script/container-backups/backup.log 2>&1
 ```
-
+## How to configure config.json
 | Parameter                       | Value         | Description                                                                                   |
 |----------------------------------|--------------|-----------------------------------------------------------------------------------------------|
 | config.BackupDestination         | file path    | Destination for the `*.tar.gz` files. The script creates a subfolder for every stack.         |
@@ -133,6 +129,29 @@ Then add this line (adjust folder paths):
 | stacks.volumes.path              | Array of paths| List of folders used as volumes by the container (can be any folder)                          |
 | stacks.volumes.maxBackups        | Number       | Number of backups to keep (older backups will be deleted when this limit is reached)          |
 | stacks.volumes.preBackupSleep    | Number (sec) | *(Optional)* Seconds to wait before backing up this volume (useful for DB/app flushes)        |
+
+## How to recover a backup!
+
+### 0. See what is inside a backup.tar.gz
+Verify what are you going to recover!
+```shell
+tar -tvf syncthing_syncthing_20241105_162629.tar.gz
+```
+
+### 1. Stop de Stack
+```shell
+docker compose -f /path/to/compose.yml down
+```
+
+### 2. Extract the backup
+```shell
+tar -xzvf /path/to/backup/oring/stack1/volume1/volume1_250902-1900.tar.gz -C /destination/path
+```
+
+### 3. Start the Stack
+```shell
+docker compose -f /path/to/compose.yml up -d
+```
 
 # Screenshots
 Example of folder structure created by this script:  
