@@ -145,7 +145,7 @@ docker compose -f /path/to/compose.yml down
 
 ### 2. Extract the backup
 ```shell
-tar -xzvf /path/to/backup/oring/stack1/volume1/volume1_250902-1900.tar.gz -C /destination/path
+sudo tar -xzvf /path/to/backup/oring/stack1/volume1/volume1_250902-1900.tar.gz -C /destination/path
 ```
 
 ### 3. Start the Stack
