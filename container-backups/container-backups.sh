@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="v2.2"
+SCRIPT_VERSION="v2.2.1"
 
 # Emoji definitions for status
 ICON_OK="✅"
@@ -205,9 +205,6 @@ for stack in $STACKS; do
         log "$ICON_OK Total backup size for stack '$STACK_NAME': $total_stack_size"
     fi
 
-    echo "---   ---   ---   ---   ---   ---   ---"
-    echo "---   ---   ---   ---   ---   ---   ---" >> "$LOG_FILE"
-
     log "$ICON_WARNING Starting stack '$STACK_NAME' with compose file $COMPOSE_FILE"
     if ! docker compose -f "$COMPOSE_FILE" up -d >> "$LOG_FILE" 2>&1; then
         log "$ICON_ERROR Failed to start stack '$STACK_NAME' after backup."
@@ -215,6 +212,9 @@ for stack in $STACKS; do
         ERROR_COUNT=$((ERROR_COUNT+1))
         continue
     fi
+
+    echo "---   ---   ---   ---   ---   ---   ---"
+    echo "---   ---   ---   ---   ---   ---   ---" >> "$LOG_FILE"
 done
 
 # Send final notification
