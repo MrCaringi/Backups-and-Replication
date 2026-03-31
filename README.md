@@ -5,6 +5,8 @@ Scripts for backups and replication automation
 - borg:    for Borg-backup related scripts
 - rclone:  for remote (public cloud normally) files replication
 - rsync:   for local/LAN files replication
+- container-backups:  for docker containers (volumes and compose.yml file)
+- folder-backups: backups of system folders
 
 # Contributors
 <a href="https://github.com/MrCaringi/Backups-and-Replication/graphs/contributors">
