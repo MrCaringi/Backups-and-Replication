@@ -1,5 +1,5 @@
 ## The Idea behind this Script
-I needed a way to backup my Docker volumes in a safe way, and with minimal downtime.
+I needed a way to backup my Docker volumes and `compose.yml` files in a safe way, and with minimal downtime.
 
 # CONTAINER BACKUP Script v2.2.1
 
