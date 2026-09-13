@@ -19,6 +19,7 @@ I needed a way to backup my Docker volumes and `compose.yml` files in a safe way
 ## Important Notice
 
 > **Warning:** The script stops and starts each stack using `docker compose down` and `docker compose up -d`. This will cause downtime for all services in the stack during the backup process.
+> **Recommendation:** use root's crontab to prevent permission issues.
 
 ## How it works
 
@@ -59,7 +60,7 @@ I needed a way to backup my Docker volumes and `compose.yml` files in a safe way
     },
     "telegram": {
         "ChatID": "your-chat-id",
-        "APIkey": "your-api-key",
+        "APIkey": "your-telegram-bot-api-key",
         "MessageThreadID": "123"
     },
     "stacks": [
@@ -70,7 +71,7 @@ I needed a way to backup my Docker volumes and `compose.yml` files in a safe way
                 {
                     "path": "/path/to/volume1",
                     "maxBackups": 5,
-                    "preBackupSleep": 10
+                    "preBackupSleep": 3
                 },
                 {
                     "path": "/path/to/volume2",
