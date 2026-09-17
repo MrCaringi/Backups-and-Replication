@@ -1,3 +1,11 @@
+# This script is deprecated.
+
+## Use this docker image instead: https://github.com/MrCaringi/docker-volume-backup
+
+
+---
+---
+
 ## The Idea behind this Script
 I needed a way to backup my Docker volumes and `compose.yml` files in a safe way, and with minimal downtime.
 
